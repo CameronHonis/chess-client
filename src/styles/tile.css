@@ -1,0 +1,49 @@
+.Tile {
+    width: 12.5%;
+    height: 12.5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Tile.DarkSquare {
+    background-color: #203b58;
+}
+
+.Tile.LightSquare {
+    background-color: #669cd5;
+}
+
+.Tile.DarkSquare.Selected {
+    background-color: #3c5978;
+}
+
+.Tile.LightSquare.Selected {
+    background-color: #a1c4e9;
+}
+
+.Tile.Selected {
+    border: solid orange 4px;
+    margin: -4px;
+    z-index: 1;
+}
+
+.Tile svg {
+    width: 75%;
+    height: 75%;
+    margin: 12.5%;
+    fill: white;
+}
+
+.Tile .BlackPawn {
+    fill: black;
+}
+
+.Tile .TileDot {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    position: absolute;
+    opacity: 50%;
+    border-radius: 20%;
+}
