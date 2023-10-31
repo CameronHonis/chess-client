@@ -2,8 +2,9 @@ import {BotType} from "../models/enums/bot_type";
 import {ARBITRATOR_URL} from "../constants";
 import {Throwable} from "../types";
 import {ArbitratorMessage} from "../models/messages/arbitrator_message";
-import {ArbitratorMessageEvent, DocumentEventMapExt} from "../models/events/arbitrator_message_event";
+import {ArbitratorMessageEventPayload} from "../models/events/arbitrator_message_event";
 import {MessageContentType} from "../models/enums/message_content_type";
+import {AuthKeyset} from "./auth_manager";
 
 export class ArbitratorClient {
     websocket: WebSocket;
@@ -24,18 +25,19 @@ export class ArbitratorClient {
                 throw e;
             }
         }
-        // @ts-ignore
-        document.addEventListener<>("arbitratorMessage-AUTH", (e: ArbitratorMessageEvent<MessageContentType.AUTH>) => {
-            window.services.authManager.arbitratorKeyset = {
-                publicKey: e.msg.content
+        document.addEventListener("arbitratorMessage-AUTH", (e: CustomEvent<ArbitratorMessageEventPayload<MessageContentType.AUTH>>) => {
+            const content = e.detail.msg.content
+            const keyset: AuthKeyset = {
+                publicKey: content.publicKey,
+                privateKey: content.privateKey,
             }
+            window.services.authManager.setArbitratorKeyset(keyset);
         });
     }
 
     _handleOpen(e: Event) {
         const url = (e.currentTarget as WebSocket).url;
         console.log(`websocket connection established with websocket on ${url}`);
-        this.websocket.send("we love you");
     }
 
     _handleMessage(e: MessageEvent): Throwable<void> {
@@ -45,21 +47,27 @@ export class ArbitratorClient {
         }
         const url = (e.currentTarget as WebSocket).url
         console.log(`[${url}] >> ${e.data}`);
-        const contentType = ArbitratorClient._validateMessageEventAndParseContent(e);
-        // @ts-ignore
-        new CustomEvent(`arbitratorMessage-${contentType}`, {msg: e.data});
-        new ArbitratorMessageEvent()
+        const contentType = ArbitratorClient._validateMessageEventAndParseContentType(e);
+        const msg = JSON.parse(e.data);
+        type MessagePayloadType = ArbitratorMessageEventPayload<typeof contentType>
+        const ev = new CustomEvent<MessagePayloadType>(`arbitratorMessage-${contentType}`, {
+            detail: {
+                msg,
+            },
+        });
+        document.dispatchEvent(ev);
     }
 
-    static _validateMessageEventAndParseContent(e: MessageEvent): Throwable<string> {
+    static _validateMessageEventAndParseContentType(e: MessageEvent): Throwable<keyof typeof MessageContentType> {
         const msg = JSON.parse(e.data);
         if (!("contentType" in msg)) {
             throw new Error("could not identify message contentType");
         }
+        type a = typeof MessageContentType
         if (typeof msg["contentType"] !== "string") {
             throw new Error("contentType is not a string");
         }
-        return msg["contentType"]
+        return msg["contentType"] as MessageContentType
     }
 
 
@@ -68,8 +76,20 @@ export class ArbitratorClient {
         console.warn(`arbitrator client websocket connection on ${url} closed`);
     }
 
+    sendMessage(msg: ArbitratorMessage<any>, signed = true): Throwable<void> {
+        if (this.websocket.readyState !== 1) {
+            throw new Error(`cannot send message, websocket not open. got readyState = ${this.websocket.readyState}`);
+        }
+        if (signed) {
+            window.services.authManager.signMessage(msg);
+        }
+        const stringifiedMsg = JSON.stringify(msg);
+        this.websocket.send(stringifiedMsg);
+    }
+
     requestBotMatch(botType: BotType) {
         // this.websocket.send(JSON.stringify(msg));
+
     }
 
     requestPlayerMatch(playerId: number) {
