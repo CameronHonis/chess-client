@@ -1,7 +1,7 @@
 import {ArbitratorMessage} from "./arbitrator_message";
 import {Throwable} from "../../types";
 import {AuthKeyset} from "../../services/auth_manager";
-import {ArbitratorTopic} from "../enums/message_topic";
+import {ArbitratorTopic} from "../enums/message_content_type";
 
 interface AuthMessageConstructorArgs {
     topic: ArbitratorTopic

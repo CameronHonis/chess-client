@@ -1,12 +1,12 @@
 import {BotType} from "../models/enums/bot_type";
-import {MessageListener} from "../helpers/websocket_listeners/message_listener";
 import {ARBITRATOR_URL} from "../constants";
-import {ArbitratorTopic} from "../models/enums/message_topic";
-import {ArbitratorAuthListener} from "../helpers/websocket_listeners/arbitrator_auth_listener";
+import {Throwable} from "../types";
+import {ArbitratorMessage} from "../models/messages/arbitrator_message";
+import {ArbitratorMessageEvent, DocumentEventMapExt} from "../models/events/arbitrator_message_event";
+import {MessageContentType} from "../models/enums/message_content_type";
 
 export class ArbitratorClient {
     websocket: WebSocket;
-    messageListenersByTopic: Map<ArbitratorTopic, (typeof MessageListener)[]>;
 
     constructor() {
         this.websocket = new WebSocket(`wss://${ARBITRATOR_URL}`);
@@ -24,9 +24,12 @@ export class ArbitratorClient {
                 throw e;
             }
         }
-
-        this.messageListenersByTopic = new Map();
-        this.addMessageListener(ArbitratorAuthListener, ArbitratorTopic.MATCHMAKING);
+        // @ts-ignore
+        document.addEventListener<>("arbitratorMessage-AUTH", (e: ArbitratorMessageEvent<MessageContentType.AUTH>) => {
+            window.services.authManager.arbitratorKeyset = {
+                publicKey: e.msg.content
+            }
+        });
     }
 
     _handleOpen(e: Event) {
@@ -35,41 +38,34 @@ export class ArbitratorClient {
         this.websocket.send("we love you");
     }
 
-    _handleMessage(e: MessageEvent) {
+    _handleMessage(e: MessageEvent): Throwable<void> {
         if (typeof e.data !== "string") {
             console.warn(`Flushing unhandled websocket data type: ${typeof e.data}`)
             return;
         }
         const url = (e.currentTarget as WebSocket).url
         console.log(`[${url}] >> ${e.data}`);
-        let msg: object
-        try {
-            msg = JSON.parse(e.data);
-        } catch (e) {
-            console.warn("Could not parse JSON from websocket response");
-            return;
-        }
-        if (!("topic" in msg)) {
-            console.warn("Could not identify topic from websocket response");
-        }
-        //@ts-ignore
-        const topic: ArbitratorTopic = msg["topic"];
-        const messageListeners = this.messageListenersByTopic.get(topic) || [];
-        for (let messageListener of messageListeners) {
-            messageListener.receiveMessage(e);
-        }
+        const contentType = ArbitratorClient._validateMessageEventAndParseContent(e);
+        // @ts-ignore
+        new CustomEvent(`arbitratorMessage-${contentType}`, {msg: e.data});
+        new ArbitratorMessageEvent()
     }
+
+    static _validateMessageEventAndParseContent(e: MessageEvent): Throwable<string> {
+        const msg = JSON.parse(e.data);
+        if (!("contentType" in msg)) {
+            throw new Error("could not identify message contentType");
+        }
+        if (typeof msg["contentType"] !== "string") {
+            throw new Error("contentType is not a string");
+        }
+        return msg["contentType"]
+    }
+
 
     _handleClose(e: CloseEvent) {
         const url = (e.currentTarget as WebSocket).url
         console.warn(`arbitrator client websocket connection on ${url} closed`);
-    }
-
-    addMessageListener(msgListener: typeof MessageListener, topic: ArbitratorTopic) {
-        if (!this.messageListenersByTopic.has(topic)) {
-            this.messageListenersByTopic.set(topic, []);
-        }
-        this.messageListenersByTopic.get(topic)?.push(msgListener);
     }
 
     requestBotMatch(botType: BotType) {

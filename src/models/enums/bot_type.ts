@@ -1,3 +1,3 @@
 export enum BotType {
-    RANDOM
+    RANDOM = "random",
 }
