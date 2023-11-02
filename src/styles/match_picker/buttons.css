@@ -1,0 +1,29 @@
+.PlayButton {
+    width: 10vw;
+    height: 3vw;
+    border-radius: .25vw;
+    background: #008643;
+    border-bottom: 2px solid #00542b;
+    border-right: 2px solid #00542b;
+    border-top: 2px solid #1fbd71;
+    border-left: 2px solid #1fbd71;
+    font-size: 1.5rem;
+    color: #00341b;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.CancelMatchmakingButton {
+    width: 10vw;
+    height: 3vw;
+    border-radius: .25vw;
+    background: #888;
+    border-bottom: 2px solid #555;
+    border-right: 2px solid #555;
+    border-top: 2px solid #ccc;
+    border-left: 2px solid #ccc;
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: 800;
+    cursor: pointer;
+}
