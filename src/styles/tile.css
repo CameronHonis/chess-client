@@ -24,7 +24,6 @@
 
 .Tile.Selected {
     border: solid orange 4px;
-    margin: -4px;
     z-index: 1;
 }
 
