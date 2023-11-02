@@ -16,7 +16,7 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
 
     const handlePlayButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
         setIsSearchingMatch(true);
-
+        window.services.arbitratorClient.requestPlayerMatch();
     }, [setIsSearchingMatch]);
 
     const handleCancelButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
@@ -39,7 +39,7 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
                         <p>match players based on your...</p>
                         <p id={"EloTag"}>Elo: 1000</p>
                         <p>and your...</p>
-                        <p id={"WinstreakTag"}>Winstreak: +2</p>
+                        <p id={"WinstreakTag"}>Winstreak: +0</p>
                     </div>
                     <Button content="Play" className="PlayButton" isDebounced onClick={handlePlayButtonClick}/>
                 </>

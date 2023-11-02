@@ -1,10 +1,11 @@
 import React from "react";
 import "../../styles/match_picker/bot_droplist_item.css";
+import {BotType} from "../../models/enums/bot_type";
 
 export interface BotDroplistItemProps {
     isSelected: boolean;
-    setSelectedBotName: React.Dispatch<React.SetStateAction<string>>;
-    botName: string;
+    setSelectedBotName: React.Dispatch<React.SetStateAction<BotType>>;
+    botName: BotType;
 }
 
 export const BotDroplistItem: React.FC<BotDroplistItemProps> = (props) => {
