@@ -9,7 +9,7 @@ export interface AuthArbitratorMessageContent {
 
 
 export interface FindBotMatchArbitratorMessageContent {
-
+    botName: string
 }
 
 export interface FindMatchArbitratorMessageContent {

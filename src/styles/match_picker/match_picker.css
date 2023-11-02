@@ -1,0 +1,25 @@
+.MatchPickerPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    padding: 2.5vh 2.5vw;
+}
+
+.MatchPickerPage-Subtitle {
+    padding-top: 5vh;
+    padding-bottom: 1vh;
+    font-size: 1.2rem;
+}
+
+.MatchPickerWrappers {
+    height: 70vh;
+    display: flex;
+    justify-content: space-between;
+    width: 75vw;
+}
+
+.MatchPickerWrappers h2 {
+    font-size: 3rem;
+}

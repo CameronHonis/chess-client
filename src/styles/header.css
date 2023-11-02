@@ -1,0 +1,11 @@
+.Header {
+    width: 100vw;
+    height: 8vh;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+#HeaderTitle {
+    color: #aaa;
+}

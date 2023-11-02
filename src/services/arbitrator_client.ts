@@ -84,15 +84,31 @@ export class ArbitratorClient {
             window.services.authManager.signMessage(msg);
         }
         const stringifiedMsg = JSON.stringify(msg);
+        console.log(`[${this.websocket.url}] << ${stringifiedMsg}`);
         this.websocket.send(stringifiedMsg);
     }
 
     requestBotMatch(botType: BotType) {
-        // this.websocket.send(JSON.stringify(msg));
-
+        const msg = new ArbitratorMessage({
+            topic: "findBotMatch",
+            contentType: MessageContentType.FIND_BOT_MATCH,
+            content: {
+                botName: botType,
+            },
+            senderKey: "",
+            privateKey: ""
+        });
+        this.sendMessage(msg);
     }
 
-    requestPlayerMatch(playerId: number) {
-
+    requestPlayerMatch() {
+        const msg = new ArbitratorMessage({
+            topic: "findMatch",
+            contentType: MessageContentType.FIND_MATCH,
+            content: {},
+            senderKey: "",
+            privateKey: "",
+        })
+        this.sendMessage(msg);
     }
 }

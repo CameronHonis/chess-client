@@ -1,0 +1,30 @@
+.HumanMatchPicker {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 25vw;
+    padding: 4vw;
+    background: #3c5978;
+    border-radius: 20px;
+}
+
+.HumanMatchPicker-MatchmakingMetrics {
+    display: flex;
+    flex-direction: column;
+}
+
+.HumanMatchPicker-MatchmakingMetrics p {
+    font-size: 1.25rem;
+    color: #aaa;
+    align-self: start;
+    padding: 1rem;
+}
+
+#EloTag, #WinstreakTag {
+    font-size: 1.75rem;
+    color: #ccc;
+    font-weight: 800;
+    align-self: end;
+}

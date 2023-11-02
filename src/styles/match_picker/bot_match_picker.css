@@ -1,0 +1,14 @@
+.BotMatchPicker {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 25vw;
+    padding: 4vw;
+    background: #78593c;
+    border-radius: 20px;
+}
+
+.BotsDroplist {
+}

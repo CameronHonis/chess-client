@@ -1,0 +1,31 @@
+import React, {ReactElement} from "react";
+import {BotDroplistItem} from "./bot_droplist_item";
+import "../../styles/match_picker/bot_match_picker.css";
+import {Button} from "../button";
+
+export interface BotMatchPickerProps {
+}
+
+export const BotMatchPicker: React.FC<BotMatchPickerProps> = (props) => {
+    const [selectedBotName, setSelectedBotName] = React.useState<string>("Random");
+
+    React.useEffect(() => {
+        console.log(selectedBotName);
+    }, [selectedBotName]);
+
+    const botNames = ["Random", "NOT_IMPLEMENTED"];
+    const botDroplistItems: ReactElement[] = [];
+    for (let botName of botNames) {
+        botDroplistItems.push(
+            <BotDroplistItem isSelected={botName === selectedBotName} setSelectedBotName={setSelectedBotName}
+                             botName={botName} key={botName}/>
+        );
+    }
+    return <div className={"BotMatchPicker"}>
+        <h2>A Robot</h2>
+        <div className={"BotsDroplist"}>
+            {botDroplistItems}
+        </div>
+        <Button content={"Challenge"} className={"PlayButton"} isDebounced onClick={console.log} />
+    </div>
+}

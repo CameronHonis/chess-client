@@ -1,0 +1,10 @@
+.Dots {
+    width: 100%;
+    height: 20%;
+}
+
+.Dot {
+    position: absolute;
+    background: white;
+    border-radius: 10%;
+}

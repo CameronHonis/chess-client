@@ -16,7 +16,7 @@ import {
 interface ArbitratorMessageArgs<CT extends keyof typeof MessageContentType> {
     topic: string
     contentType: CT
-    content: any
+    content: ArbitratorMessageContentTypeToContentMap[CT]
     senderKey: string
     privateKey: string
 }
