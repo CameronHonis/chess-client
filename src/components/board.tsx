@@ -37,11 +37,14 @@ export const Board: React.FC = () => {
     }, [squareSelected, boardState]);
 
     const handleTileMouseClick = (square: Square) => {
-        if (squareSelected && !targetSquareHashes.has(square.getHash())) {
-            setSquareSelected(null);
-            return;
+        if (squareSelected) {
+            if (squareSelected.equalTo(square)) {
+                setSquareSelected(null);
+                return;
+            } else if (targetSquareHashes.has(square.getHash())) {
+                // play move
+            }
         }
-        // we know at this point, the square clicked is not selected
         const piece = boardState.getPieceBySquare(square);
         if (ChessPieceHelper.isWhite(piece)) {
             setSquareSelected(square);
