@@ -1,53 +1,68 @@
-export interface EmptyArbitratorMessageContent {
+import {Match} from "../match";
+import {Move} from "../move";
+
+export interface EmptyMessageContent {
 
 }
 
-export interface AuthArbitratorMessageContent {
+export interface AuthMessageContent {
     publicKey: string;
     privateKey: string;
 }
 
 
-export interface FindBotMatchArbitratorMessageContent {
-    botName: string
+export interface FindBotMatchMessageContent {
+    botName: string;
 }
 
-export interface FindMatchArbitratorMessageContent {
-
-}
-
-export interface MatchUpdateArbitratorMessageContent {
+export interface FindMatchMessageContent {
 
 }
 
-export interface MoveArbitratorMessageContent {
+export interface MatchUpdateMessageContent {
+    match: Match;
+}
+
+export interface MoveMessageContent {
+    move: Move;
+}
+
+export interface SubscribeRequestMessageContent {
 
 }
 
-export interface SubscribeRequestArbitratorMessageContent {
+export interface SubscribeRequestGrantedMessageContent {
 
 }
 
-export interface SubscribeRequestDeniedArbitratorMessageContent {
+export interface SubscribeRequestDeniedMessageContent {
 
 }
 
-export interface FindBotMatchNoBotsArbitratorMessageContent {
+export interface FindBotMatchNoBotsMessageContent {
 
 }
 
-export interface EchoArbitratorMessageContent {
+export interface EchoMessageContent {
 
 }
 
-export interface UpgradeAuthRequestArbitratorMessageContent {
+export interface UpgradeAuthRequestMessageContent {
 
 }
 
-export interface UpgradeAuthGrantedArbitratorMessageContent {
+export interface UpgradeAuthGrantedMessageContent {
 
 }
 
-export interface UpgradeAuthDeniedArbitratorMessageContent {
+export interface UpgradeAuthDeniedMessageContent {
+
+}
+
+export interface InitBotSuccessMessageContent {
+
+}
+
+export interface InitBotFailureMessageContent {
 
 }
