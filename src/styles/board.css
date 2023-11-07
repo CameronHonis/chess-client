@@ -1,7 +1,16 @@
+.BoardFrame {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
 .Board {
-    position: absolute;
     background-color: red;
-    aspect-ratio: 1;
     display: flex;
     flex-wrap: wrap;
+    aspect-ratio: 1;
+    border: 8px solid white;
+    /* height computed in Board.tsx */
+
 }

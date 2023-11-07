@@ -8,8 +8,8 @@ export class Move {
     piece: ChessPiece
     startSquare: Square
     endSquare: Square
-    pieceSquaresCheckingKing: Square[]
-    pieceTaken: ChessPiece | null;
+    kingCheckingSquares: Square[]
+    capturedPiece: ChessPiece | null;
     pawnUpgradedTo: ChessPiece | null;
 
     constructor(piece: ChessPiece, startSquare: Square, endSquare: Square, pieceSquaresCheckingKing: Square[],
@@ -18,18 +18,18 @@ export class Move {
         this.startSquare = startSquare;
         this.endSquare = endSquare;
         pieceSquaresCheckingKing.sort((a, b) => 10 * b.rank + b.file - 10 * a.rank - a.file);
-        this.pieceSquaresCheckingKing = pieceSquaresCheckingKing;
-        this.pieceTaken = pieceTaken;
+        this.kingCheckingSquares = pieceSquaresCheckingKing;
+        this.capturedPiece = pieceTaken;
         this.pawnUpgradedTo = pawnUpgradedTo;
     }
 
     addSquaresCheckingKing(square: Square | Square[]) {
         if (Array.isArray(square)) {
-            this.pieceSquaresCheckingKing.push(...square);
+            this.kingCheckingSquares.push(...square);
         } else {
-            this.pieceSquaresCheckingKing.push(square);
+            this.kingCheckingSquares.push(square);
         }
-        this.pieceSquaresCheckingKing.sort((a, b) => 10 * b.rank + b.file - 10 * a.rank - a.file);
+        this.kingCheckingSquares.sort((a, b) => 10 * b.rank + b.file - 10 * a.rank - a.file);
     }
 
     getUpdatedBoardStatePieces(boardState: BoardState): BoardState {
@@ -65,7 +65,7 @@ export class Move {
     // TODO: move into GameHelper
     getResultingBoardState(boardState: BoardState): BoardState {
         const rtnBoardState = this.getUpdatedBoardStatePieces(boardState);
-        if (this.pieceTaken || ChessPieceHelper.isPawn(this.piece)) {
+        if (this.capturedPiece || ChessPieceHelper.isPawn(this.piece)) {
             rtnBoardState.halfMoveClockCount = 0;
         } else {
             rtnBoardState.halfMoveClockCount++;
@@ -100,7 +100,7 @@ export class Move {
         const nextLegalMoves = rtnBoardState.getLegalMovesGroupedBySquareHash();
         if (Object.entries(nextLegalMoves).length === 0) {
             rtnBoardState.isTerminal = true;
-            if (this.pieceSquaresCheckingKing.length === 0) {
+            if (this.kingCheckingSquares.length === 0) {
                 rtnBoardState.isDraw = true;
             } else {
                 rtnBoardState.isWhiteWinner = boardState.isWhiteTurn;
@@ -117,16 +117,16 @@ export class Move {
                  piece,
                  startSquare,
                  endSquare,
-                 pieceSquaresCheckingKing,
-                 pieceTaken,
+                 kingCheckingSquares,
+                 capturedPiece,
                  pawnUpgradedTo
              }: Partial<Move>): Move {
         return new Move(
             piece || this.piece,
             startSquare || this.startSquare.copy(),
             endSquare || this.endSquare.copy(),
-            pieceSquaresCheckingKing || [...this.pieceSquaresCheckingKing],
-            pieceTaken || this.pieceTaken,
+            kingCheckingSquares || [...this.kingCheckingSquares],
+            capturedPiece || this.capturedPiece,
             pawnUpgradedTo || this.pawnUpgradedTo
         );
     }
@@ -136,14 +136,14 @@ export class Move {
     }
 
     equalTo(otherMove: Move): boolean {
-        if (this.pieceSquaresCheckingKing.length !== otherMove.pieceSquaresCheckingKing.length) return false;
-        for (let i = 0; i < this.pieceSquaresCheckingKing.length; i++) {
-            if (!this.pieceSquaresCheckingKing[i].equalTo(otherMove.pieceSquaresCheckingKing[i])) return false;
+        if (this.kingCheckingSquares.length !== otherMove.kingCheckingSquares.length) return false;
+        for (let i = 0; i < this.kingCheckingSquares.length; i++) {
+            if (!this.kingCheckingSquares[i].equalTo(otherMove.kingCheckingSquares[i])) return false;
         }
         return this.piece === otherMove.piece &&
             this.startSquare.equalTo(otherMove.startSquare) &&
             this.endSquare.equalTo(otherMove.endSquare) &&
-            this.pieceTaken === otherMove.pieceTaken &&
+            this.capturedPiece === otherMove.capturedPiece &&
             this.pawnUpgradedTo === otherMove.pawnUpgradedTo;
     }
 }

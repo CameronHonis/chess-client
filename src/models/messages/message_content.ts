@@ -24,6 +24,7 @@ export interface MatchUpdateMessageContent {
 }
 
 export interface MoveMessageContent {
+    matchId: string;
     move: Move;
 }
 

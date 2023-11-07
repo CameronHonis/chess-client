@@ -108,13 +108,13 @@ export function parseContent<CT extends MessageContentType>(
             const startSquare = new Square(moveContent.move.startSquare.rank, moveContent.move.startSquare.file);
             const endSquare = new Square(moveContent.move.endSquare.rank, moveContent.move.endSquare.file);
             let checkingSquares: Square[] = [];
-            if (moveContent.move.pieceSquaresCheckingKing != null) {
-                checkingSquares = moveContent.move.pieceSquaresCheckingKing.map(squareJson => {
+            if (moveContent.move.kingCheckingSquares != null) {
+                checkingSquares = moveContent.move.kingCheckingSquares.map(squareJson => {
                     return new Square(squareJson.rank, squareJson.file);
                 });
             }
             moveContent.move = new Move(moveContent.move.piece, startSquare, endSquare, checkingSquares,
-                moveContent.move.pieceTaken, moveContent.move.pawnUpgradedTo);
+                moveContent.move.capturedPiece, moveContent.move.pawnUpgradedTo);
             return moveContent as MessageContentTypeToContentMap[CT];
         default:
             return content as MessageContentTypeToContentMap[CT];

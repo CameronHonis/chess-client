@@ -108,6 +108,7 @@ export class ArbitratorClient {
             topic: `match-${matchId}`,
             contentType: MessageContentType.MOVE,
             content: {
+                matchId,
                 move,
             },
             senderKey: "",

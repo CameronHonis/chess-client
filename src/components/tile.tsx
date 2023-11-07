@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import "../styles/tile.css";
 import {Pawn} from "./svgs/pawn_svg";
 import {Knight} from "./svgs/knight_svg";
@@ -20,8 +20,6 @@ interface Props {
 
 export const Tile: React.FC<Props> = (props) => {
     const {square, pieceType, isSelected, isDotVisible, handleSquareClick} = props;
-
-    useEffect(() => console.log("remount tile"), []);
 
     const isWhite = ChessPieceHelper.isWhite(pieceType)
     let tileIcon: React.JSX.Element | null = null;
