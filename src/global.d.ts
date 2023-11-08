@@ -3,6 +3,7 @@ import {AuthManager} from "./services/auth_manager";
 import {MessageEventPayload} from "./models/events/message_event";
 import {MessageContentType} from "./models/enums/message_content_type";
 import {MessageEventName} from "./models/enums/message_event_name";
+import {Timer} from "./services/timer";
 
 interface ArbitratorMessageEventMap {
     [MessageEventName.EMPTY]: MessageEventPayload<MessageContentType.EMPTY>;
@@ -36,6 +37,7 @@ declare global {
         services: {
             authManager: AuthManager;
             arbitratorClient: ArbitratorClient;
+            timer: Timer;
         }
     }
 }

@@ -1,0 +1,16 @@
+.Clock {
+    border-radius: .5rem;
+    padding: .5rem 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.WhiteClock {
+    background-color: #ddd;
+    color: black;
+}
+
+.BlackClock {
+    background-color: black;
+    color: white;
+}

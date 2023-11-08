@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useMemo, useState} from "react";
 import "../styles/board.css";
 import {Tile} from "./tile";
 import {Square} from "../models/square";
@@ -7,20 +7,8 @@ import {ChessPiece} from "../models/enums/chess_piece";
 import {Move} from "../models/move";
 import {matchContext} from "../App";
 import {ReactComp, Throwable} from "../types";
-import {Timer} from "./timer";
+import {Clock} from "./clock";
 import {Match} from "../models/match";
-
-const handleWindowResize = (boardElement: HTMLDivElement, headerElement: HTMLDivElement) => {
-    const verticalMargin = 50;
-    const horizontalMargin = 10;
-    const maxHeight = window.innerHeight - headerElement.offsetHeight - 2 * verticalMargin;
-    const maxWidth = window.innerWidth - 2 * horizontalMargin;
-    // const margin = Number.parseInt(containerRef.current.style.margin.slice(0, -2));
-    const boardLen = Math.min(maxHeight, maxWidth);
-    boardElement.style.width = `${boardLen}px`;
-    boardElement.style.height = `${boardLen}px`;
-    boardElement.style.margin = `${verticalMargin}px ${horizontalMargin}px`;
-}
 
 export interface BoardProps {
     header: HTMLDivElement | null;
@@ -28,17 +16,7 @@ export interface BoardProps {
 
 export const Board: React.FC<BoardProps> = (props) => {
     const match = React.useContext(matchContext) as Match;
-    const boardRef = useRef<HTMLDivElement>(null);
     const [squareSelected, setSquareSelected] = useState<Square | null>(null);
-
-    // runs only once when component is created
-    useEffect(() => {
-        if (boardRef.current == null) return;
-        if (props.header == null) return;
-        handleWindowResize(boardRef.current, props.header);
-        // @ts-ignore
-        window.addEventListener("resize", () => handleWindowResize(boardRef.current, props.header));
-    }, [props.header, boardRef]);
 
     const [targetSquareHashes, movesByStartSquareHash] = useMemo(() => {
         const _movesByStartSquareHash = match.board.getLegalMovesGroupedBySquareHash();
@@ -127,27 +105,13 @@ export const Board: React.FC<BoardProps> = (props) => {
         return tiles;
     }, [isWhitePerspective, handleTileMouseClick, match, squareSelected, targetSquareHashes]);
 
-    const getPlayerSeconds = React.useCallback((isOpponent: boolean): number => {
-        if (isWhitePerspective) {
-            if (isOpponent) {
-                return match.blackTimeRemaining;
-            } else {
-                return match.whiteTimeRemaining;
-            }
-        } else {
-            if (isOpponent) {
-                return match.whiteTimeRemaining;
-            } else {
-                return match.blackTimeRemaining;
-            }
-        }
-    }, [isWhitePerspective, match]);
-
     return <div className={"BoardFrame"}>
-        {/*<Timer isWhite={!isWhitePerspective} seconds={getPlayerSeconds(true)}/>*/}
-        <div className={"Board"} ref={boardRef}>
+        <div className={"Clocks"}>
+            <Clock isWhite={!isWhitePerspective}/>
+            <Clock isWhite={isWhitePerspective} isHomeClock/>
+        </div>
+        <div className={"Board"}>
             {getTiles()}
         </div>
-        {/*<Timer isWhite={isWhitePerspective} seconds={getPlayerSeconds(false)}/>*/}
     </div>
 }

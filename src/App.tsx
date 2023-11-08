@@ -28,6 +28,7 @@ function App() {
         if (match === null) {
             setPage(Page.HOME);
         } else {
+            window.services.timer.setFromMatch(match);
             setPage(Page.BOARD);
         }
     }, [match]);
