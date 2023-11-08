@@ -9,7 +9,6 @@ const animateDots = (dotsWrapperRef: React.RefObject<HTMLDivElement>,
                      thirdDotRef: React.RefObject<HTMLDivElement>,
                      time: number,
                      animationIdWrapper: { animationId: number }) => {
-    console.log("a");
     if (!dotsWrapperRef.current || !firstDotRef.current || !secondDotRef.current || !thirdDotRef.current) return;
     function getHeight(normalizedTime: number): number {
         // returns a height with range [0, 1]
@@ -88,7 +87,6 @@ export const Dots: React.FC<{ [key: string]: any }> = (props) => {
     React.useEffect(() => {
         if (!dotsWrapperRef.current || !firstDotRef.current || !secondDotRef.current || !thirdDotRef.current) return;
         applyDotSizeStyle(dotsWrapperRef, firstDotRef, secondDotRef, thirdDotRef);
-        let isDotsAnimationActive = true;
         const animationIdWrapper = {animationId: -1};
         animationIdWrapper.animationId = requestAnimationFrame(t => {
             animateDots(
@@ -102,7 +100,7 @@ export const Dots: React.FC<{ [key: string]: any }> = (props) => {
         });
 
         return () => {
-            isDotsAnimationActive = false;
+            cancelAnimationFrame(animationIdWrapper.animationId);
         }
     }, [firstDotRef, secondDotRef, thirdDotRef]);
 

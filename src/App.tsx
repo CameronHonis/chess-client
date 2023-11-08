@@ -37,7 +37,7 @@ function App() {
             <matchContext.Provider value={match}>
                 <Header headerRef={headerRef} />
                 {page === Page.HOME && <MatchPicker />}
-                {page === Page.BOARD && <Board header={headerRef.current}/>}
+                {page === Page.BOARD && match && <Board header={headerRef.current}/>}
             </matchContext.Provider>
         </div>
     );
