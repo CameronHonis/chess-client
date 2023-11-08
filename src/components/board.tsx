@@ -66,7 +66,7 @@ export const Board: React.FC<BoardProps> = (props) => {
         }
     }, [isWhitePerspective, match, movesByStartSquareHash, squareSelected, targetSquareHashes]);
 
-    const getTiles = React.useCallback((): ReactComp<typeof Tile>[] => {
+    const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
         if (isWhitePerspective) {
             for (let rank = 8; rank > 0; rank--) {
@@ -111,7 +111,7 @@ export const Board: React.FC<BoardProps> = (props) => {
             <Clock isWhite={isWhitePerspective} isHomeClock/>
         </div>
         <div className={"Board"}>
-            {getTiles()}
+            {tiles}
         </div>
     </div>
 }
