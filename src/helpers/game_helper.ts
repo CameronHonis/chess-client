@@ -288,6 +288,11 @@ export class GameHelper {
         }
         const pieceSquaresCheckingKing: Square[] = [];
         const kingSquare = isWhiteKing ? boardState.material.whiteKingSquare : boardState.material.blackKingSquare;
+        const enemyKingSquare = isWhiteKing ? boardState.material.blackKingSquare : boardState.material.whiteKingSquare;
+        // check for adjacent kings
+        if (kingSquare.distanceFrom(enemyKingSquare) < 2) {
+            pieceSquaresCheckingKing.push(enemyKingSquare);
+        }
         // check for knight checks
         const knightCheckSquares: Square[] = [
             new Square(kingSquare.rank + 2, kingSquare.file + 1),

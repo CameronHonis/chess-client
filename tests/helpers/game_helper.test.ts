@@ -28,7 +28,7 @@ describe("GameHelper", () => {
         describe("when the pawn can capture either direction", () => {
             describe("and the square in front is not occupied", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/4p1n1/5P2/8/8/8 w - - 0 1";
+                    const fen = "k7/8/8/4p1n1/5P2/8/8/7K w - - 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(4, 6), new Square(5, 6), [], null, null),
@@ -41,7 +41,7 @@ describe("GameHelper", () => {
             });
             describe("and the square in front is occupied", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/4ppn1/5P2/8/8/8 w - - 0 1";
+                    const fen = "k7/8/8/4ppn1/5P2/8/8/7K w - - 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(4, 6), new Square(5, 5), [], ChessPiece.BLACK_PAWN, null),
@@ -55,7 +55,7 @@ describe("GameHelper", () => {
         describe("when the pawn can capture in one direction", () => {
             describe("and the square in front is not occupied", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/4p3/5P2/8/8/8 w - - 0 1";
+                    const fen = "k7/8/8/4p3/5P2/8/8/7K w - - 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(4, 6), new Square(5, 6), [], null, null),
@@ -67,7 +67,7 @@ describe("GameHelper", () => {
             });
             describe("and the square in front is occupied", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/4rq2/5P2/8/8/8 w - - 0 1";
+                    const fen = "k7/8/8/4rq2/5P2/8/8/7K w - - 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(4, 6), new Square(5, 5), [], ChessPiece.BLACK_ROOK, null),
@@ -91,7 +91,7 @@ describe("GameHelper", () => {
             });
             describe("and the square in front is not occupied", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/8/5P2/8/8/8 w - - 0 1";
+                    const fen = "k7/8/8/8/5P2/8/8/7K w - - 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(4, 6), new Square(5, 6), [], null, null),
@@ -113,7 +113,7 @@ describe("GameHelper", () => {
         describe("when the pawn can capture en passant to the left", () => {
             describe("and the square in front is not occupied", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/4pP2/8/8/8/8 w - e6 0 1";
+                    const fen = "k7/8/8/4pP2/8/8/8/7K w - e6 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(5, 6), new Square(6, 5), [], ChessPiece.BLACK_PAWN, null),
@@ -138,7 +138,7 @@ describe("GameHelper", () => {
         describe("when the pawn can capture en passant to the right", () => {
             describe("and the square in front is not occupied", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/5Pp1/8/8/8/8 w - g6 0 1";
+                    const fen = "k7/8/8/5Pp1/8/8/8/7K w - g6 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(5, 6), new Square(6, 7), [], ChessPiece.BLACK_PAWN, null),
@@ -163,7 +163,7 @@ describe("GameHelper", () => {
         describe("when the pawn is on the starting row", () => {
             describe("and the two squares in front are not occupied", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/8/8/8/1P6/8 w - - 0 1";
+                    const fen = "k7/8/8/8/8/8/1P6/7K w - - 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(2, 2), new Square(3, 2), [], null, null),
@@ -175,7 +175,7 @@ describe("GameHelper", () => {
             });
             describe("and the square two in front is occupied, but not the square directly in front", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/8/8/8/1B6/8/1P6/8 w - - 0 1";
+                    const fen = "k7/8/8/8/1B6/8/1P6/7K w - - 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(2, 2), new Square(3, 2), [], null, null),
@@ -198,7 +198,7 @@ describe("GameHelper", () => {
             describe("and the pawn can capture to the left", () => {
                 describe("and the square in front is occupied", () => {
                     it("returns the correct moves", () => {
-                        const fen = "rn6/1P6/8/8/8/8/8/8 w - - 0 1";
+                        const fen = "rn6/1P6/8/8/8/8/8/1k5K w - - 0 1";
                         const boardState = BoardState.fromFEN(fen);
                         const expMoves = [
                             new Move(ChessPiece.WHITE_PAWN, new Square(7, 2), new Square(8, 1), [], ChessPiece.BLACK_ROOK, ChessPiece.WHITE_KNIGHT),
@@ -212,7 +212,7 @@ describe("GameHelper", () => {
                 });
                 describe("and the square in front is not occupied", () => {
                     it("returns the correct moves", () => {
-                        const fen = "r7/1P6/8/8/8/8/8/8 w - - 0 1";
+                        const fen = "r7/1P6/8/8/8/8/8/2k4K w - - 0 1";
                         const boardState = BoardState.fromFEN(fen);
                         const expMoves = [
                             new Move(ChessPiece.WHITE_PAWN, new Square(7, 2), new Square(8, 1), [], ChessPiece.BLACK_ROOK, ChessPiece.WHITE_KNIGHT),
@@ -231,7 +231,7 @@ describe("GameHelper", () => {
             });
             describe("and the pawn can not capture", () => {
                 it("returns the correct moves", () => {
-                    const fen = "8/1P6/8/8/8/8/8/8 w - - 0 1";
+                    const fen = "8/1P6/8/8/k7/8/8/7K w - - 0 1";
                     const boardState = BoardState.fromFEN(fen);
                     const expMoves = [
                         new Move(ChessPiece.WHITE_PAWN, new Square(7, 2), new Square(8, 2), [], null, ChessPiece.WHITE_KNIGHT),
@@ -896,6 +896,14 @@ describe("GameHelper", () => {
                 expect(queenSquares).toBeInstanceOf(Array);
                 expect(queenSquares).toHaveLength(0);
 
+            });
+        });
+        describe("when two kings are adjacent", () => {
+            it("returns the adjacent king square", () => {
+                const board = BoardState.fromFEN("8/8/8/3kK3/8/8/8/8 w - - 0 1");
+                const checkingSquares = GameHelper.getPieceSquaresCheckingKing(board, true);
+                expect(checkingSquares.length).toBe(1);
+                expect(checkingSquares[0].equalTo(new Square(5, 4))).toBeTruthy();
             });
         });
     });
