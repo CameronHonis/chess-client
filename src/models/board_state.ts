@@ -16,8 +16,8 @@ interface BoardStateConstructorArgs {
     halfMoveClockCount?: number
     fullMoveCount?: number
     isTerminal?: boolean
-    isDraw?: boolean
     isWhiteWinner?: boolean
+    isBlackWinner?: boolean
 }
 
 export class BoardState {
@@ -32,8 +32,8 @@ export class BoardState {
     halfMoveClockCount: number
     fullMoveCount: number
     isTerminal: boolean
-    isDraw: boolean
     isWhiteWinner: boolean
+    isBlackWinner: boolean
 
     constructor({
                     pieces,
@@ -46,8 +46,8 @@ export class BoardState {
                     halfMoveClockCount = 0,
                     fullMoveCount = 1,
                     isTerminal = false,
-                    isDraw = false,
                     isWhiteWinner = false,
+                    isBlackWinner = false,
                 }: BoardStateConstructorArgs) {
         this._validate_pieces_shape(pieces);
 
@@ -62,8 +62,8 @@ export class BoardState {
         this.halfMoveClockCount = halfMoveClockCount;
         this.fullMoveCount = fullMoveCount;
         this.isTerminal = isTerminal;
-        this.isDraw = isDraw;
         this.isWhiteWinner = isWhiteWinner;
+        this.isBlackWinner = isBlackWinner;
     }
 
 

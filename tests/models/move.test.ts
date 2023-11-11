@@ -32,8 +32,8 @@ const compareBoardStates = (expBoardState: BoardState, actualBoardState: BoardSt
             assert(expBoardState.halfMoveClockCount === actualBoardState.halfMoveClockCount);
             assert(expBoardState.fullMoveCount === actualBoardState.fullMoveCount);
             assert(expBoardState.isTerminal === actualBoardState.isTerminal);
-            assert(expBoardState.isDraw === actualBoardState.isDraw);
             assert(expBoardState.isWhiteWinner === actualBoardState.isWhiteWinner);
+            assert(expBoardState.isBlackWinner === actualBoardState.isBlackWinner);
         }
     }
 }
@@ -119,8 +119,8 @@ describe("Move", () => {
                     expBoardState.setPieceOnSquare(ChessPiece.WHITE_QUEEN, new Square(1, 5));
                     expBoardState.setPieceOnSquare(ChessPiece.EMPTY, new Square(3, 7));
                     expBoardState.isTerminal = true;
-                    expBoardState.isDraw = false;
                     expBoardState.isWhiteWinner = true;
+                    expBoardState.isBlackWinner = false;
                     expBoardState.isWhiteTurn = false;
                     expBoardState.halfMoveClockCount++;
                     compareBoardStates(expBoardState, resultingBoardState);
@@ -323,7 +323,8 @@ describe("Move", () => {
                 const resultingBoardState = move.getResultingBoardState(boardState);
                 const expResultingBoardState = boardState.copy();
                 expResultingBoardState.isTerminal = true;
-                expResultingBoardState.isDraw = true;
+                expResultingBoardState.isWhiteWinner = false;
+                expResultingBoardState.isBlackWinner = false;
                 expResultingBoardState.isWhiteTurn = false;
                 expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_QUEEN, new Square(6, 2));
                 expResultingBoardState.setPieceOnSquare(ChessPiece.EMPTY, new Square(6, 4));
@@ -338,7 +339,8 @@ describe("Move", () => {
                 const resultingBoardState = move.getResultingBoardState(boardState);
                 const expResultingBoardState = boardState.copy();
                 expResultingBoardState.isTerminal = true;
-                expResultingBoardState.isDraw = true;
+                expResultingBoardState.isWhiteWinner = false;
+                expResultingBoardState.isBlackWinner = false;
                 expResultingBoardState.isWhiteTurn = false;
                 expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_KNIGHT, new Square(4, 4));
                 expResultingBoardState.setPieceOnSquare(ChessPiece.EMPTY, new Square(3, 6));
@@ -355,7 +357,8 @@ describe("Move", () => {
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.isWhiteTurn = false;
                     expResultingBoardState.isTerminal = true;
-                    expResultingBoardState.isDraw = true;
+                    expResultingBoardState.isWhiteWinner = false;
+                    expResultingBoardState.isBlackWinner = false;
                     expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_KING, new Square(3, 5));
                     expResultingBoardState.setPieceOnSquare(ChessPiece.EMPTY, new Square(3, 6));
                     compareBoardStates(expResultingBoardState, resultingBoardState);

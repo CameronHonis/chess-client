@@ -100,15 +100,12 @@ export class Move {
         const nextLegalMoves = rtnBoardState.getLegalMovesGroupedBySquareHash();
         if (Object.entries(nextLegalMoves).length === 0) {
             rtnBoardState.isTerminal = true;
-            if (this.kingCheckingSquares.length === 0) {
-                rtnBoardState.isDraw = true;
-            } else {
+            if (this.kingCheckingSquares.length !== 0) {
                 rtnBoardState.isWhiteWinner = boardState.isWhiteTurn;
             }
         }
         if (rtnBoardState.halfMoveClockCount >= 50 || GameHelper.isForcedDraw(rtnBoardState.material)) {
             rtnBoardState.isTerminal = true;
-            rtnBoardState.isDraw = true;
         }
         return rtnBoardState;
     }
