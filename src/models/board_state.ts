@@ -106,6 +106,16 @@ export class BoardState {
         return movesBySquareHash;
     }
 
+    getHasLegalMoves(): boolean {
+        const legalMovesBySquareHash = this.getLegalMovesGroupedBySquareHash();
+        for (let legalMoves of Object.values(legalMovesBySquareHash)) {
+            if (legalMoves.length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static getInitBoardState(): BoardState {
         const whitePawnRow = [ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN]
         const blackPawnRow = [ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN,]

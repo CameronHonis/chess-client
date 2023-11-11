@@ -75,4 +75,29 @@ describe("BoardState", () => {
            })
        });
     });
+
+    describe("::getHasLegalMoves", () => {
+        describe("when the board is in a stalemate state", () => {
+            it("returns false", () => {
+                const fen = "4K3/8/3r1q2/8/8/8/1k6/8 w - - 0 1";
+                const board = BoardState.fromFEN(fen);
+                const hasLegalMoves = board.getHasLegalMoves();
+                expect(hasLegalMoves).toBeFalsy();
+            });
+        });
+        describe("when the board is in a playable state", () => {
+            it("returns true", () => {
+               const board = BoardState.getInitBoardState();
+               const hasLegalMoves = board.getHasLegalMoves();
+               expect(hasLegalMoves).toBeTruthy();
+            });
+        });
+        describe("when the board is in a checkmate state", () => {
+            it("returns false", () => {
+                const board = BoardState.fromFEN("3K4/3q4/3k4/8/8/8/8/8 w - - 0 1");
+                const hasLegalMoves = board.getHasLegalMoves();
+                expect(hasLegalMoves).toBeFalsy();
+            });
+        });
+    });
 });

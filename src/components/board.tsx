@@ -9,6 +9,7 @@ import {matchContext} from "../App";
 import {ReactComp, Throwable} from "../types";
 import {Clock} from "./clock";
 import {Match} from "../models/match";
+import {Summary} from "./summary";
 
 export interface BoardProps {
     header: HTMLDivElement | null;
@@ -113,5 +114,6 @@ export const Board: React.FC<BoardProps> = (props) => {
         <div className={"Board"}>
             {tiles}
         </div>
+        {match.board.isTerminal && <Summary match={match}/>}
     </div>
 }

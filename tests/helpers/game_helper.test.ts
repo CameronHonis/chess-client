@@ -573,6 +573,13 @@ describe("GameHelper", () => {
                 compareMoves(expMoves, actualMoves);
             });
         });
+        describe("when the king is checkmated on the back rank by a defended queen", () => {
+            it("returns no legal moves", () => {
+                const boardState = BoardState.fromFEN("3K4/3q4/3k4/8/8/8/8/8 w - - 0 1");
+                const actualMoves = GameHelper.getLegalMovesForKing(boardState, new Square(8, 4));
+                expect(actualMoves.length).toBe(0);
+            });
+        });
 
         describe("when the king has kingside castle rights", () => {
             describe("and a piece occupies a square between the king and kingside rook", () => {
@@ -704,6 +711,7 @@ describe("GameHelper", () => {
                 });
             });
         });
+
     });
 
     describe('#getPieceSquaresCheckingKing', () => {
