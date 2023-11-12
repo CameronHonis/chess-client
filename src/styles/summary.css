@@ -1,0 +1,77 @@
+.SummaryFrame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 7vw;
+}
+
+.Summary {
+    width: 20vw;
+    height: 20vw;
+    background: #444;
+    border-radius: 1vw;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .7);
+}
+
+.Summary-Banner {
+    background: #222;
+    width: 100%;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+}
+
+.Summary-Banner p {
+    color: white;
+    font-weight: bold;
+}
+
+.Summary-Body {
+    width: 100%;
+    height: 75%;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Summary-Body p {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.Summary-Buttons {
+    width: 85%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.Summary-Buttons button {
+    border: none;
+    width: 40%;
+    padding: 5%;
+    border-radius: .25rem;
+    color: white;
+    font-weight: bold;
+    text-outline: 1px black;
+    text-shadow: 0 0 2px black;
+}
+
+.Summary-Buttons button:first-child {
+    background: #22cccc;
+    border-bottom: 2px solid #118888;
+}
+
+.Summary-Buttons button:last-child {
+    background: #cc8822;
+    border-bottom: 2px solid #885511;
+}

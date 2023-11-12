@@ -5,6 +5,8 @@ import {MessageEventName} from "./models/enums/message_event_name";
 import {Match} from "./models/match";
 import {Board} from "./components/board";
 import "./styles/app.css";
+import {BoardState} from "./models/board_state";
+import {TimeControl} from "./models/time_control";
 
 export enum Page {
     HOME = "HOME",
@@ -13,8 +15,24 @@ export enum Page {
 
 export const matchContext = React.createContext<Match | null>(null);
 
+const board = BoardState.fromFEN("3k4/3Q4/3K4/8/8/8/8/8 b - - 0 1");
+board.isTerminal = true;
+const tempMatch = new Match({
+    uuid: "asdf",
+    board: board,
+    whiteTimeRemaining: 10,
+    whiteClientId: "whiteClientId",
+    blackTimeRemaining: 10,
+    blackClientId: "blackClientId",
+    timeControl: new TimeControl({
+        initialTimeSeconds: 600,
+        incrementSeconds: 0,
+        timeAfterMovesCount: 0,
+        secondsAfterMoves: 0
+    }),
+});
 function App() {
-    const [match, setMatch] = React.useState<Match | null>(null);
+    const [match, setMatch] = React.useState<Match | null>(tempMatch);
     const [page, setPage] = React.useState<Page>(Page.HOME);
     const headerRef = React.useRef<HTMLDivElement>(null);
 

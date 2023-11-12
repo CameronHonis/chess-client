@@ -12,6 +12,12 @@ window.services = {
     timer: new Timer(),
 };
 
+// TEMPORARY
+window.services.authManager.setArbitratorKeyset({
+    publicKey: "whiteClientId",
+    privateKey: "whitePrivateKey",
+});
+
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );

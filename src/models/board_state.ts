@@ -18,6 +18,7 @@ interface BoardStateConstructorArgs {
     isTerminal?: boolean
     isWhiteWinner?: boolean
     isBlackWinner?: boolean
+    repetitionsByMiniFEN?: { [miniFEN: string]: number } | null
 }
 
 export class BoardState {
@@ -34,6 +35,7 @@ export class BoardState {
     isTerminal: boolean
     isWhiteWinner: boolean
     isBlackWinner: boolean
+    repetitionsByMiniFEN: { [miniFEN: string]: number }
 
     constructor({
                     pieces,
@@ -48,6 +50,7 @@ export class BoardState {
                     isTerminal = false,
                     isWhiteWinner = false,
                     isBlackWinner = false,
+                    repetitionsByMiniFEN = null,
                 }: BoardStateConstructorArgs) {
         this._validate_pieces_shape(pieces);
 
@@ -64,6 +67,7 @@ export class BoardState {
         this.isTerminal = isTerminal;
         this.isWhiteWinner = isWhiteWinner;
         this.isBlackWinner = isBlackWinner;
+        this.repetitionsByMiniFEN = repetitionsByMiniFEN || {};
     }
 
 
@@ -110,6 +114,15 @@ export class BoardState {
         const legalMovesBySquareHash = this.getLegalMovesGroupedBySquareHash();
         for (let legalMoves of Object.values(legalMovesBySquareHash)) {
             if (legalMoves.length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    isDrawByRepetition(): boolean {
+        for (let repetitions of Object.values(this.repetitionsByMiniFEN)) {
+            if (repetitions >= 3) {
                 return true;
             }
         }
