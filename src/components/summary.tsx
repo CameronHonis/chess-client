@@ -32,6 +32,15 @@ export const Summary: React.FC<SummaryProps> = (props) => {
             }
         }
     }, [board, whiteTimeRemaining, blackTimeRemaining]);
+
+    const handleHomeClick = () => {
+
+    }
+
+    const handleRematchClick = () => {
+
+    }
+
     return <div className={"SummaryFrame"}>
         <div className={"Summary"}>
             <div className={"Summary-Banner"}>
@@ -40,8 +49,8 @@ export const Summary: React.FC<SummaryProps> = (props) => {
             <div className={"Summary-Body"}>
                 <p>{outcomeExpl}</p>
                 <div className={"Summary-Buttons"}>
-                    <button>Home</button>
-                    <button>Rematch</button>
+                    <button onClick={handleHomeClick}>Home</button>
+                    <button onClick={handleRematchClick}>Rematch</button>
                 </div>
             </div>
         </div>

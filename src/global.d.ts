@@ -4,6 +4,9 @@ import {MessageEventPayload} from "./models/events/message_event";
 import {MessageContentType} from "./models/enums/message_content_type";
 import {MessageEventName} from "./models/enums/message_event_name";
 import {Timer} from "./services/timer";
+import {AppState} from "./models/state/app_state";
+import {AppStateAction} from "./models/actions/app_state_action";
+import React from "react";
 
 interface ArbitratorMessageEventMap {
     [MessageEventName.EMPTY]: MessageEventPayload<MessageContentType.EMPTY>;
@@ -34,6 +37,8 @@ declare global {
     }
 
     interface Window {
+        appState: AppState;
+        appDispatch: React.Dispatch<AppStateAction>;
         services: {
             authManager: AuthManager;
             arbitratorClient: ArbitratorClient;

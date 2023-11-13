@@ -5,19 +5,23 @@ import {Square} from "../models/square";
 import {ChessPieceHelper} from "../helpers/chess_piece_helper";
 import {ChessPiece} from "../models/enums/chess_piece";
 import {Move} from "../models/move";
-import {matchContext} from "../App";
+import {appStateContext} from "../App";
 import {ReactComp, Throwable} from "../types";
 import {Clock} from "./clock";
 import {Match} from "../models/match";
 import {Summary} from "./summary";
 
 export interface BoardProps {
-    header: HTMLDivElement | null;
 }
 
-export const Board: React.FC<BoardProps> = (props) => {
-    const match = React.useContext(matchContext) as Match;
+export const Board: React.FC<BoardProps> = () => {
+    const [appState] = React.useContext(appStateContext);
     const [squareSelected, setSquareSelected] = useState<Square | null>(null);
+
+    const match = appState.match as Match;
+    React.useEffect(() => {
+        window.services.timer.setFromMatch(match);
+    }, [match]);
 
     const [targetSquareHashes, movesByStartSquareHash] = useMemo(() => {
         const _movesByStartSquareHash = match.board.getLegalMovesGroupedBySquareHash();

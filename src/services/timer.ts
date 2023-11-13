@@ -9,12 +9,14 @@ export class Timer {
     private intervalId: NodeJS.Timer | null;
     whiteClockStateSetter?: React.Dispatch<React.SetStateAction<string>>;
     blackClockStateSetter?: React.Dispatch<React.SetStateAction<string>>;
+    isPaused: boolean;
 
     constructor() {
         this.whiteSeconds = 0;
         this.blackSeconds = 0;
         this.isWhiteTurn = true;
         this.intervalId = null;
+        this.isPaused = false;
         this.resetInterval();
     }
 
@@ -27,7 +29,8 @@ export class Timer {
     }
 
     private onTick() {
-        if (!this.whiteClockStateSetter || !this.blackClockStateSetter) { return }
+        if (this.isPaused) { return; }
+        if (!this.whiteClockStateSetter || !this.blackClockStateSetter) { return; }
         if (this.isWhiteTurn) {
             this.whiteSeconds = Math.max(0, this.whiteSeconds - 0.1);
         } else {
@@ -44,22 +47,11 @@ export class Timer {
         this.blackClockStateSetter(blackFormattedTime);
     }
 
-    setPlayersTime(whiteSeconds: number, blackSeconds: number) {
-        this.whiteSeconds = whiteSeconds;
-        this.blackSeconds = blackSeconds;
-
-        this.resetInterval();
-    }
-
-    setTurn(isWhiteTurn: boolean) {
-        this.isWhiteTurn = false;
-        this.resetInterval();
-    }
-
     setFromMatch(match: Match) {
         this.whiteSeconds = match.whiteTimeRemaining;
         this.blackSeconds = match.blackTimeRemaining;
         this.isWhiteTurn = match.board.isWhiteTurn;
+        this.isPaused = match.board.isTerminal;
         this.resetInterval();
     }
 

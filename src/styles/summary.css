@@ -8,13 +8,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-left: 7vw;
 }
 
 .Summary {
+    background: #333;
     width: 20vw;
     height: 20vw;
-    background: #444;
     border-radius: 1vw;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, .7);
@@ -50,20 +49,21 @@
 }
 
 .Summary-Buttons {
-    width: 85%;
+    width: 90%;
     display: flex;
     justify-content: space-around;
 }
 
 .Summary-Buttons button {
     border: none;
-    width: 40%;
+    width: 42%;
     padding: 5%;
     border-radius: .25rem;
     color: white;
+    font-size: 1.25rem;
     font-weight: bold;
-    text-outline: 1px black;
     text-shadow: 0 0 2px black;
+    cursor: pointer;
 }
 
 .Summary-Buttons button:first-child {
@@ -71,7 +71,15 @@
     border-bottom: 2px solid #118888;
 }
 
+.Summary-Buttons button:first-child:hover{
+    background: #30eeee;
+}
+
 .Summary-Buttons button:last-child {
     background: #cc8822;
     border-bottom: 2px solid #885511;
+}
+
+.Summary-Buttons button:last-child:hover {
+    background: #eeaa33;
 }
