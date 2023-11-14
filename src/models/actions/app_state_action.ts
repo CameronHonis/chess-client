@@ -1,6 +1,6 @@
 export enum AppStateActionType {
-    MATCH_UPDATE_RECEIVED="MATCH_UDPATE_RECEIVED",
-
+    MATCH_UPDATE_RECEIVED="MATCH_UPDATE_RECEIVED",
+    RETURNED_HOME="RETURNED_HOME",
 }
 
 export abstract class AppStateAction {

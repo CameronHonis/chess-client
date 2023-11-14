@@ -1,5 +1,6 @@
 .SummaryFrame {
     position: absolute;
+    z-index: 1;
     top: 0;
     left: 0;
     width: 100%;
@@ -12,8 +13,8 @@
 
 .Summary {
     background: #333;
-    width: 20vw;
-    height: 20vw;
+    width: 300px;
+    height: 300px;
     border-radius: 1vw;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, .7);

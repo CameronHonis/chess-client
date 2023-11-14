@@ -1,16 +1,20 @@
 import React from "react"
 import {Match} from "../models/match";
 import "../styles/summary.css";
+import {ReturnedHome} from "../models/actions/returned_home";
+import {appStateContext} from "../App";
 
 export interface SummaryProps {
-    match: Match;
 }
 
 export const Summary: React.FC<SummaryProps> = (props) => {
-    const board = props.match.board;
-    const whiteTimeRemaining = props.match.whiteTimeRemaining;
-    const blackTimeRemaining = props.match.blackTimeRemaining;
-    const [outcomeDesc, outcomeExpl]  = React.useMemo(() => {
+    const [appState, appDispatch] = React.useContext(appStateContext);
+
+    const match = appState.match!;
+    const board = match.board;
+    const whiteTimeRemaining = match.whiteTimeRemaining;
+    const blackTimeRemaining = match.blackTimeRemaining;
+    const [outcomeDesc, outcomeExpl] = React.useMemo(() => {
         if (board.isWhiteWinner === board.isBlackWinner) {
             if (board.halfMoveClockCount >= 50) {
                 return ["Draw", "by 50-move rule"];
@@ -34,7 +38,7 @@ export const Summary: React.FC<SummaryProps> = (props) => {
     }, [board, whiteTimeRemaining, blackTimeRemaining]);
 
     const handleHomeClick = () => {
-
+        appDispatch(new ReturnedHome());
     }
 
     const handleRematchClick = () => {

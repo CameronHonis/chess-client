@@ -118,6 +118,6 @@ export const Board: React.FC<BoardProps> = () => {
         <div className={"Board"}>
             {tiles}
         </div>
-        {match.board.isTerminal && <Summary match={match}/>}
+        {match.board.isTerminal && <Summary />}
     </div>
 }

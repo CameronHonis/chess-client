@@ -20,6 +20,12 @@ const tempMatch = new Match({
     }),
 });
 
+export const initAppState = {
+    page: Page.HOME,
+    match: null,
+    // page: Page.BOARD,
+    // match: tempMatch,
+};
 
 export class AppState {
     page: Page;
@@ -29,11 +35,7 @@ export class AppState {
         this.page = appState.page || initAppState.page;
         this.match = appState.match || initAppState.match;
     }
+
+
 }
 
-export const initAppState = new AppState({
-    // page: Page.HOME,
-    // match: null,
-    page: Page.BOARD,
-    match: tempMatch,
-});
