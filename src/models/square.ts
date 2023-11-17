@@ -26,7 +26,7 @@ export class Square {
     }
 
     getHash(): string {
-        return `${this.rank.toString()},${this.file.toString()}`;
+        return `${this.rank.toString()}-${this.file.toString()}`;
     }
 
     equalTo(otherSquare: Square): boolean {

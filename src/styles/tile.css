@@ -34,7 +34,12 @@
     fill: white;
 }
 
-.Tile .BlackPawn {
+.Tile .BlackPawn,
+.Tile .BlackRook,
+.Tile .BlackKnight,
+.Tile .BlackBishop,
+.Tile .BlackQueen,
+.Tile .BlackKing {
     fill: black;
 }
 

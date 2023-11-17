@@ -7,6 +7,7 @@ import {Timer} from "./services/timer";
 import {AppState} from "./models/state/app_state";
 import {AppStateAction} from "./models/actions/app_state_action";
 import React from "react";
+import {BoardAnimator} from "./services/board_animator";
 
 interface ArbitratorMessageEventMap {
     [MessageEventName.EMPTY]: MessageEventPayload<MessageContentType.EMPTY>;
@@ -43,6 +44,7 @@ declare global {
             authManager: AuthManager;
             arbitratorClient: ArbitratorClient;
             timer: Timer;
+            boardAnimator: BoardAnimator
         }
     }
 }

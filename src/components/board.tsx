@@ -73,38 +73,28 @@ export const Board: React.FC<BoardProps> = () => {
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
-        if (isWhitePerspective) {
-            for (let rank = 8; rank > 0; rank--) {
-                for (let file = 1; file < 9; file++) {
-                    const square = new Square(rank, file);
-                    const idx = (rank - 1) * 8 + (file - 1);
-                    const isSelected = !!squareSelected &&
-                        squareSelected.rank === rank &&
-                        squareSelected.file === file;
-                    tiles.push(<Tile square={square}
-                                     pieceType={match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY}
-                                     isSelected={isSelected}
-                                     isDotVisible={targetSquareHashes.has(square.getHash())}
-                                     handleSquareClick={handleTileMouseClick}
-                                     key={idx}/>);
+        for (let rank = 8; rank > 0; rank--) {
+            for (let file = 1; file < 9; file++) {
+                let square: Square;
+                if (isWhitePerspective) {
+                    square = new Square(rank, file);
+                } else {
+                    square = new Square(9 - rank, 9 - file);
                 }
-            }
-
-        } else {
-            for (let rank = 1; rank < 9; rank++) {
-                for (let file = 8; file > 0; file--) {
-                    const square = new Square(rank, file);
-                    const idx = (rank - 1) * 8 + (file - 1);
-                    const isSelected = !!squareSelected &&
-                        squareSelected.rank === rank &&
-                        squareSelected.file === file;
-                    tiles.push(<Tile square={square}
-                                     pieceType={match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY}
-                                     isSelected={isSelected}
-                                     isDotVisible={targetSquareHashes.has(square.getHash())}
-                                     handleSquareClick={handleTileMouseClick}
-                                     key={idx}/>);
-                }
+                const idx = (rank - 1) * 8 + (file - 1);
+                const isSelected = !!squareSelected &&
+                    squareSelected.rank === rank &&
+                    squareSelected.file === file;
+                const isDotVisible = targetSquareHashes.has(square.getHash())
+                const pieceType = match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY;
+                tiles.push(<Tile square={square}
+                                 pieceType={pieceType}
+                                 isSelected={isSelected}
+                                 isDotVisible={isDotVisible}
+                                 handleSquareClick={handleTileMouseClick}
+                                 rank={rank}
+                                 file={file}
+                                 key={idx}/>);
             }
         }
         return tiles;
@@ -118,6 +108,6 @@ export const Board: React.FC<BoardProps> = () => {
         <div className={"Board"}>
             {tiles}
         </div>
-        {match.board.isTerminal && <Summary />}
+        {match.board.isTerminal && <Summary/>}
     </div>
 }

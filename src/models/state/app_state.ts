@@ -3,7 +3,8 @@ import {Match} from "../match";
 import {BoardState} from "../board_state";
 import {TimeControl} from "../time_control";
 
-const board = BoardState.fromFEN("3k4/3Q4/3K4/8/8/8/8/8 b - - 0 1");
+// const board = BoardState.fromFEN("3k4/3Q4/3K4/8/8/8/8/8 b - - 0 1");
+const board = BoardState.getInitBoardState();
 board.isTerminal = true;
 const tempMatch = new Match({
     uuid: "asdf",
@@ -21,10 +22,10 @@ const tempMatch = new Match({
 });
 
 export const initAppState = {
-    page: Page.HOME,
-    match: null,
-    // page: Page.BOARD,
-    // match: tempMatch,
+    // page: Page.HOME,
+    // match: null,
+    page: Page.BOARD,
+    match: tempMatch,
 };
 
 export class AppState {

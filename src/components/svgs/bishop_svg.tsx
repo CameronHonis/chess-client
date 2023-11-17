@@ -6,8 +6,12 @@ interface Props {
 
 export const Bishop: React.FC<Props> = (props) => {
     const {isWhite} = props;
+    const classNames = [
+        isWhite ? "WhiteBishop" : "BlackBishop",
+        "TilePiece"
+    ];
     return <svg version="1.1"
-                viewBox="0 0 301.885 301.885" className={isWhite ? "WhitePawn" : "BlackPawn"}>
+                viewBox="0 0 301.885 301.885" className={classNames.join(" ")}>
         <g>
             <path d="M228.942,248.455h-17.68l-19.825-122.46c0,0,0-0.065,0.065-0.065l9.165-20.865c4.225-8.255,3.055-18.265-3.055-26.13
 			l-31.785-40.82c6.305-6.565,8.515-15.6,5.59-23.595c-3.38-9.23-12.285-15.34-20.8-14.43c-9.555,0.13-18.005,6.63-20.28,15.535

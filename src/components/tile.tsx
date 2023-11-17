@@ -16,10 +16,18 @@ interface Props {
     isSelected: boolean;
     isDotVisible: boolean;
     handleSquareClick: (square: Square) => void;
+    rank: number;
+    file: number;
 }
 
 export const Tile: React.FC<Props> = (props) => {
-    const {square, pieceType, isSelected, isDotVisible, handleSquareClick} = props;
+    const {
+        square,
+        pieceType,
+        isSelected,
+        isDotVisible,
+        handleSquareClick,
+    } = props;
 
     const isWhite = ChessPieceHelper.isWhite(pieceType)
     let tileIcon: React.JSX.Element | null = null;
@@ -40,9 +48,8 @@ export const Tile: React.FC<Props> = (props) => {
         ${square.isDarkSquare() ? "DarkSquare" : "LightSquare"}
         ${isSelected ? "Selected" : ""}
         ${isDotVisible ? "Dotted" : ""}`;
-    return <div className={className} onClick={() => handleSquareClick(square)}>
+    return <div className={className} id={`Tile${square.getHash()}`} onClick={() => handleSquareClick(square)}>
         {tileIcon}
-        {isDotVisible && <div className="TileDot" />}
-        {/*<div className="TileDot" />*/}
+        {isDotVisible && <div className="TileDot"/>}
     </div>
 }

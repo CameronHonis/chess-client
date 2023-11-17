@@ -5,11 +5,13 @@ import App from './App';
 import {ArbitratorClient} from "./services/arbitrator_client";
 import {AuthManager} from "./services/auth_manager";
 import {Timer} from "./services/timer";
+import {BoardAnimator} from "./services/board_animator";
 
 window.services = {
     arbitratorClient: new ArbitratorClient(),
     authManager: new AuthManager(),
     timer: new Timer(),
+    boardAnimator: new BoardAnimator(),
 };
 
 // TEMPORARY

@@ -6,7 +6,8 @@ interface Props {
 
 export const Pawn: React.FC<Props> = (props) => {
     const { isWhite } = props;
-    return <svg className={isWhite ? "WhitePawn" : "BlackPawn"} version="1.1" xmlns="http://www.w3.org/2000/svg"
+    const classNames = ["Pawn", isWhite ? "WhitePawn" : "BlackPawn", "TilePiece"]
+    return <svg className={classNames.join(" ")} version="1.1" xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512">
         <g>
             <path d="M266.487,35.439c-4.557-1.178-9.208,1.604-10.359,6.17c-1.161,4.574,1.604,9.216,6.178,10.368
