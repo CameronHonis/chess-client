@@ -10,6 +10,7 @@ import {ReactComp, Throwable} from "../types";
 import {Clock} from "./clock";
 import {Match} from "../models/match";
 import {Summary} from "./summary";
+import {AnimTile} from "./anim_tile";
 
 export interface BoardProps {
 }
@@ -24,6 +25,9 @@ export const Board: React.FC<BoardProps> = () => {
     }, [match]);
 
     const [targetSquareHashes, movesByStartSquareHash] = useMemo(() => {
+        if (squareSelected != null) {
+            console.log("squareSelected", squareSelected.getHash());
+        }
         const _movesByStartSquareHash = match.board.getLegalMovesGroupedBySquareHash();
         if (squareSelected && squareSelected.getHash() in _movesByStartSquareHash) {
             const moves = _movesByStartSquareHash[squareSelected.getHash()];
@@ -73,18 +77,19 @@ export const Board: React.FC<BoardProps> = () => {
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
-        for (let rank = 8; rank > 0; rank--) {
-            for (let file = 1; file < 9; file++) {
-                let square: Square;
+        for (let r = 7; r >= 0; r--) {
+            for (let c = 0; c < 8; c++) {
+                let rank: number, file: number;
                 if (isWhitePerspective) {
-                    square = new Square(rank, file);
+                    rank = r + 1;
+                    file = c + 1;
                 } else {
-                    square = new Square(9 - rank, 9 - file);
+                    rank = 8 - r;
+                    file = 8 - c;
                 }
-                const idx = (rank - 1) * 8 + (file - 1);
-                const isSelected = !!squareSelected &&
-                    squareSelected.rank === rank &&
-                    squareSelected.file === file;
+                const square = new Square(rank, file);
+                const idx = 8 * r + c;
+                const isSelected = !!squareSelected && square.equalTo(squareSelected);
                 const isDotVisible = targetSquareHashes.has(square.getHash())
                 const pieceType = match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY;
                 tiles.push(<Tile square={square}
@@ -92,13 +97,21 @@ export const Board: React.FC<BoardProps> = () => {
                                  isSelected={isSelected}
                                  isDotVisible={isDotVisible}
                                  handleSquareClick={handleTileMouseClick}
-                                 rank={rank}
-                                 file={file}
+                                 rank={r}
+                                 file={c}
                                  key={idx}/>);
             }
         }
         return tiles;
     }, [isWhitePerspective, handleTileMouseClick, match, squareSelected, targetSquareHashes]);
+
+    const animTile = React.useMemo((): ReactComp<typeof AnimTile> | null => {
+        if (!appState.lastMove) {
+            return null;
+        }
+        return <AnimTile piece={appState.lastMove.piece} />
+    }, [appState.lastMove]);
+
 
     return <div className={"BoardFrame"}>
         <div className={"Clocks"}>
@@ -107,6 +120,7 @@ export const Board: React.FC<BoardProps> = () => {
         </div>
         <div className={"Board"}>
             {tiles}
+            {animTile}
         </div>
         {match.board.isTerminal && <Summary/>}
     </div>

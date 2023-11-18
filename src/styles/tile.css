@@ -51,3 +51,27 @@
     opacity: 50%;
     border-radius: 20%;
 }
+
+#AnimatedTile {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#AnimatedTile svg {
+    width: 75%;
+    height: 75%;
+    margin: 12.5%;
+    fill: white;
+}
+
+#AnimatedTile .BlackPawn,
+#AnimatedTile .BlackRook,
+#AnimatedTile .BlackKnight,
+#AnimatedTile .BlackBishop,
+#AnimatedTile .BlackQueen,
+#AnimatedTile .BlackKing {
+    fill: black;
+}
