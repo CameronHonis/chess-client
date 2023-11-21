@@ -18,24 +18,36 @@ export interface BoardProps {
 export const Board: React.FC<BoardProps> = () => {
     const [appState] = React.useContext(appStateContext);
     const [squareSelected, setSquareSelected] = useState<Square | null>(null);
+    const [draggingSquare, setDraggingSquare] = useState<Square | null>(null);
 
     const match = appState.match as Match;
     React.useEffect(() => {
         window.services.timer.setFromMatch(match);
     }, [match]);
 
-    const [targetSquareHashes, movesByStartSquareHash] = useMemo(() => {
+    React.useEffect(() => {
+        if (!draggingSquare) {
+            window.services.boardAnimator.dropPiece();
+            return;
+        }
+        window.services.boardAnimator.holdPiece(draggingSquare);
+    }, [draggingSquare]);
+
+    const movesByStartSquareHash = useMemo(() => {
         if (squareSelected != null) {
             console.log("squareSelected", squareSelected.getHash());
         }
-        const _movesByStartSquareHash = match.board.getLegalMovesGroupedBySquareHash();
-        if (squareSelected && squareSelected.getHash() in _movesByStartSquareHash) {
-            const moves = _movesByStartSquareHash[squareSelected.getHash()];
-            return [new Set(moves.map(move => move.endSquare.getHash())), _movesByStartSquareHash];
-        } else {
-            return [new Set(), _movesByStartSquareHash];
-        }
+        return match.board.getLegalMovesGroupedBySquareHash();
     }, [squareSelected, match]);
+
+    const getLandSquareHashes = React.useCallback((originSquare: Square): Set<string> => {
+        const originSquareHash = originSquare.getHash();
+        if (!(originSquareHash in movesByStartSquareHash)) {
+            return new Set();
+        }
+        const moves = movesByStartSquareHash[originSquare.getHash()];
+        return new Set(moves.map(move => move.endSquare.getHash()));
+    }, [movesByStartSquareHash]);
 
     const whiteId = match.whiteClientId;
     const isWhitePerspective = React.useMemo((): Throwable<boolean> => {
@@ -46,37 +58,59 @@ export const Board: React.FC<BoardProps> = () => {
         return arbitratorKeyset.publicKey === whiteId;
     }, [whiteId]);
 
-    const handleTileMouseClick = React.useCallback((clickedSquare: Square) => {
-        const clickedPiece = match.board.getPieceBySquare(clickedSquare);
-        if (squareSelected) {
-            if (squareSelected.equalTo(clickedSquare)) {
-                setSquareSelected(null);
-                return;
-            } else if (targetSquareHashes.has(clickedSquare.getHash())) {
-                let move: Move | undefined = undefined;
-                for (let possibleMove of movesByStartSquareHash[squareSelected.getHash()]) {
-                    if (possibleMove.endSquare.equalTo(clickedSquare)) {
-                        move = possibleMove;
-                        break;
-                    }
-                }
-                if (!move) {
-                    throw new Error("target squares not consistent with movesByStartSquareHash");
-                }
-                window.services.arbitratorClient.sendMove(match.uuid, move);
-                setSquareSelected(null);
-            }
-        }
-        const isSelectedOwnPiece = (ChessPieceHelper.isWhite(clickedPiece) && isWhitePerspective)
-            || (!ChessPieceHelper.isWhite(clickedPiece) && !isWhitePerspective);
-        if (isSelectedOwnPiece) {
-            setSquareSelected(clickedSquare);
+    const handleTileMouseDown = React.useCallback((mouseSquare: Square) => {
+        if (squareSelected && mouseSquare.equalTo(squareSelected)) {
             return;
         }
-    }, [isWhitePerspective, match, movesByStartSquareHash, squareSelected, targetSquareHashes]);
+        const mousePiece = match.board.getPieceBySquare(mouseSquare);
+        if (mousePiece === ChessPiece.EMPTY) {
+            return;
+        }
+        const isWhitePiece = ChessPieceHelper.isWhite(mousePiece);
+        const isWhiteTurn = match.board.isWhiteTurn;
+        if (isWhitePiece !== isWhiteTurn) {
+            return;
+        }
+        setSquareSelected(mouseSquare);
+        setDraggingSquare(mouseSquare);
+    }, [squareSelected, match.board]);
+
+    const handleTileMouseUp = React.useCallback((dropSquare: Square) => {
+        if (squareSelected) {
+            if (dropSquare.equalTo(squareSelected)) {
+                if (draggingSquare) {
+                    setDraggingSquare(null);
+                } else {
+                    setSquareSelected(null);
+                }
+                return;
+            }
+            const landSquareHashes = getLandSquareHashes(squareSelected);
+            const dropSquareHash = dropSquare.getHash();
+            if (!landSquareHashes.has(dropSquareHash)) {
+                setDraggingSquare(null);
+                setSquareSelected(null);
+                return;
+            }
+            let move: Move | null = null;
+            for (const m of movesByStartSquareHash[squareSelected.getHash()]) {
+                if (m.endSquare.equalTo(dropSquare)) {
+                    move = m;
+                    break;
+                }
+            }
+            if (!move) {
+                throw new Error(`couldn't find move with end square ${dropSquare.getHash()}`);
+            }
+            window.services.arbitratorClient.sendMove(match.uuid, move);
+            setDraggingSquare(null);
+            setSquareSelected(null);
+        }
+    }, [squareSelected, draggingSquare, match.uuid, getLandSquareHashes, movesByStartSquareHash]);
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
+        const landSquareHashes = squareSelected ? getLandSquareHashes(squareSelected) : new Set<string>();
         for (let r = 7; r >= 0; r--) {
             for (let c = 0; c < 8; c++) {
                 let rank: number, file: number;
@@ -90,27 +124,35 @@ export const Board: React.FC<BoardProps> = () => {
                 const square = new Square(rank, file);
                 const idx = 8 * r + c;
                 const isSelected = !!squareSelected && square.equalTo(squareSelected);
-                const isDotVisible = targetSquareHashes.has(square.getHash())
+                const isDotVisible = landSquareHashes.has(square.getHash())
                 const pieceType = match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY;
                 tiles.push(<Tile square={square}
                                  pieceType={pieceType}
                                  isSelected={isSelected}
                                  isDotVisible={isDotVisible}
-                                 handleSquareClick={handleTileMouseClick}
+                                 handleSquareMouseDown={handleTileMouseDown}
+                                 handleSquareMouseUp={handleTileMouseUp}
                                  rank={r}
                                  file={c}
                                  key={idx}/>);
             }
         }
         return tiles;
-    }, [isWhitePerspective, handleTileMouseClick, match, squareSelected, targetSquareHashes]);
+    }, [isWhitePerspective, squareSelected, getLandSquareHashes, match, handleTileMouseDown, handleTileMouseUp]);
 
     const animTile = React.useMemo((): ReactComp<typeof AnimTile> | null => {
         if (!appState.lastMove) {
             return null;
         }
-        return <AnimTile piece={appState.lastMove.piece} />
+        return <AnimTile piece={appState.lastMove.piece} isDragging={false}/>;
     }, [appState.lastMove]);
+
+    const draggingTile = React.useMemo((): ReactComp<typeof Tile> | null => {
+        if (draggingSquare === null) {
+            return null;
+        }
+        return <AnimTile piece={match.board.getPieceBySquare(draggingSquare)} isDragging/>;
+    }, [match.board, draggingSquare]);
 
 
     return <div className={"BoardFrame"}>
@@ -121,6 +163,7 @@ export const Board: React.FC<BoardProps> = () => {
         <div className={"Board"}>
             {tiles}
             {animTile}
+            {draggingTile}
         </div>
         {match.board.isTerminal && <Summary/>}
     </div>

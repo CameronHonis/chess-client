@@ -1,10 +1,9 @@
 import {Square} from "../models/square";
-import {ChessPiece} from "../models/enums/chess_piece";
 
 export class BoardAnimator {
     private pieceMoveAnimation: PieceMoveAnimation | null = null;
     private pieceMoveDurationMs: number = 500;
-    private holdPieceAnimation: HoldPieceAnimation | null = false;
+    private holdPieceAnimation: HoldPieceAnimation | null = null;
 
     constructor() {
         const clock = () => {
@@ -27,6 +26,9 @@ export class BoardAnimator {
                 this.pieceMoveAnimation.onTick(progress);
             }
         }
+        if (this.holdPieceAnimation) {
+            this.holdPieceAnimation.onTick();
+        }
     }
 
     movePiece(startSquare: Square, destSquare: Square) {
@@ -37,7 +39,17 @@ export class BoardAnimator {
     }
 
     holdPiece(square: Square) {
+        if (this.holdPieceAnimation) {
+            this.holdPieceAnimation.cleanUp();
+        }
+        this.holdPieceAnimation = new HoldPieceAnimation(square);
+    }
 
+    dropPiece() {
+        if (this.holdPieceAnimation) {
+            this.holdPieceAnimation.cleanUp();
+        }
+        this.holdPieceAnimation = null;
     }
 }
 
@@ -107,5 +119,34 @@ export class PieceMoveAnimation {
 }
 
 export class HoldPieceAnimation {
+    draggingSquare: Square;
+    draggingTile: HTMLDivElement;
+    mouseX: number = -10000;
+    mouseY: number = -10000;
+    constructor(draggingSquare: Square) {
+        this.draggingSquare = draggingSquare;
+        const draggingTileId = `Tile${draggingSquare.getHash()}`;
+        this.draggingTile = document.getElementById(draggingTileId) as HTMLDivElement;
+        document.addEventListener("mousemove", e => this.setMousePos(e.clientX, e.clientY));
+    }
 
+    private setMousePos(x: number, y: number) {
+        this.mouseX = x;
+        this.mouseY = y;
+    }
+
+    onTick() {
+        const animTile = document.getElementById("DraggingTile");
+        if (!animTile) { return }
+
+        const { width } = this.draggingTile.getBoundingClientRect();
+        animTile.style.width = `${width}px`;
+        animTile.style.top = `${width}px`;
+        animTile.style.left = `${this.mouseX - width/2}px`;
+        animTile.style.top = `${this.mouseY - width/2}px`;
+    }
+
+    cleanUp() {
+
+    }
 }

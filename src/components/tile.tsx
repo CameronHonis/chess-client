@@ -15,7 +15,8 @@ interface Props {
     pieceType: ChessPiece;
     isSelected: boolean;
     isDotVisible: boolean;
-    handleSquareClick: (square: Square) => void;
+    handleSquareMouseDown: (square: Square) => void;
+    handleSquareMouseUp: (square: Square) => void;
     rank: number;
     file: number;
 }
@@ -26,7 +27,8 @@ export const Tile: React.FC<Props> = (props) => {
         pieceType,
         isSelected,
         isDotVisible,
-        handleSquareClick,
+        handleSquareMouseDown,
+        handleSquareMouseUp,
     } = props;
 
     const isWhite = ChessPieceHelper.isWhite(pieceType)
@@ -48,7 +50,12 @@ export const Tile: React.FC<Props> = (props) => {
         ${square.isDarkSquare() ? "DarkSquare" : "LightSquare"}
         ${isSelected ? "Selected" : ""}
         ${isDotVisible ? "Dotted" : ""}`;
-    return <div className={className} id={`Tile${square.getHash()}`} onClick={() => handleSquareClick(square)}>
+    return <div
+        className={className}
+        id={`Tile${square.getHash()}`}
+        onMouseDown={() => handleSquareMouseDown(square)}
+        onMouseUp={() => handleSquareMouseUp(square)}
+    >
         {tileIcon}
         {isDotVisible && <div className="TileDot"/>}
     </div>

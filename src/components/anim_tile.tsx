@@ -10,6 +10,7 @@ import {ChessPieceHelper} from "../helpers/chess_piece_helper";
 
 export type AnimTileProps = {
     piece: ChessPiece;
+    isDragging: boolean;
 }
 
 export const AnimTile: React.FC<AnimTileProps> = (props) => {
@@ -30,7 +31,7 @@ export const AnimTile: React.FC<AnimTileProps> = (props) => {
     } else {
         throw new Error("invalid piece type");
     }
-    return <div id={"AnimatedTile"}>
+    return <div className="Tile" id={props.isDragging ? "DraggingTile" : "AnimatedTile"}>
         {tileIcon}
     </div>
 }

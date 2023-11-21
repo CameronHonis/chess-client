@@ -29,8 +29,8 @@ function App() {
         });
         document.addEventListener(MessageEventName.MOVE, (e) => {
             const move = e.detail.msg.content.move;
-            dispatch(new MoveReceived(move));
             window.services.boardAnimator.movePiece(move.startSquare, move.endSquare);
+            dispatch(new MoveReceived(move));
         });
     }, []);
 
