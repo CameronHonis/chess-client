@@ -6,6 +6,10 @@
     align-items: center;
 }
 
+.Tile.Interactable {
+    cursor: pointer;
+}
+
 .Tile.DarkSquare {
     background-color: #203b58;
 }
@@ -27,11 +31,12 @@
     z-index: 1;
 }
 
-.Tile svg {
-    width: 75%;
-    height: 75%;
+.Tile svg, .Tile img {
+    width: 95%;
+    height: 95%;
     margin: 12.5%;
     fill: white;
+    user-select: none;
 }
 
 .Tile .BlackPawn,
@@ -59,4 +64,8 @@
     justify-content: center;
     align-items: center;
     pointer-events: none;
+}
+
+#DraggingTile Img {
+    user-select: none;
 }

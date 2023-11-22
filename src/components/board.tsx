@@ -49,6 +49,29 @@ export const Board: React.FC<BoardProps> = () => {
         return new Set(moves.map(move => move.endSquare.getHash()));
     }, [movesByStartSquareHash]);
 
+    const getIsInteractable = React.useCallback((square: Square): boolean => {
+        if (!match) {
+            return false;
+        }
+        if (squareSelected) {
+            if (square.equalTo(squareSelected)) {
+                return true;
+            }
+            const landSquareHashes = getLandSquareHashes(squareSelected);
+            if (landSquareHashes.has(square.getHash())) {
+                return true;
+            }
+        }
+        const pieceType = match.board.getPieceBySquare(square);
+        const isPieceTurn =
+            (ChessPieceHelper.isWhite(pieceType) && match.board.isWhiteTurn) ||
+            (ChessPieceHelper.isBlack(pieceType) && !match.board.isWhiteTurn);
+        if (isPieceTurn) {
+            return true;
+        }
+        return false;
+    }, [getLandSquareHashes, match, squareSelected]);
+
     const whiteId = match.whiteClientId;
     const isWhitePerspective = React.useMemo((): Throwable<boolean> => {
         const arbitratorKeyset = window.services.authManager.getArbitratorKeyset();
@@ -125,7 +148,7 @@ export const Board: React.FC<BoardProps> = () => {
                 const idx = 8 * r + c;
                 const isSelected = !!squareSelected && square.equalTo(squareSelected);
                 const isDotVisible = landSquareHashes.has(square.getHash())
-                const pieceType = match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY;
+                const pieceType = !!match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY;
                 tiles.push(<Tile square={square}
                                  pieceType={pieceType}
                                  isSelected={isSelected}
@@ -134,11 +157,12 @@ export const Board: React.FC<BoardProps> = () => {
                                  handleSquareMouseUp={handleTileMouseUp}
                                  rank={r}
                                  file={c}
+                                 isInteractable={getIsInteractable(square)}
                                  key={idx}/>);
             }
         }
         return tiles;
-    }, [isWhitePerspective, squareSelected, getLandSquareHashes, match, handleTileMouseDown, handleTileMouseUp]);
+    }, [squareSelected, getLandSquareHashes, isWhitePerspective, match, handleTileMouseDown, handleTileMouseUp, getIsInteractable]);
 
     const animTile = React.useMemo((): ReactComp<typeof AnimTile> | null => {
         if (!appState.lastMove) {

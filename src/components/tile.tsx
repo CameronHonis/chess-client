@@ -1,11 +1,11 @@
 import React from "react";
 import "../styles/tile.css";
-import {Pawn} from "./svgs/pawn_svg";
-import {Knight} from "./svgs/knight_svg";
-import {Bishop} from "./svgs/bishop_svg";
-import {Rook} from "./svgs/rook_svg";
-import {Queen} from "./svgs/queen_svg";
-import {King} from "./svgs/king_svg";
+import {Pawn} from "./pieces/pawn_svg";
+import {Knight} from "./pieces/knight_svg";
+import {Bishop} from "./pieces/bishop_svg";
+import {Rook} from "./pieces/rook_svg";
+import {Queen} from "./pieces/queen_svg";
+import {King} from "./pieces/king_svg";
 import {ChessPiece} from "../models/enums/chess_piece";
 import {ChessPieceHelper} from "../helpers/chess_piece_helper";
 import {Square} from "../models/square";
@@ -19,6 +19,7 @@ interface Props {
     handleSquareMouseUp: (square: Square) => void;
     rank: number;
     file: number;
+    isInteractable: boolean;
 }
 
 export const Tile: React.FC<Props> = (props) => {
@@ -46,12 +47,20 @@ export const Tile: React.FC<Props> = (props) => {
     } else if (pieceType === ChessPiece.WHITE_KING || pieceType === ChessPiece.BLACK_KING) {
         tileIcon = <King isWhite={isWhite}/>;
     }
-    const className = `Tile 
-        ${square.isDarkSquare() ? "DarkSquare" : "LightSquare"}
-        ${isSelected ? "Selected" : ""}
-        ${isDotVisible ? "Dotted" : ""}`;
+    const classNames = [];
+    classNames.push("Tile");
+    classNames.push(square.isDarkSquare() ? "DarkSquare" : "LightSquare");
+    if (isSelected) {
+        classNames.push("Selected");
+    }
+    if (isDotVisible) {
+        classNames.push("Dotted");
+    }
+    if (props.isInteractable) {
+        classNames.push("Interactable");
+    }
     return <div
-        className={className}
+        className={classNames.join(" ")}
         id={`Tile${square.getHash()}`}
         onMouseDown={() => handleSquareMouseDown(square)}
         onMouseUp={() => handleSquareMouseUp(square)}
