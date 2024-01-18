@@ -16,7 +16,7 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
 
     const handlePlayButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
         setIsSearchingMatch(true);
-        window.services.arbitratorClient.requestPlayerMatch();
+        window.services.arbitratorClient.findMatch();
     }, [setIsSearchingMatch]);
 
     const handleCancelButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {

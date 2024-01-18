@@ -1,26 +1,28 @@
-import {MessageContentType} from "../enums/message_content_type";
-import {
-    AuthMessageContent,
-    EchoMessageContent,
-    EmptyMessageContent,
-    FindBotMatchMessageContent,
-    FindBotMatchNoBotsMessageContent,
-    FindMatchMessageContent, InitBotFailureMessageContent, InitBotSuccessMessageContent,
-    MatchUpdateMessageContent,
-    MoveMessageContent,
-    SubscribeRequestDeniedMessageContent,
-    SubscribeRequestGrantedMessageContent,
-    SubscribeRequestMessageContent,
-    UpgradeAuthDeniedMessageContent,
-    UpgradeAuthGrantedMessageContent,
-    UpgradeAuthRequestMessageContent
-} from "./message_content";
-import {isMessageEventName} from "../enums/message_event_name";
-import {Throwable} from "../../types";
-import {Match} from "../match";
-import {BoardState} from "../board_state";
-import {Move} from "../move";
-import {Square} from "../square";
+import {MessageContentType} from "../../enums/message_content_type";
+import {isMessageEventName} from "../../enums/message_event_name";
+import {Throwable} from "../../../types";
+import {Match} from "../../match";
+import {BoardState} from "../../board_state";
+import {Move} from "../../move";
+import {Square} from "../../square";
+import {EmptyMessageContent} from "./contents/empty_message_content";
+import {AuthMessageContent} from "./contents/auth_message_content";
+import {FindMatchMessageContent} from "./contents/find_match_message_content";
+import {MatchUpdateMessageContent} from "./contents/match_update_message_content";
+import {MoveMessageContent} from "./contents/move_message_content";
+import {SubscribeRequestMessageContent} from "./contents/subscribe_request_message_content";
+import {SubscribeRequestGrantedMessageContent} from "./contents/subscribe_request_granted_message_content";
+import {SubscribeRequestDeniedMessageContent} from "./contents/subscribe_request_denied_message_content";
+import {EchoMessageContent} from "./contents/echo_message_content";
+import {UpgradeAuthRequestMessageContent} from "./contents/upgrade_auth_request_message_content";
+import {UpgradeAuthGrantedMessageContent} from "./contents/upgrade_auth_granted_message_content";
+import {UpgradeAuthDeniedMessageContent} from "./contents/upgrade_auth_denied_message_content";
+import {ChallengeMessageContent} from "./contents/challenge_message_content";
+import {ChallengeRequestFailedMessageContent} from "./contents/challenge_request_failed_message_content";
+import {ChallengeRequestAcceptedMessageContent} from "./contents/challenge_request_accepted_message_content";
+import {ChallengeRequestDeniedMessageContent} from "./contents/challenge_request_denied_message_content";
+import {ChallengeRequestRevokedMessageContent} from "./contents/challenge_request_revoked_message_content";
+import {MatchCreationFailedMessageContent} from "./contents/match_creation_failed_message_content";
 
 interface ArbitratorMessageArgs<CT extends keyof typeof MessageContentType> {
     topic: string
@@ -49,20 +51,22 @@ export class ArbitratorMessage<CT extends keyof typeof MessageContentType> {
 export interface MessageContentTypeToContentMap {
     "EMPTY": EmptyMessageContent,
     "AUTH": AuthMessageContent,
-    "FIND_BOT_MATCH": FindBotMatchMessageContent,
     "FIND_MATCH": FindMatchMessageContent,
     "MATCH_UPDATE": MatchUpdateMessageContent,
     "MOVE": MoveMessageContent,
     "SUBSCRIBE_REQUEST": SubscribeRequestMessageContent,
     "SUBSCRIBE_REQUEST_GRANTED": SubscribeRequestGrantedMessageContent,
     "SUBSCRIBE_REQUEST_DENIED": SubscribeRequestDeniedMessageContent,
-    "FIND_BOT_MATCH_NO_BOTS": FindBotMatchNoBotsMessageContent,
     "ECHO": EchoMessageContent,
     "UPGRADE_AUTH_REQUEST": UpgradeAuthRequestMessageContent,
     "UPGRADE_AUTH_GRANTED": UpgradeAuthGrantedMessageContent,
     "UPGRADE_AUTH_DENIED": UpgradeAuthDeniedMessageContent,
-    "INIT_BOT_MATCH_SUCCESS": InitBotSuccessMessageContent,
-    "INIT_BOT_MATCH_FAILURE": InitBotFailureMessageContent,
+    "CHALLENGE_REQUEST": ChallengeMessageContent,
+    "CHALLENGE_REQUEST_FAILED": ChallengeRequestFailedMessageContent,
+    "CHALLENGE_REQUEST_ACCEPTED": ChallengeRequestAcceptedMessageContent,
+    "CHALLENGE_REQUEST_DENIED": ChallengeRequestDeniedMessageContent,
+    "CHALLENGE_REQUEST_REVOKED": ChallengeRequestRevokedMessageContent,
+    "MATCH_CREATION_FAILED": MatchCreationFailedMessageContent,
 }
 
 export function parseMessageFromJsonObj(obj: Object): Throwable<ArbitratorMessage<MessageContentType>> {

@@ -1,11 +1,11 @@
 import {BotType} from "../models/enums/bot_type";
 import {ARBITRATOR_URL} from "../constants";
 import {Throwable} from "../types";
-import {ArbitratorMessage, parseMessageFromJsonObj} from "../models/messages/arbitrator_message";
+import {ArbitratorMessage, parseMessageFromJsonObj} from "../models/messages/arbitrator/arbitrator_message";
 import {MessageEventPayload} from "../models/events/message_event";
 import {MessageContentType} from "../models/enums/message_content_type";
 import {AuthKeyset} from "./auth_manager";
-import {isMessageEventName, MessageEventName, parseEventName} from "../models/enums/message_event_name";
+import {MessageEventName, parseEventName} from "../models/enums/message_event_name";
 import {ArbitratorMessageEventMap} from "../global";
 import {Move} from "../models/move";
 
@@ -79,20 +79,21 @@ export class ArbitratorClient {
         this.websocket.send(stringifiedMsg);
     }
 
-    requestBotMatch(botType: BotType) {
+    challengePlayer(playerKey: string): Throwable<void> {
         const msg = new ArbitratorMessage({
-            topic: "findBotMatch",
-            contentType: MessageContentType.FIND_BOT_MATCH,
+            topic: "challenge",
+            contentType: MessageContentType.CHALLENGE_REQUEST,
             content: {
-                botName: botType,
+                playerKey,
             },
-            senderKey: "",
-            privateKey: ""
-        });
-        this.sendMessage(msg);
+        })
     }
 
-    requestPlayerMatch() {
+    challengeBot(botType: BotType): Throwable<void> {
+
+    }
+
+    findMatch(): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: "findMatch",
             contentType: MessageContentType.FIND_MATCH,
@@ -103,7 +104,7 @@ export class ArbitratorClient {
         this.sendMessage(msg);
     }
 
-    sendMove(matchId: string, move: Move) {
+    sendMove(matchId: string, move: Move): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: `match-${matchId}`,
             contentType: MessageContentType.MOVE,
