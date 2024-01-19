@@ -8,6 +8,8 @@ import {AuthKeyset} from "./auth_manager";
 import {MessageEventName, parseEventName} from "../models/enums/message_event_name";
 import {ArbitratorMessageEventMap} from "../global";
 import {Move} from "../models/move";
+import {Challenge} from "../models/challenge";
+import {TimeControl} from "../models/time_control";
 
 export class ArbitratorClient {
     websocket: WebSocket;
@@ -38,12 +40,12 @@ export class ArbitratorClient {
         });
     }
 
-    _handleOpen(e: Event) {
+    private _handleOpen(e: Event) {
         const url = (e.currentTarget as WebSocket).url;
         console.log(`websocket connection established with websocket on ${url}`);
     }
 
-    _handleMessage(e: MessageEvent): Throwable<void> {
+    private _handleMessage(e: MessageEvent): Throwable<void> {
         if (typeof e.data !== "string") {
             console.warn(`Flushing unhandled websocket data type: ${typeof e.data}`)
             return;
@@ -56,18 +58,18 @@ export class ArbitratorClient {
         type EventType = ArbitratorMessageEventMap[typeof eventName];
         document.dispatchEvent(new CustomEvent<EventType>(eventName, {
             detail: {
-                // @ts-ignore why tho????
+                // @ts-ignore - why?
                 msg,
             }
         }));
     }
 
-    _handleClose(e: CloseEvent) {
+    private _handleClose(e: CloseEvent) {
         const url = (e.currentTarget as WebSocket).url
         console.warn(`arbitrator client websocket connection on ${url} closed`);
     }
 
-    sendMessage(msg: ArbitratorMessage<any>, signed = true): Throwable<void> {
+    signAndSendMsg(msg: ArbitratorMessage<any>, signed = true): Throwable<void> {
         if (this.websocket.readyState !== 1) {
             throw new Error(`cannot send message, websocket not open. got readyState = ${this.websocket.readyState}`);
         }
@@ -79,18 +81,44 @@ export class ArbitratorClient {
         this.websocket.send(stringifiedMsg);
     }
 
-    challengePlayer(playerKey: string): Throwable<void> {
+    challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: TimeControl): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: "challenge",
             contentType: MessageContentType.CHALLENGE_REQUEST,
             content: {
-                playerKey,
+                challenge: new Challenge({
+                    challengerKey: window.services.authManager.getArbitratorKeyset()!.publicKey,
+                    challengedKey: playerKey,
+                    isChallengerWhite: isWhite,
+                    isChallengerBlack: isBlack,
+                    timeControl: timeControl,
+                    botName: "",
+                })
             },
-        })
+            senderKey: "",
+            privateKey: "",
+        });
+        this.signAndSendMsg(msg);
     }
 
-    challengeBot(botType: BotType): Throwable<void> {
-
+    challengeBot(botType: BotType, isWhite: boolean, isBlack: boolean, timeControl: TimeControl): Throwable<void> {
+        const msg = new ArbitratorMessage({
+            topic: "challenge",
+            contentType: MessageContentType.CHALLENGE_REQUEST,
+            content: {
+                challenge: new Challenge({
+                    challengerKey: window.services.authManager.getArbitratorKeyset()!.publicKey,
+                    challengedKey: "",
+                    isChallengerWhite: isWhite,
+                    isChallengerBlack: isBlack,
+                    timeControl: timeControl,
+                    botName: botType,
+                }),
+            },
+            senderKey: "",
+            privateKey: "",
+        });
+        this.signAndSendMsg(msg);
     }
 
     findMatch(): Throwable<void> {
@@ -101,7 +129,7 @@ export class ArbitratorClient {
             senderKey: "",
             privateKey: "",
         })
-        this.sendMessage(msg);
+        this.signAndSendMsg(msg);
     }
 
     sendMove(matchId: string, move: Move): Throwable<void> {
@@ -115,6 +143,6 @@ export class ArbitratorClient {
             senderKey: "",
             privateKey: "",
         });
-        this.sendMessage(msg);
+        this.signAndSendMsg(msg);
     }
 }

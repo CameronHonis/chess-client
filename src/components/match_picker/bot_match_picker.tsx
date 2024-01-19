@@ -4,6 +4,7 @@ import "../../styles/match_picker/bot_match_picker.css";
 import {Button} from "../button";
 import {ArbitratorClient} from "../../services/arbitrator_client";
 import {BotType} from "../../models/enums/bot_type";
+import {newBlitzTimeControl} from "../../models/time_control";
 
 export interface BotMatchPickerProps {
 }
@@ -12,7 +13,7 @@ export const BotMatchPicker: React.FC<BotMatchPickerProps> = (props) => {
     const [selectedBotName, setSelectedBotName] = React.useState<BotType>(BotType.RANDOM);
 
     const handlePlayButtonClicked = React.useCallback(() => {
-        window.services.arbitratorClient.requestBotMatch(selectedBotName);
+        window.services.arbitratorClient.challengeBot(selectedBotName, true, true, newBlitzTimeControl());
     }, [selectedBotName]);
 
     const botNames = [BotType.RANDOM, BotType.NOT_IMPLEMENTED];
