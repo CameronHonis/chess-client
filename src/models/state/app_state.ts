@@ -1,7 +1,7 @@
 import {Page} from "../enums/page";
 import {Match} from "../api/match";
 import {BoardState} from "../game/board_state";
-import {TimeControl} from "../api/time_control";
+import {newBulletTimeControl, newRapidTimeControl, TimeControl} from "../api/time_control";
 import {ChessPiece} from "../enums/chess_piece";
 import {Move} from "../game/move";
 
@@ -15,12 +15,7 @@ const tempMatch = new Match({
     whiteClientId: "whiteClientId",
     blackTimeRemaining: 10,
     blackClientId: "blackClientId",
-    timeControl: new TimeControl({
-        initialTimeSeconds: 600,
-        incrementSeconds: 0,
-        timeAfterMovesCount: 0,
-        secondsAfterMoves: 0
-    }),
+    timeControl: newRapidTimeControl(),
 });
 
 export const initAppState = {
