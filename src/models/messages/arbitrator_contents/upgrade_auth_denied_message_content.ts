@@ -1,4 +1,4 @@
-import {Templated} from "../../../abcs/templated";
+import {Templated} from "../../../interfaces/templated";
 
 export class UpgradeAuthDeniedMessageContent extends Templated {
     reason: string;

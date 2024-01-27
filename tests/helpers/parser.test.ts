@@ -1,4 +1,4 @@
-import {Templated} from "../../src/abcs/templated";
+import {Templated} from "../../src/interfaces/templated";
 import {Parser} from "../../src/helpers/parser";
 
 class Company extends Templated {

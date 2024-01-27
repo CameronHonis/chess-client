@@ -1,4 +1,4 @@
-import {Templated} from "../../../abcs/templated";
+import {Templated} from "../../../interfaces/templated";
 
 export class SubscribeRequestGrantedMessageContent extends Templated {
     topic: string;

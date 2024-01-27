@@ -1,4 +1,4 @@
-import {Templated} from "../../../abcs/templated";
+import {Templated} from "../../../interfaces/templated";
 
 export class MatchCreationFailedMessageContent extends Templated {
     whiteClientKey: string;

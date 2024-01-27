@@ -1,4 +1,4 @@
-import {Templated} from "../../../abcs/templated";
+import {Templated} from "../../../interfaces/templated";
 
 export class UpgradeAuthRequestMessageContent extends Templated {
     role: string;

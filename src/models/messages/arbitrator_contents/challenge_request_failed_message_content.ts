@@ -1,5 +1,5 @@
 import {Challenge} from "../../api/challenge";
-import {Templated} from "../../../abcs/templated";
+import {Templated} from "../../../interfaces/templated";
 
 export class ChallengeRequestFailedMessageContent extends Templated {
     challenge: Challenge;

@@ -1,4 +1,4 @@
-import {Templated} from "../../../abcs/templated";
+import {Templated} from "../../../interfaces/templated";
 import {Move} from "../../domain/move";
 
 export class MoveMessageContent extends Templated {

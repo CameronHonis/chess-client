@@ -1,5 +1,5 @@
 import {TimeControl} from "./time_control";
-import {Templated} from "../../abcs/templated";
+import {Templated} from "../../interfaces/templated";
 
 export interface ChallengeArgs {
     challengerKey: string;

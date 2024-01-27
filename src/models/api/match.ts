@@ -1,6 +1,6 @@
 import {BoardState} from "../domain/board_state";
 import {TimeControl} from "./time_control";
-import {Templated} from "../../abcs/templated";
+import {Templated} from "../../interfaces/templated";
 
 export class Match extends Templated {
     uuid: string;

@@ -1,5 +1,5 @@
 import {Match} from "../../api/match";
-import {Templated} from "../../../abcs/templated";
+import {Templated} from "../../../interfaces/templated";
 
 export class MatchUpdateMessageContent extends Templated {
     match: Match;

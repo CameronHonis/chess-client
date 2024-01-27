@@ -1,4 +1,4 @@
-import {Templated} from "../../../abcs/templated";
+import {Templated} from "../../../interfaces/templated";
 
 export class RevokeChallengeMessageContent extends Templated {
     challengerClientKey: string;
