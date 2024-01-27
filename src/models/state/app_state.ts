@@ -1,9 +1,9 @@
 import {Page} from "../enums/page";
-import {Match} from "../match";
-import {BoardState} from "../board_state";
-import {TimeControl} from "../time_control";
+import {Match} from "../api/match";
+import {BoardState} from "../game/board_state";
+import {TimeControl} from "../api/time_control";
 import {ChessPiece} from "../enums/chess_piece";
-import {Move} from "../move";
+import {Move} from "../game/move";
 
 // const board = BoardState.fromFEN("3k4/3Q4/3K4/8/8/8/8/8 b - - 0 1");
 const board = BoardState.getInitBoardState();

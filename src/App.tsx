@@ -22,7 +22,7 @@ function App() {
     }, [state, dispatch]);
 
     React.useEffect(() => {
-        document.addEventListener(MessageEventName.MATCH_UPDATE, (e) => {
+        document.addEventListener(MessageEventName.MATCH_UPDATED, (e) => {
             dispatch(new MatchUpdateReceived({
                 newMatch: e.detail.msg.content.match,
             }));

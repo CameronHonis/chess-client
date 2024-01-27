@@ -1,5 +1,5 @@
 import React from "react";
-import {Match} from "../models/match";
+import {Match} from "../models/api/match";
 import {formatTimeForTimer} from "../helpers/format_time";
 
 export class Timer {

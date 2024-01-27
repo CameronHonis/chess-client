@@ -4,7 +4,7 @@ import "../../styles/match_picker/bot_match_picker.css";
 import {Button} from "../button";
 import {ArbitratorClient} from "../../services/arbitrator_client";
 import {BotType} from "../../models/enums/bot_type";
-import {newBlitzTimeControl} from "../../models/time_control";
+import {newBlitzTimeControl} from "../../models/api/time_control";
 
 export interface BotMatchPickerProps {
 }

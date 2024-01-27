@@ -1,14 +1,14 @@
 import React, {useMemo, useState} from "react";
 import "../styles/board.css";
 import {Tile} from "./tile";
-import {Square} from "../models/square";
+import {Square} from "../models/game/square";
 import {ChessPieceHelper} from "../helpers/chess_piece_helper";
 import {ChessPiece} from "../models/enums/chess_piece";
-import {Move} from "../models/move";
+import {Move} from "../models/game/move";
 import {appStateContext} from "../App";
 import {ReactComp, Throwable} from "../types";
 import {Clock} from "./clock";
-import {Match} from "../models/match";
+import {Match} from "../models/api/match";
 import {Summary} from "./summary";
 import {AnimTile} from "./anim_tile";
 

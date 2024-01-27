@@ -1,8 +1,7 @@
-// @ts-ignore
 import {GameHelper} from "../../src/helpers/game_helper";
-import {BoardState} from "../../src/models/board_state";
-import {Square} from "../../src/models/square";
-import {Move} from "../../src/models/move";
+import {BoardState} from "../../src/models/game/board_state";
+import {Square} from "../../src/models/game/square";
+import {Move} from "../../src/models/game/move";
 import {ChessPiece} from "../../src/models/enums/chess_piece";
 
 const compareMoves = (expMoves: Move[], actualMoves: Move[]) => {

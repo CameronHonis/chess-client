@@ -1,4 +1,4 @@
-import {ArbitratorMessage} from "../messages/arbitrator/arbitrator_message";
+import {ArbitratorMessage} from "../messages/arbitrator_message";
 import {MessageContentType} from "../enums/message_content_type";
 
 export interface MessageEventPayload<CT extends keyof typeof MessageContentType> {

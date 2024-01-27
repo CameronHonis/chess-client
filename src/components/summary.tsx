@@ -1,5 +1,5 @@
 import React from "react"
-import {Match} from "../models/match";
+import {Match} from "../models/api/match";
 import "../styles/summary.css";
 import {ReturnedHome} from "../models/actions/returned_home";
 import {appStateContext} from "../App";

@@ -1,4 +1,4 @@
-import {ArbitratorMessage} from "../models/messages/arbitrator/arbitrator_message";
+import {ArbitratorMessage} from "../models/messages/arbitrator_message";
 import {Throwable} from "../types";
 
 export interface AuthKeyset {

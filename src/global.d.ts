@@ -13,7 +13,7 @@ interface ArbitratorMessageEventMap {
     [MessageEventName.EMPTY]: MessageEventPayload<MessageContentType.EMPTY>;
     [MessageEventName.AUTH]: MessageEventPayload<MessageContentType.AUTH>;
     [MessageEventName.FIND_MATCH]: MessageEventPayload<MessageContentType.FIND_MATCH>;
-    [MessageEventName.MATCH_UPDATE]: MessageEventPayload<MessageContentType.MATCH_UPDATE>;
+    [MessageEventName.MATCH_UPDATED]: MessageEventPayload<MessageContentType.MATCH_UPDATED>;
     [MessageEventName.MOVE]: MessageEventPayload<MessageContentType.MOVE>;
     [MessageEventName.SUBSCRIBE_REQUEST]: MessageEventPayload<MessageContentType.SUBSCRIBE_REQUEST>;
     [MessageEventName.SUBSCRIBE_REQUEST_GRANTED]: MessageEventPayload<MessageContentType.SUBSCRIBE_REQUEST_GRANTED>;
@@ -24,9 +24,9 @@ interface ArbitratorMessageEventMap {
     [MessageEventName.UPGRADE_AUTH_DENIED]: MessageEventPayload<MessageContentType.UPGRADE_AUTH_DENIED>;
     [MessageEventName.CHALLENGE_REQUEST]: MessageEventPayload<MessageContentType.CHALLENGE_REQUEST>;
     [MessageEventName.CHALLENGE_REQUEST_FAILED]: MessageEventPayload<MessageContentType.CHALLENGE_REQUEST_FAILED>;
-    [MessageEventName.CHALLENGE_REQUEST_ACCEPTED]: MessageEventPayload<MessageContentType.CHALLENGE_REQUEST_ACCEPTED>;
-    [MessageEventName.CHALLENGE_REQUEST_DENIED]: MessageEventPayload<MessageContentType.CHALLENGE_REQUEST_DENIED>;
-    [MessageEventName.CHALLENGE_REQUEST_REVOKED]: MessageEventPayload<MessageContentType.CHALLENGE_REQUEST_REVOKED>;
+    [MessageEventName.CHALLENGE_REQUEST_ACCEPTED]: MessageEventPayload<MessageContentType.ACCEPT_CHALLENGE>;
+    [MessageEventName.DECLINE_CHALLENGE]: MessageEventPayload<MessageContentType.DECLINE_CHALLENGE>;
+    [MessageEventName.REVOKE_CHALLENGE]: MessageEventPayload<MessageContentType.REVOKE_CHALLENGE>;
     [MessageEventName.MATCH_CREATION_FAILED]: MessageEventPayload<MessageContentType.MATCH_CREATION_FAILED>;
 }
 

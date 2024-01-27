@@ -1,5 +1,5 @@
-import {BoardState} from "../../src/models/board_state";
-import {Square} from "../../src/models/square";
+import {BoardState} from "../../src/models/game/board_state";
+import {Square} from "../../src/models/game/square";
 
 describe("BoardState", () => {
     describe("#fromFEN", () => {
