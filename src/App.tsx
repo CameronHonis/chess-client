@@ -1,7 +1,7 @@
 import React from 'react';
 import {MatchPicker} from "./components/match_picker/match_picker";
 import {Header} from "./components/header";
-import {MessageEventName} from "./models/enums/message_event_name";
+import {parseEventName} from "./models/enums/message_event_name";
 import {Board} from "./components/board";
 import "./styles/app.css";
 import {AppState} from "./models/state/app_state";
@@ -10,6 +10,7 @@ import {MatchUpdateReceived} from "./models/actions/match_update_received";
 import {AppStateAction} from "./models/actions/app_state_action";
 import {Page} from "./models/enums/page";
 import {MoveReceived} from "./models/actions/move_received";
+import {MessageContentType} from "./models/enums/message_content_type";
 
 export const appStateContext = React.createContext<[AppState, React.Dispatch<AppStateAction>]>([new AppState({}), () => {
 }]);
@@ -22,12 +23,12 @@ function App() {
     }, [state, dispatch]);
 
     React.useEffect(() => {
-        document.addEventListener(MessageEventName.MATCH_UPDATED, (e) => {
+        document.addEventListener(parseEventName(MessageContentType.MATCH_UPDATED), (e) => {
             dispatch(new MatchUpdateReceived({
                 newMatch: e.detail.msg.content.match,
             }));
         });
-        document.addEventListener(MessageEventName.MOVE, (e) => {
+        document.addEventListener(parseEventName(MessageContentType.MOVE), (e) => {
             const move = e.detail.msg.content.move;
             window.services.boardAnimator.movePiece(move.startSquare, move.endSquare);
             dispatch(new MoveReceived(move));

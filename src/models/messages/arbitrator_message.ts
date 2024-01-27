@@ -1,5 +1,5 @@
 import {isMessageContentType, MessageContentType} from "../enums/message_content_type";
-import {Constructor, Throwable} from "../../types";
+import {Throwable} from "../../types";
 import {Parser} from "../../helpers/parser";
 import {MatchUpdateMessageContent} from "./arbitrator_contents/match_update_message_content";
 import {ChallengeUpdatedMessageContent} from "./arbitrator_contents/challenge_updated_msg_content";
@@ -21,7 +21,6 @@ import {RequestChallengeMessageContent} from "./arbitrator_contents/challenge_re
 import {AcceptChallengeMessageContent} from "./arbitrator_contents/challenge_request_accepted_message_content";
 import {DeclineChallengeMessageContent} from "./arbitrator_contents/challenge_request_denied_message_content";
 import {RevokeChallengeMessageContent} from "./arbitrator_contents/challenge_request_revoked_message_content";
-import {Templated} from "../../abcs/templated";
 
 export class ArbitratorMessage<CT extends keyof typeof MessageContentType> {
     topic: string
@@ -62,6 +61,7 @@ type ContentByContentType = {
     "REVOKE_CHALLENGE": typeof RevokeChallengeMessageContent,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const ContentByContentType: ContentByContentType = {
     [MessageContentType.MATCH_UPDATED]: MatchUpdateMessageContent,
     [MessageContentType.CHALLENGE_UPDATED]: ChallengeUpdatedMessageContent,

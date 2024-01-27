@@ -6,7 +6,6 @@ import {MessageEventPayload} from "../models/events/message_event";
 import {MessageContentType} from "../models/enums/message_content_type";
 import {AuthKeyset} from "./auth_manager";
 import {MessageEventName, parseEventName} from "../models/enums/message_event_name";
-import {ArbitratorMessageEventMap} from "../global";
 import {Move} from "../models/game/move";
 import {Challenge} from "../models/api/challenge";
 import {TimeControl} from "../models/api/time_control";
@@ -30,7 +29,7 @@ export class ArbitratorClient {
                 throw e;
             }
         }
-        document.addEventListener(MessageEventName.AUTH, (e: CustomEvent<MessageEventPayload<MessageContentType.AUTH>>) => {
+        document.addEventListener(parseEventName(MessageContentType.AUTH), (e: CustomEvent<MessageEventPayload<MessageContentType.AUTH>>) => {
             const content = e.detail.msg.content
             const keyset: AuthKeyset = {
                 publicKey: content.publicKey,
@@ -52,16 +51,19 @@ export class ArbitratorClient {
         }
         const url = (e.currentTarget as WebSocket).url
         console.log(`[${url}] >> ${e.data}`);
+        
         const msgJsonObj = JSON.parse(e.data);
         const msg = parseMessageFromJson(msgJsonObj);
+
         const eventName = parseEventName(msg.contentType);
-        type EventType = ArbitratorMessageEventMap[typeof eventName];
-        document.dispatchEvent(new CustomEvent<EventType>(eventName, {
+        type EventType = MessageEventPayload<typeof msg.contentType>;
+        const event = new CustomEvent<EventType>(eventName, {
             detail: {
-                // @ts-ignore - why?
                 msg,
             }
-        }));
+        });
+        
+        document.dispatchEvent(event);
     }
 
     private _handleClose(e: CloseEvent) {

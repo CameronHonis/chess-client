@@ -4,3 +4,5 @@ import {MessageContentType} from "../enums/message_content_type";
 export interface MessageEventPayload<CT extends keyof typeof MessageContentType> {
     msg: ArbitratorMessage<CT>
 }
+
+export type InboundArbitratorMessage<CT extends keyof typeof MessageContentType> = CustomEvent<MessageEventPayload<CT>>;

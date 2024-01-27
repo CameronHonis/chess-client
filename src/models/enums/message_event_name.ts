@@ -1,17 +1,17 @@
 import {MessageContentType} from "./message_content_type";
 
-export type MessageEventName = `message-${MessageContentType}`;
+export type MessageEventName<CT extends keyof typeof MessageContentType> = `message-${CT}`;
 
-export function parseEventName(contentType: MessageContentType): MessageEventName {
+export function parseEventName<CT extends keyof typeof MessageContentType>(contentType: CT): MessageEventName<CT> {
     const messageEventName = `message-${contentType}`;
     if (isMessageEventName(messageEventName)) {
-        return messageEventName;
+        return messageEventName as MessageEventName<CT>;
     } else {
         throw new Error(`could not map contentType ${contentType} to event name`);
     }
 }
 
-export function isMessageEventName(name: string): name is MessageEventName {
+export function isMessageEventName(name: string): name is MessageEventName<keyof typeof MessageContentType> {
     if (!name.startsWith("message-")) {
         return false
     }
