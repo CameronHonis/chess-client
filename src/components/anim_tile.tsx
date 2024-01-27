@@ -1,5 +1,5 @@
 import React from "react";
-import {ChessPiece} from "../models/enums/chess_piece";
+import {ChessPiece} from "../models/domain/chess_piece";
 import {Pawn} from "./pieces/pawn_svg";
 import {Knight} from "./pieces/knight_svg";
 import {Bishop} from "./pieces/bishop_svg";

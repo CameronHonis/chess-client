@@ -1,7 +1,7 @@
-import {ChessPiece} from "../../src/models/enums/chess_piece";
-import {Square} from "../../src/models/game/square";
-import {BoardState} from "../../src/models/game/board_state";
-import {Move} from "../../src/models/game/move";
+import {ChessPiece} from "../../src/models/domain/chess_piece";
+import {Square} from "../../src/models/domain/square";
+import {BoardState} from "../../src/models/domain/board_state";
+import {Move} from "../../src/models/domain/move";
 
 
 const assert = (condition: boolean, msg: string | undefined = undefined) => {

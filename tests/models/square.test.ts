@@ -1,4 +1,4 @@
-import {Square} from "../../src/models/game/square";
+import {Square} from "../../src/models/domain/square";
 
 describe("Square", () => {
     describe("::EqualTo", () => {

@@ -1,4 +1,4 @@
-import {ChessPiece} from "../enums/chess_piece";
+import {ChessPiece} from "./chess_piece";
 import {Square} from "./square";
 import {Move} from "./move";
 import {GameHelper} from "../../helpers/game_helper";

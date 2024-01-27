@@ -1,5 +1,5 @@
 import {AppStateAction, AppStateActionType} from "./app_state_action";
-import {Move} from "../game/move";
+import {Move} from "../domain/move";
 import {MatchUpdateReceived} from "./match_update_received";
 
 export type MoveReceivedPayload = {

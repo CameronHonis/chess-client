@@ -1,4 +1,4 @@
-import {isMessageContentType, MessageContentType} from "../enums/message_content_type";
+import {isMessageContentType, MessageContentType} from "./message_content_type";
 import {Throwable} from "../../types";
 import {Parser} from "../../helpers/parser";
 import {MatchUpdateMessageContent} from "./arbitrator_contents/match_update_message_content";

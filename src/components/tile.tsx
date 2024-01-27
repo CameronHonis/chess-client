@@ -6,9 +6,9 @@ import {Bishop} from "./pieces/bishop_svg";
 import {Rook} from "./pieces/rook_svg";
 import {Queen} from "./pieces/queen_svg";
 import {King} from "./pieces/king_svg";
-import {ChessPiece} from "../models/enums/chess_piece";
+import {ChessPiece} from "../models/domain/chess_piece";
 import {ChessPieceHelper} from "../helpers/chess_piece_helper";
-import {Square} from "../models/game/square";
+import {Square} from "../models/domain/square";
 
 interface Props {
     square: Square;

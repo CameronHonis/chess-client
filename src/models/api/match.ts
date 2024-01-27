@@ -1,4 +1,4 @@
-import {BoardState} from "../game/board_state";
+import {BoardState} from "../domain/board_state";
 import {TimeControl} from "./time_control";
 import {Templated} from "../../abcs/templated";
 

@@ -1,9 +1,9 @@
-import {Move} from "../models/game/move";
-import {BoardState} from "../models/game/board_state";
-import {Square} from "../models/game/square";
-import {ChessPiece} from "../models/enums/chess_piece";
+import {Move} from "../models/domain/move";
+import {BoardState} from "../models/domain/board_state";
+import {Square} from "../models/domain/square";
+import {ChessPiece} from "../models/domain/chess_piece";
 import {ChessPieceHelper} from "./chess_piece_helper";
-import {Material} from "../models/game/material";
+import {Material} from "../models/domain/material";
 
 export class GameHelper {
     static getLegalMovesByBoardAndSquare(boardState: BoardState, square: Square): Move[] {

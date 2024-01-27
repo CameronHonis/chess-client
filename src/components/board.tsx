@@ -1,10 +1,10 @@
 import React, {useMemo, useState} from "react";
 import "../styles/board.css";
 import {Tile} from "./tile";
-import {Square} from "../models/game/square";
+import {Square} from "../models/domain/square";
 import {ChessPieceHelper} from "../helpers/chess_piece_helper";
-import {ChessPiece} from "../models/enums/chess_piece";
-import {Move} from "../models/game/move";
+import {ChessPiece} from "../models/domain/chess_piece";
+import {Move} from "../models/domain/move";
 import {appStateContext} from "../App";
 import {ReactComp, Throwable} from "../types";
 import {Clock} from "./clock";

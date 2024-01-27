@@ -1,13 +1,13 @@
 import {ArbitratorClient} from "./services/arbitrator_client";
 import {AuthManager} from "./services/auth_manager";
-import {MessageContentType} from "./models/enums/message_content_type";
+import {MessageContentType} from "./models/messages/message_content_type";
 import {Timer} from "./services/timer";
 import {AppState} from "./models/state/app_state";
 import {AppStateAction} from "./models/actions/app_state_action";
 import React from "react";
 import {BoardAnimator} from "./services/board_animator";
 import {InboundArbitratorMessage} from "./models/events/message_event";
-import {MessageEventName} from "./models/enums/message_event_name";
+import {MessageEventName} from "./models/events/message_event_name";
 
 declare global {
     interface Document {

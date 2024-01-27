@@ -1,5 +1,5 @@
 import {Square} from "./square";
-import {ChessPiece} from "../enums/chess_piece";
+import {ChessPiece} from "./chess_piece";
 import {ChessPieceHelper} from "../../helpers/chess_piece_helper";
 
 export class Material {

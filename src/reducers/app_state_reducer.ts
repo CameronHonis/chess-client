@@ -1,6 +1,6 @@
 import {AppState} from "../models/state/app_state";
 import {AppStateAction} from "../models/actions/app_state_action";
-import {Page} from "../models/enums/page";
+import {Page} from "../models/state/page";
 import {isMatchUpdateReceived} from "../models/actions/match_update_received";
 import {isReturnedHome} from "../models/actions/returned_home";
 import {isMoveReceived} from "../models/actions/move_received";

@@ -1,4 +1,4 @@
-import {MessageContentType} from "./message_content_type";
+import {MessageContentType} from "../messages/message_content_type";
 
 export type MessageEventName<CT extends keyof typeof MessageContentType> = `message-${CT}`;
 

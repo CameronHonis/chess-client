@@ -1,4 +1,4 @@
-import {ChessPiece} from "../models/enums/chess_piece";
+import {ChessPiece} from "../models/domain/chess_piece";
 
 export class ChessPieceHelper {
     static isWhite(piece: ChessPiece): boolean {

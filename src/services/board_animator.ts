@@ -1,4 +1,4 @@
-import {Square} from "../models/game/square";
+import {Square} from "../models/domain/square";
 
 export class BoardAnimator {
     private pieceMoveAnimation: PieceMoveAnimation | null = null;

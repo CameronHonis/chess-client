@@ -1,6 +1,6 @@
 import React from "react";
 import "../../styles/match_picker/bot_droplist_item.css";
-import {BotType} from "../../models/enums/bot_type";
+import {BotType} from "../../models/state/bot_type";
 
 export interface BotDroplistItemProps {
     isSelected: boolean;

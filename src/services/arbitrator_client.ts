@@ -1,12 +1,12 @@
-import {BotType} from "../models/enums/bot_type";
+import {BotType} from "../models/state/bot_type";
 import {ARBITRATOR_URL} from "../constants";
 import {Throwable} from "../types";
 import {ArbitratorMessage, parseMessageFromJson} from "../models/messages/arbitrator_message";
 import {MessageEventPayload} from "../models/events/message_event";
-import {MessageContentType} from "../models/enums/message_content_type";
+import {MessageContentType} from "../models/messages/message_content_type";
 import {AuthKeyset} from "./auth_manager";
-import {MessageEventName, parseEventName} from "../models/enums/message_event_name";
-import {Move} from "../models/game/move";
+import {MessageEventName, parseEventName} from "../models/events/message_event_name";
+import {Move} from "../models/domain/move";
 import {Challenge} from "../models/api/challenge";
 import {TimeControl} from "../models/api/time_control";
 

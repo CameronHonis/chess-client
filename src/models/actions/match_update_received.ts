@@ -8,8 +8,10 @@ export interface MatchUpdateReceivedPayload {
 export class MatchUpdateReceived implements AppStateAction {
     type = AppStateActionType.MATCH_UPDATE_RECEIVED;
     payload: MatchUpdateReceivedPayload;
-    constructor(payload: MatchUpdateReceivedPayload) {
-        this.payload = payload;
+    constructor(match: Match) {
+        this.payload = {
+            newMatch: match,
+        };
     }
 }
 

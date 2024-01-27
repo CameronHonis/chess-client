@@ -1,8 +1,8 @@
 import {GameHelper} from "../../src/helpers/game_helper";
-import {BoardState} from "../../src/models/game/board_state";
-import {Square} from "../../src/models/game/square";
-import {Move} from "../../src/models/game/move";
-import {ChessPiece} from "../../src/models/enums/chess_piece";
+import {BoardState} from "../../src/models/domain/board_state";
+import {Square} from "../../src/models/domain/square";
+import {Move} from "../../src/models/domain/move";
+import {ChessPiece} from "../../src/models/domain/chess_piece";
 
 const compareMoves = (expMoves: Move[], actualMoves: Move[]) => {
     expect(actualMoves).toBeInstanceOf(Array);

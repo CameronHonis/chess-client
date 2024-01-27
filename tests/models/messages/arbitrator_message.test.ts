@@ -1,8 +1,8 @@
-import {MessageContentType} from "../../../src/models/enums/message_content_type";
+import {MessageContentType} from "../../../src/models/messages/message_content_type";
 import {MatchUpdateMessageContent} from "../../../src/models/messages/arbitrator_contents/match_update_message_content";
 import {ArbitratorMessage, parseMessageFromJson} from "../../../src/models/messages/arbitrator_message";
 import {Match} from "../../../src/models/api/match";
-import {BoardState} from "../../../src/models/game/board_state";
+import {BoardState} from "../../../src/models/domain/board_state";
 import {TimeControl} from "../../../src/models/api/time_control";
 
 
