@@ -2,6 +2,7 @@ import {Templated} from "../../../abcs/templated";
 
 export class UpgradeAuthGrantedMessageContent extends Templated {
     upgradedToRole: string;
+
     constructor(args: UpgradeAuthGrantedMessageContent) {
         super({});
         this.upgradedToRole = args.upgradedToRole;

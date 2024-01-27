@@ -4,6 +4,7 @@ export class MatchCreationFailedMessageContent extends Templated {
     whiteClientKey: string;
     blackClientKey: string;
     reason: string;
+
     constructor(args: MatchCreationFailedMessageContent) {
         super({});
         this.whiteClientKey = args.whiteClientKey;

@@ -17,7 +17,7 @@ import {FindMatchMessageContent} from "./arbitrator_contents/find_match_message_
 import {MoveMessageContent} from "./arbitrator_contents/move_message_content";
 import {SubscribeRequestMessageContent} from "./arbitrator_contents/subscribe_request_message_content";
 import {UpgradeAuthRequestMessageContent} from "./arbitrator_contents/upgrade_auth_request_message_content";
-import {RequestChallengeMessageContent} from "./arbitrator_contents/challenge_message_content";
+import {RequestChallengeMessageContent} from "./arbitrator_contents/challenge_request_message_content";
 import {AcceptChallengeMessageContent} from "./arbitrator_contents/challenge_request_accepted_message_content";
 import {DeclineChallengeMessageContent} from "./arbitrator_contents/challenge_request_denied_message_content";
 import {RevokeChallengeMessageContent} from "./arbitrator_contents/challenge_request_revoked_message_content";

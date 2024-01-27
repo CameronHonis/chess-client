@@ -4,6 +4,7 @@ import {Templated} from "../../../abcs/templated";
 export class ChallengeRequestFailedMessageContent extends Templated {
     challenge: Challenge;
     reason: string;
+
     constructor(args: ChallengeRequestFailedMessageContent) {
         super({});
         this.challenge = args.challenge;

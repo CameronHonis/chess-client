@@ -3,6 +3,7 @@ import {Templated} from "../../../abcs/templated";
 export class UpgradeAuthRequestMessageContent extends Templated {
     role: string;
     secret: string;
+
     constructor(args: UpgradeAuthRequestMessageContent) {
         super({});
         this.role = args.role;
