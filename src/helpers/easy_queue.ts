@@ -25,7 +25,7 @@ export class EasyQueue<T> implements Queue<T> {
         if (this.size() === 0) {
             throw new RangeError("cannot get last element from empty queue");
         }
-        return this._eles[this._eles.length-1];
+        return this._eles[this._eles.length - 1];
     }
 
     push(ele: T) {
@@ -42,5 +42,9 @@ export class EasyQueue<T> implements Queue<T> {
         }
 
         return first;
+    }
+
+    copy(): EasyQueue<T> {
+        return new EasyQueue(...this._eles.slice(this.firstIdx));
     }
 }

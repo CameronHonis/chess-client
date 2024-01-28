@@ -77,4 +77,24 @@ describe("EasyQueue", () => {
             });
         });
     });
+    describe("::copy", () => {
+        beforeEach(() => {
+            // cause the first element ptr to be > 0
+           q.push(1);
+           q.push(2);
+           q.push(3);
+           q.push(4);
+           q.push(5);
+           q.pop();
+           q.pop();
+        });
+        it("creates an exact copy", () => {
+            const q1 = q.copy();
+            expect(q1).toBeInstanceOf(EasyQueue);
+            expect(q1.size()).toBe(q.size());
+            expect(q1.first()).toBe(q.first());
+            expect(q1.last()).toBe(q.last());
+            expect(q1 === q).toBe(false);
+        });
+    });
 });

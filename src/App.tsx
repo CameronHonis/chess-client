@@ -11,6 +11,7 @@ import {AppStateAction} from "./models/actions/app_state_action";
 import {Page} from "./models/state/page";
 import {MoveReceived} from "./models/actions/move_received";
 import {MessageContentType} from "./models/messages/message_content_type";
+import {NotifsOverlay} from "./components/notifs_overlay";
 
 export const appStateContext = React.createContext<[AppState, React.Dispatch<AppStateAction>]>([new AppState({}), () => {
 }]);
@@ -24,9 +25,8 @@ function App() {
 
     React.useEffect(() => {
         document.addEventListener(parseEventName(MessageContentType.MATCH_UPDATED), (e) => {
-            dispatch(new MatchUpdateReceived({
-                newMatch: e.detail.msg.content.match,
-            }));
+            const newMatch = e.detail.msg.content.match;
+            dispatch(new MatchUpdateReceived(newMatch));
         });
         document.addEventListener(parseEventName(MessageContentType.MOVE), (e) => {
             const move = e.detail.msg.content.move;
@@ -39,6 +39,7 @@ function App() {
         <div className="App">
             <appStateContext.Provider value={[state, dispatch]}>
                 <Header/>
+                <NotifsOverlay/>
                 {state.page === Page.HOME && <MatchPicker/>}
                 {state.page === Page.BOARD && <Board/>}
             </appStateContext.Provider>
