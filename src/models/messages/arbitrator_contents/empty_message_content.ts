@@ -1,12 +1,16 @@
-import {Templated} from "../../../interfaces/templated";
+import z from "zod";
 
-export class EmptyMessageContent extends Templated {
+export const EmptyMessageContent = z.object({});
 
-    constructor(args: EmptyMessageContent) {
-        super({});
-    }
+export type EmptyMessageContent = z.infer<typeof EmptyMessageContent>;
 
-    static template(): Object {
-        return {};
-    }
-}
+// export class EmptyMessageContent extends Templated {
+//
+//     constructor(args: EmptyMessageContent) {
+//         super({});
+//     }
+//
+//     static template(): Object {
+//         return {};
+//     }
+// }

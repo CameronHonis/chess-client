@@ -1,11 +1,15 @@
-import {Templated} from "../../../interfaces/templated";
+import z from "zod";
 
-export class FindMatchMessageContent extends Templated {
-    constructor(args: FindMatchMessageContent) {
-        super({});
-    }
+export const FindMatchMessageContent = z.object({});
 
-    static template(): Object {
-        return {};
-    }
-}
+export type FindMatchMessageContent = z.infer<typeof FindMatchMessageContent>;
+
+// export class FindMatchMessageContent extends Templated {
+//     constructor(args: FindMatchMessageContent) {
+//         super({});
+//     }
+//
+//     static template(): Object {
+//         return {};
+//     }
+// }

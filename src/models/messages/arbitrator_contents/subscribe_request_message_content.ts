@@ -1,16 +1,22 @@
-import {Templated} from "../../../interfaces/templated";
+import z from "zod";
 
-export class SubscribeRequestMessageContent extends Templated {
-    topic: string;
+export const SubscribeRequestGrantedMessageContent = z.object({
+    topic: z.string(),
+});
 
-    constructor(args: SubscribeRequestMessageContent) {
-        super({});
-        this.topic = args.topic;
-    }
+export type SubscribeRequestGrantedMessageContent = z.infer<typeof SubscribeRequestGrantedMessageContent>;
 
-    static template(): Object {
-        return {
-            topic: "some-topic",
-        };
-    }
-}
+// export class SubscribeRequestMessageContent extends Templated {
+//     topic: string;
+//
+//     constructor(args: SubscribeRequestMessageContent) {
+//         super({});
+//         this.topic = args.topic;
+//     }
+//
+//     static template(): Object {
+//         return {
+//             topic: "some-topic",
+//         };
+//     }
+// }

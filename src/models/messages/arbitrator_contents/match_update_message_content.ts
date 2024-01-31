@@ -1,17 +1,23 @@
-import {Match} from "../../api/match";
-import {Templated} from "../../../interfaces/templated";
+import z from "zod";
+import {ApiMatch} from "../../api/match";
 
-export class MatchUpdateMessageContent extends Templated {
-    match: Match;
+export const MatchUpdateMessageContent = z.object({
+    match: ApiMatch,
+});
 
-    constructor(args: MatchUpdateMessageContent) {
-        super({});
-        this.match = new Match(args.match);
-    }
+export type MatchUpdateMessageContent = z.infer<typeof MatchUpdateMessageContent>;
 
-    static template(): Object {
-        return {
-            match: Match.template(),
-        };
-    }
-}
+// export class MatchUpdateMessageContent extends Templated {
+//     match: Match;
+//
+//     constructor(args: MatchUpdateMessageContent) {
+//         super({});
+//         this.match = new Match(args.match);
+//     }
+//
+//     static template(): Object {
+//         return {
+//             match: Match.template(),
+//         };
+//     }
+// }

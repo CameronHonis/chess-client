@@ -1,20 +1,9 @@
-import {Templated} from "../../../interfaces/templated";
-import {Move} from "../../domain/move";
+import z from "zod";
+import {ApiMove} from "../../api/move";
 
-export class MoveMessageContent extends Templated {
-    matchId: string;
-    move: Move;
+export const MoveMessageContent = z.object({
+    matchId: z.string(),
+    move: ApiMove,
+});
 
-    constructor(args: MoveMessageContent) {
-        super({});
-        this.matchId = args.matchId;
-        this.move = args.move;
-    }
-
-    static template(): Object {
-        return {
-            matchId: "some-match-id",
-            move: Move.template(),
-        };
-    }
-}
+export type MoveMessageContent = z.infer<typeof MoveMessageContent>;

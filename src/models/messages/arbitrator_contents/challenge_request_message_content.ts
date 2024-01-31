@@ -1,17 +1,23 @@
-import {Challenge} from "../../api/challenge";
-import {Templated} from "../../../interfaces/templated";
+import {ApiChallenge} from "../../api/challenge";
+import z from "zod";
 
-export class RequestChallengeMessageContent extends Templated {
-    challenge: Challenge;
+export const RequestChallengeMessageContent = z.object({
+    challenge: ApiChallenge,
+});
 
-    constructor(args: RequestChallengeMessageContent) {
-        super({});
-        this.challenge = args.challenge;
-    }
-
-    static template(): Object {
-        return {
-            challenge: Challenge.template(),
-        };
-    }
-}
+export type RequestChallengeMessageContent = z.infer<typeof RequestChallengeMessageContent>;
+//
+// export class RequestChallengeMessageContent extends Templated {
+//     challenge: Challenge;
+//
+//     constructor(args: RequestChallengeMessageContent) {
+//         super({});
+//         this.challenge = args.challenge;
+//     }
+//
+//     static template(): Object {
+//         return {
+//             challenge: Challenge.template(),
+//         };
+//     }
+// }

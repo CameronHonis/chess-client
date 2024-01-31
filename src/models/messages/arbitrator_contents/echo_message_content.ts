@@ -1,16 +1,22 @@
-import {Templated} from "../../../interfaces/templated";
+import z from "zod";
 
-export class EchoMessageContent extends Templated {
-    message: string;
+export const EchoMessageContent = z.object({
+    message: z.string(),
+});
 
-    constructor(args: EchoMessageContent) {
-        super({});
-        this.message = args.message;
-    }
+export type EchoMessageContent = z.infer<typeof EchoMessageContent>;
 
-    static template(): Object {
-        return {
-            message: "ECHO ECHo ECho Echo echo",
-        };
-    }
-}
+// export class EchoMessageContent extends Templated {
+//     message: string;
+//
+//     constructor(args: EchoMessageContent) {
+//         super({});
+//         this.message = args.message;
+//     }
+//
+//     static template(): Object {
+//         return {
+//             message: "ECHO ECHo ECho Echo echo",
+//         };
+//     }
+// }

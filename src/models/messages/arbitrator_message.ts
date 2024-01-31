@@ -21,10 +21,12 @@ import {RequestChallengeMessageContent} from "./arbitrator_contents/challenge_re
 import {AcceptChallengeMessageContent} from "./arbitrator_contents/challenge_request_accepted_message_content";
 import {DeclineChallengeMessageContent} from "./arbitrator_contents/challenge_request_denied_message_content";
 import {RevokeChallengeMessageContent} from "./arbitrator_contents/challenge_request_revoked_message_content";
+import {ZodObject} from "zod";
 
 export class ArbitratorMessage<CT extends keyof typeof MessageContentType> {
     topic: string
     contentType: CT
+    //@ts-ignore
     content: InstanceType<ContentByContentType[CT]>
     senderKey: string
     privateKey: string
@@ -106,7 +108,14 @@ export function parseMessageFromJson<T extends keyof typeof MessageContentType>(
         throw new TypeError(`property "content" expected to be an object, got type: ${typeof obj.content}`);
     }
     const targetCls = ContentByContentType[obj.contentType];
-    const content = Parser.parseJson(obj.content, targetCls);
+    let content: InstanceType<typeof targetCls>;
+    if (targetCls === ChallengeUpdatedMessageContent || targetCls === ChallengeRequestFailedMessageContent ||
+        targetCls === RequestChallengeMessageContent || targetCls === AcceptChallengeMessageContent ||
+        targetCls === DeclineChallengeMessageContent || targetCls === RevokeChallengeMessageContent) {
+        content = (targetCls as ZodObject<any>).parse(obj.content) as InstanceType<typeof targetCls>;
+    } else {
+        content = Parser.parseJson(obj.content, targetCls);
+    }
 
     if (!("topic" in obj)) {
         throw new TypeError(`property "topic" expected to exist`);

@@ -1,16 +1,22 @@
-import {Templated} from "../../../interfaces/templated";
+import z from "zod";
 
-export class UpgradeAuthDeniedMessageContent extends Templated {
-    reason: string;
+export const UpgradeAuthDeniedMessageContent = z.object({
+    reason: z.string(),
+});
 
-    constructor(args: UpgradeAuthDeniedMessageContent) {
-        super({});
-        this.reason = args.reason;
-    }
+export type UpgradeAuthDeniedMessageContent = z.infer<typeof UpgradeAuthDeniedMessageContent>;
 
-    static template(): Object {
-        return {
-            reason: "nice try, hacker mans",
-        };
-    }
-}
+// export class UpgradeAuthDeniedMessageContent extends Templated {
+//     reason: string;
+//
+//     constructor(args: UpgradeAuthDeniedMessageContent) {
+//         super({});
+//         this.reason = args.reason;
+//     }
+//
+//     static template(): Object {
+//         return {
+//             reason: "nice try, hacker mans",
+//         };
+//     }
+// }

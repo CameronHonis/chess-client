@@ -1,16 +1,22 @@
-import {Templated} from "../../../interfaces/templated";
+import z from "zod";
 
-export class UpgradeAuthGrantedMessageContent extends Templated {
-    upgradedToRole: string;
+export const UpgradeAuthGrantedMessageContent = z.object({
+    upgradedToRole: z.string(),
+});
 
-    constructor(args: UpgradeAuthGrantedMessageContent) {
-        super({});
-        this.upgradedToRole = args.upgradedToRole;
-    }
+export type UpgradeAuthGrantedMessageContent = z.infer<typeof UpgradeAuthGrantedMessageContent>;
 
-    static template(): Object {
-        return {
-            upgradedToRole: "new-role"
-        };
-    }
-}
+// export class UpgradeAuthGrantedMessageContent extends Templated {
+//     upgradedToRole: string;
+//
+//     constructor(args: UpgradeAuthGrantedMessageContent) {
+//         super({});
+//         this.upgradedToRole = args.upgradedToRole;
+//     }
+//
+//     static template(): Object {
+//         return {
+//             upgradedToRole: "new-role"
+//         };
+//     }
+// }

@@ -1,16 +1,22 @@
-import {Templated} from "../../../interfaces/templated";
+import z from "zod";
 
-export class RevokeChallengeMessageContent extends Templated {
-    challengerClientKey: string;
+export const RevokeChallengeMessageContent = z.object({
+    challengerClientKey: z.string().length(64),
+});
 
-    constructor(args: RevokeChallengeMessageContent) {
-        super({});
-        this.challengerClientKey = args.challengerClientKey;
-    }
+export type RevokeChallengeMessageContent = z.infer<typeof RevokeChallengeMessageContent>;
 
-    static template(): Object {
-        return {
-            challengerClientKey: "some-challenger-key",
-        };
-    }
-}
+// export class RevokeChallengeMessageContent extends Templated {
+//     challengerClientKey: string;
+//
+//     constructor(args: RevokeChallengeMessageContent) {
+//         super({});
+//         this.challengerClientKey = args.challengerClientKey;
+//     }
+//
+//     static template(): Object {
+//         return {
+//             challengerClientKey: "some-challenger-key",
+//         };
+//     }
+// }
