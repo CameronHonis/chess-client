@@ -1,9 +1,10 @@
-import {ChessPiece} from "./chess_piece";
+import {ChessPiece, ChessPieceFromApi} from "./chess_piece";
 import {Square} from "./square";
 import {Move} from "./move";
 import {GameHelper} from "../../helpers/game_helper";
 import {Material} from "./material";
 import {Templated} from "../../interfaces/templated";
+import {ApiBoard} from "../api/board";
 
 interface BoardStateConstructorArgs {
 
@@ -19,10 +20,10 @@ interface BoardStateConstructorArgs {
     isTerminal?: boolean
     isWhiteWinner?: boolean
     isBlackWinner?: boolean
-    repetitionsByMiniFEN?: { [miniFEN: string]: number } | null
+    repetitionsByMiniFEN?: Map<string, number > | null
 }
 
-export class BoardState extends Templated {
+export class BoardState {
     pieces: ChessPiece[][]
     material: Material;
     enPassantSquare: Square | null;
@@ -36,7 +37,7 @@ export class BoardState extends Templated {
     isTerminal: boolean
     isWhiteWinner: boolean
     isBlackWinner: boolean
-    repetitionsByMiniFEN: { [miniFEN: string]: number }
+    repetitionsByMiniFEN: Map<string, number>
 
     constructor({
                     pieces,
@@ -53,7 +54,6 @@ export class BoardState extends Templated {
                     isBlackWinner = false,
                     repetitionsByMiniFEN = null,
                 }: BoardStateConstructorArgs) {
-        super({});
         this._validate_pieces_shape(pieces);
 
         this.pieces = pieces;
@@ -69,7 +69,7 @@ export class BoardState extends Templated {
         this.isTerminal = isTerminal;
         this.isWhiteWinner = isWhiteWinner;
         this.isBlackWinner = isBlackWinner;
-        this.repetitionsByMiniFEN = repetitionsByMiniFEN || {};
+        this.repetitionsByMiniFEN = repetitionsByMiniFEN || new Map();
     }
 
 
@@ -372,8 +372,21 @@ export class BoardState extends Templated {
         return this.copyWith({});
     }
 
-    static template(): BoardState {
-        const initBoard = this.getInitBoardState();
-        return JSON.parse(JSON.stringify(initBoard));
+    static fromApi(apiBoard: ApiBoard): BoardState {
+        return new BoardState({
+            pieces: apiBoard.pieces.map(row => row.map(ChessPieceFromApi)),
+            enPassantSquare: apiBoard.enPassantSquare ? Square.fromApi(apiBoard.enPassantSquare) : null,
+            isWhiteTurn: apiBoard.isWhiteTurn,
+            canWhiteCastleKingside: apiBoard.canWhiteCastleKingside,
+            canWhiteCastleQueenside: apiBoard.canWhiteCastleQueenside,
+            canBlackCastleKingside: apiBoard.canBlackCastleKingside,
+            canBlackCastleQueenside: apiBoard.canBlackCastleQueenside,
+            halfMoveClockCount: apiBoard.halfMoveClockCount,
+            fullMoveCount: apiBoard.fullMoveCount,
+            isTerminal: apiBoard.isTerminal,
+            isWhiteWinner: apiBoard.isWhiteWinner,
+            isBlackWinner: apiBoard.isBlackWinner,
+            repetitionsByMiniFEN: apiBoard.repetitionsByMiniFEN,
+        });
     }
 }

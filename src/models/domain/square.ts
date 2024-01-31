@@ -1,11 +1,10 @@
-import {Templated} from "../../interfaces/templated";
+import {ApiSquare} from "../api/square";
 
-export class Square extends Templated {
+export class Square {
     rank: number
     file: number
 
     constructor(rank: number, file: number) {
-        super({});
         this.rank = rank;
         this.file = file;
     }
@@ -54,10 +53,7 @@ export class Square extends Templated {
         return this.copyWith({});
     }
 
-    static template(): Object {
-        return {
-            rank: 1,
-            file: 1,
-        }
+    static fromApi(apiSquare: ApiSquare): Square {
+        return new Square(apiSquare.rank, apiSquare.file);
     }
 }

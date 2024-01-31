@@ -1,4 +1,4 @@
-import {TimeControl} from "./time_control";
+import {ApiTimeControl} from "./time_control";
 import z from "zod";
 import {ApiBoard} from "./board";
 
@@ -9,7 +9,7 @@ export const ApiMatch = z.object({
     whiteTimeRemaining: z.number(),
     blackClientId: z.string().length(64),
     blackTimeRemaining: z.number(),
-    timeControl: TimeControl,
+    timeControl: ApiTimeControl,
 });
 
 export type ApiMatch = z.infer<typeof ApiMatch>;

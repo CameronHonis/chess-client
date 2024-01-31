@@ -13,3 +13,7 @@ export enum ChessPiece {
     BLACK_QUEEN,
     BLACK_KING
 }
+
+export function ChessPieceFromApi(apiPiece: number): ChessPiece {
+    return apiPiece as ChessPiece;
+}

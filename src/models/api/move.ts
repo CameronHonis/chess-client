@@ -10,3 +10,5 @@ export const ApiMove = z.object({
     kingCheckingSquares: z.array(ApiSquare),
     pawnUpgradedTo: z.number().int(),
 });
+
+export type ApiMove = z.infer<typeof ApiMove>;

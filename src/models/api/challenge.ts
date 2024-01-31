@@ -1,4 +1,4 @@
-import {TimeControl} from "./time_control";
+import {ApiTimeControl} from "./time_control";
 import z from "zod";
 
 export const ApiChallenge = z.object({
@@ -7,31 +7,11 @@ export const ApiChallenge = z.object({
     challengedKey: z.string().length(64),
     isChallengerWhite: z.boolean(),
     isChallengerBlack: z.boolean(),
-    timeControl: TimeControl,
+    timeControl: ApiTimeControl,
     botName: z.string(),
 });
 
 export type ApiChallenge = z.infer<typeof ApiChallenge>;
-
-export function NewChallenge(
-    uuid: string,
-    challengerKey: string,
-    challengedKey: string,
-    isChallengerWhite: boolean,
-    isChallengerBlack: boolean,
-    timeControl: TimeControl,
-    botName: string
-): ApiChallenge {
-    return {
-        uuid,
-        challengerKey,
-        challengedKey,
-        isChallengerWhite,
-        isChallengerBlack,
-        timeControl,
-        botName,
-    };
-}
 
 // interface ConstructorArgs {
 //     uuid: string;

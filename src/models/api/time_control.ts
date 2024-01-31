@@ -1,13 +1,13 @@
 import z from "zod";
 
-export const TimeControl = z.object({
+export const ApiTimeControl = z.object({
     initialTimeSec: z.number().positive(),
     incrementSec: z.number().gte(0),
     timeAfterMovesCount: z.number().gte(0),
     secAfterMoves: z.number().gte(0).int(),
 })
 
-export type TimeControl = z.infer<typeof TimeControl>
+export type ApiTimeControl = z.infer<typeof ApiTimeControl>
 
 // export class TimeControl extends Templated {
 //     initialTimeSec: number;
@@ -28,30 +28,3 @@ export type TimeControl = z.infer<typeof TimeControl>
 //         return JSON.parse(JSON.stringify(rapidTimeControl));
 //     }
 // }
-
-export function newBulletTimeControl(): TimeControl {
-    return {
-        initialTimeSec: 60,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    };
-}
-
-export function newBlitzTimeControl(): TimeControl {
-    return {
-        initialTimeSec: 300,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    };
-}
-
-export function newRapidTimeControl(): TimeControl {
-    return {
-        initialTimeSec: 900,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    };
-}

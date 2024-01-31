@@ -4,8 +4,9 @@ import {BoardState} from "./board_state";
 import {ChessPieceHelper} from "../../helpers/chess_piece_helper";
 import {GameHelper} from "../../helpers/game_helper";
 import {Templated} from "../../interfaces/templated";
+import {ApiMove} from "../api/move";
 
-export class Move extends Templated {
+export class Move {
     piece: ChessPiece
     startSquare: Square
     endSquare: Square
@@ -15,7 +16,6 @@ export class Move extends Templated {
 
     constructor(piece: ChessPiece, startSquare: Square, endSquare: Square, pieceSquaresCheckingKing: Square[],
                 pieceTaken: ChessPiece | null, pawnUpgradedTo: ChessPiece | null) {
-        super({});
         this.piece = piece;
         this.startSquare = startSquare;
         this.endSquare = endSquare;
@@ -146,14 +146,14 @@ export class Move extends Templated {
             this.pawnUpgradedTo === otherMove.pawnUpgradedTo;
     }
 
-    static template(): Object {
-        return {
-            piece: ChessPiece.WHITE_PAWN,
-            startSquare: Square.template(),
-            endStart: Square.template(),
-            kingCheckingSquares: [Square.template()],
-            capturedPieces: ChessPiece.EMPTY,
-            pawnUpgradedTo: ChessPiece.EMPTY,
-        }
+    static fromApi(apiMove: ApiMove): Move {
+        return new Move(
+            apiMove.piece,
+            Square.fromApi(apiMove.startSquare),
+            Square.fromApi(apiMove.endSquare),
+            apiMove.kingCheckingSquares.map(Square.fromApi),
+            apiMove.capturedPiece,
+            apiMove.pawnUpgradedTo
+        );
     }
 }
