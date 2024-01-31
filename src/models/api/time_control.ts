@@ -1,48 +1,57 @@
-import {Templated} from "../../interfaces/templated";
+import z from "zod";
 
-export class TimeControl extends Templated {
-    initialTimeSec: number;
-    incrementSec: number;
-    timeAfterMovesCount: number;
-    secAfterMoves: number;
+export const TimeControl = z.object({
+    initialTimeSec: z.number().positive(),
+    incrementSec: z.number().gte(0),
+    timeAfterMovesCount: z.number().gte(0),
+    secAfterMoves: z.number().gte(0).int(),
+})
 
-    constructor(args: TimeControl) {
-        super({});
-        this.initialTimeSec = args.initialTimeSec;
-        this.incrementSec = args.incrementSec;
-        this.timeAfterMovesCount = args.timeAfterMovesCount;
-        this.secAfterMoves = args.secAfterMoves;
-    }
+export type TimeControl = z.infer<typeof TimeControl>
 
-    static template(): Object {
-        const rapidTimeControl = newRapidTimeControl();
-        return JSON.parse(JSON.stringify(rapidTimeControl));
-    }
-}
+// export class TimeControl extends Templated {
+//     initialTimeSec: number;
+//     incrementSec: number;
+//     timeAfterMovesCount: number;
+//     secAfterMoves: number;
+//
+//     constructor(args: TimeControl) {
+//         super({});
+//         this.initialTimeSec = args.initialTimeSec;
+//         this.incrementSec = args.incrementSec;
+//         this.timeAfterMovesCount = args.timeAfterMovesCount;
+//         this.secAfterMoves = args.secAfterMoves;
+//     }
+//
+//     static template(): Object {
+//         const rapidTimeControl = newRapidTimeControl();
+//         return JSON.parse(JSON.stringify(rapidTimeControl));
+//     }
+// }
 
 export function newBulletTimeControl(): TimeControl {
-    return new TimeControl({
+    return {
         initialTimeSec: 60,
         incrementSec: 0,
         timeAfterMovesCount: 0,
         secAfterMoves: 0,
-    });
+    };
 }
 
 export function newBlitzTimeControl(): TimeControl {
-    return new TimeControl({
+    return {
         initialTimeSec: 300,
         incrementSec: 0,
         timeAfterMovesCount: 0,
         secAfterMoves: 0,
-    });
+    };
 }
 
 export function newRapidTimeControl(): TimeControl {
-    return new TimeControl({
+    return {
         initialTimeSec: 900,
         incrementSec: 0,
         timeAfterMovesCount: 0,
         secAfterMoves: 0,
-    });
+    };
 }
