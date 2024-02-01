@@ -2,9 +2,8 @@ import React, {ReactElement} from "react";
 import {BotDroplistItem} from "./bot_droplist_item";
 import "../../styles/match_picker/bot_match_picker.css";
 import {Button} from "../button";
-import {ArbitratorClient} from "../../services/arbitrator_client";
 import {BotType} from "../../models/state/bot_type";
-import {newBlitzTimeControl} from "../../models/api/time_control";
+import {newBlitzTimeControl} from "../../models/domain/challenge";
 
 export interface BotMatchPickerProps {
 }

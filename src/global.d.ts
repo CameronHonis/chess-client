@@ -6,20 +6,20 @@ import {AppState} from "./models/state/app_state";
 import {AppStateAction} from "./models/actions/app_state_action";
 import React from "react";
 import {BoardAnimator} from "./services/board_animator";
-import {InboundArbitratorMessage} from "./models/events/message_event";
+import {ArbitratorMessageEvent} from "./models/events/message_event";
 import {MessageEventName} from "./models/events/message_event_name";
 import {NotifAnimator} from "./services/notif_animator";
 import {NOTIF_EVENT, NotifEvent} from "./models/events/notif_event";
 
 declare global {
     interface Document {
-        addEventListener<CT extends keyof typeof MessageContentType>(type: MessageEventName<CT>, listener: (this: HTMLElement, ev: InboundArbitratorMessage<CT>) => void): void;
+        addEventListener<CT extends MessageContentType>(type: MessageEventName<CT>, listener: (this: HTMLElement, ev: ArbitratorMessageEvent<CT>) => void): void;
         addEventListener(type: NOTIF_EVENT, listener: (this: HTMLElement, ev: NotifEvent) => void): void;
 
-        dispatchEvent<CT extends keyof typeof MessageContentType>(ev: InboundArbitratorMessage<CT>): void;
+        dispatchEvent<CT extends keyof typeof MessageContentType>(ev: ArbitratorMessageEvent<CT>): void;
         dispatchEvent(ev: NotifEvent): void;
 
-        removeEventListener<CT extends keyof MessageContentType>(type: MessageEventName<CT>, listener: (this: HTMLElement, ev: InboundArbitratorMessage<CT>) => void): void;
+        removeEventListener<CT extends keyof MessageContentType>(type: MessageEventName<CT>, listener: (this: HTMLElement, ev: ArbitratorMessageEvent<CT>) => void): void;
         removeEventListener(type: NOTIF_EVENT, listener: (this: HTMLElement, ev: NotifEvent) => void): void;
     }
 

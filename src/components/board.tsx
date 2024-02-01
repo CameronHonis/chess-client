@@ -8,7 +8,6 @@ import {Move} from "../models/domain/move";
 import {appStateContext} from "../App";
 import {ReactComp, Throwable} from "../types";
 import {Clock} from "./clock";
-import {Match} from "../models/api/match";
 import {Summary} from "./summary";
 import {AnimTile} from "./anim_tile";
 
@@ -19,8 +18,8 @@ export const Board: React.FC<BoardProps> = () => {
     const [appState] = React.useContext(appStateContext);
     const [squareSelected, setSquareSelected] = useState<Square | null>(null);
     const [draggingSquare, setDraggingSquare] = useState<Square | null>(null);
+    const match = appState.match!;
 
-    const match = appState.match as Match;
     React.useEffect(() => {
         window.services.timer.setFromMatch(match);
     }, [match]);

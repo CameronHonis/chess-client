@@ -1,6 +1,6 @@
 import React from "react";
-import {Match} from "../models/api/match";
 import {formatTimeForTimer} from "../helpers/format_time";
+import {Match} from "../models/domain/match";
 
 export class Timer {
     whiteSeconds: number;

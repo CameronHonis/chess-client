@@ -1,6 +1,4 @@
 import {isMessageContentType, MessageContentType} from "./message_content_type";
-import {Throwable} from "../../types";
-import {Parser} from "../../helpers/parser";
 import {MatchUpdateMessageContent} from "./arbitrator_contents/match_update_message_content";
 import {ChallengeUpdatedMessageContent} from "./arbitrator_contents/challenge_updated_msg_content";
 import {MoveFailedMessageContent} from "./arbitrator_contents/move_failed_message_content";

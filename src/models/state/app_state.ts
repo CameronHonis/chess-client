@@ -1,9 +1,9 @@
 import {Page} from "./page";
-import {Match} from "../api/match";
+import {ApiMatch} from "../api/match";
 import {BoardState} from "../domain/board_state";
-import {newBulletTimeControl, newRapidTimeControl, TimeControl} from "../api/time_control";
-import {ChessPiece} from "../domain/chess_piece";
 import {Move} from "../domain/move";
+import {newRapidTimeControl} from "../domain/challenge";
+import {Match} from "../domain/match";
 
 // const board = BoardState.fromFEN("3k4/3Q4/3K4/8/8/8/8/8 b - - 0 1");
 const board = BoardState.getInitBoardState();
