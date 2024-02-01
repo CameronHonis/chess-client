@@ -7,6 +7,7 @@ import {AuthManager} from "./services/auth_manager";
 import {Timer} from "./services/timer";
 import {BoardAnimator} from "./services/board_animator";
 import {NotifAnimator} from "./services/notif_animator";
+import {registerOnAuthMsg, registerOnChallengeFailed} from "./helpers/arbitrator_handlers";
 
 window.services = {
     arbitratorClient: new ArbitratorClient(),
@@ -16,11 +17,14 @@ window.services = {
     notifAnimator: new NotifAnimator(),
 };
 
-// TEMPORARY
-window.services.authManager.setArbitratorKeyset({
-    publicKey: "whiteClientId",
-    privateKey: "whitePrivateKey",
-});
+registerOnAuthMsg();
+registerOnChallengeFailed();
+
+// // TEMPORARY
+// window.services.authManager.setArbitratorKeyset({
+//     publicKey: "whiteClientId",
+//     privateKey: "whitePrivateKey",
+// });
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement

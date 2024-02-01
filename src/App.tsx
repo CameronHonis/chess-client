@@ -21,15 +21,8 @@ function App() {
     }, [state, dispatch]);
 
     React.useEffect(() => {
-        document.addEventListener(parseEventName(MessageContentType.MATCH_UPDATED), (e) => {
-            const newMatch = e.detail.msg.content.match;
-            dispatch(new MatchUpdateReceived(newMatch));
-        });
-        document.addEventListener(parseEventName(MessageContentType.MOVE), (e) => {
-            const move = e.detail.msg.content.move;
-            window.services.boardAnimator.movePiece(move.startSquare, move.endSquare);
-            dispatch(new MoveReceived(move));
-        });
+        registerOnMatchUpdatedMsg(dispatch);
+        registerOnMoveMsg(dispatch);
     }, []);
 
     return (
