@@ -6,6 +6,8 @@ export const ChallengeRequestFailedMessageContent = z.object({
     reason: z.string(),
 });
 
+export type ChallengeRequestFailedMessageContent = z.infer<typeof ChallengeRequestFailedMessageContent>;
+
 // export class ChallengeRequestFailedMessageContent extends Templated {
 //     challenge: Challenge;
 //     reason: string;

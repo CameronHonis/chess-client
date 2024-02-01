@@ -1,8 +1,8 @@
 import {ArbitratorMessage} from "../messages/arbitrator_message";
 import {MessageContentType} from "../messages/message_content_type";
 
-export interface MessageEventPayload<CT extends keyof typeof MessageContentType> {
+export interface ArbitratorMessageEventPayload<CT extends MessageContentType> {
     msg: ArbitratorMessage<CT>
 }
 
-export type InboundArbitratorMessage<CT extends keyof typeof MessageContentType> = CustomEvent<MessageEventPayload<CT>>;
+export type ArbitratorMessageEvent<CT extends MessageContentType> = CustomEvent<ArbitratorMessageEventPayload<CT>>;

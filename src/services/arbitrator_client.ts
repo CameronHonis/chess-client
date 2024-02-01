@@ -1,14 +1,12 @@
 import {BotType} from "../models/state/bot_type";
 import {ARBITRATOR_URL} from "../constants";
 import {Throwable} from "../types";
-import {ArbitratorMessage, parseMessageFromJson} from "../models/messages/arbitrator_message";
-import {MessageEventPayload} from "../models/events/message_event";
+import {ArbitratorMessageEventPayload} from "../models/events/message_event";
 import {MessageContentType} from "../models/messages/message_content_type";
-import {AuthKeyset} from "./auth_manager";
-import {MessageEventName, parseEventName} from "../models/events/message_event_name";
+import {parseEventName} from "../models/events/message_event_name";
 import {Move} from "../models/domain/move";
-import {Challenge} from "../models/api/challenge";
-import {TimeControl} from "../models/api/time_control";
+import {ApiTimeControl} from "../models/api/time_control";
+import {ArbitratorMessage} from "../models/messages/arbitrator_message";
 
 export class ArbitratorClient {
     websocket: WebSocket;
@@ -29,14 +27,6 @@ export class ArbitratorClient {
                 throw e;
             }
         }
-        document.addEventListener(parseEventName(MessageContentType.AUTH), (e: CustomEvent<MessageEventPayload<MessageContentType.AUTH>>) => {
-            const content = e.detail.msg.content
-            const keyset: AuthKeyset = {
-                publicKey: content.publicKey,
-                privateKey: content.privateKey,
-            }
-            window.services.authManager.setArbitratorKeyset(keyset);
-        });
     }
 
     private _handleOpen(e: Event) {
@@ -51,18 +41,18 @@ export class ArbitratorClient {
         }
         const url = (e.currentTarget as WebSocket).url
         console.log(`[${url}] >> ${e.data}`);
-        
+
         const msgJsonObj = JSON.parse(e.data);
-        const msg = parseMessageFromJson(msgJsonObj);
+        const msg = ArbitratorMessage.fromJson(msgJsonObj);
 
         const eventName = parseEventName(msg.contentType);
-        type EventType = MessageEventPayload<typeof msg.contentType>;
+        type EventType = ArbitratorMessageEventPayload<typeof msg.contentType>;
         const event = new CustomEvent<EventType>(eventName, {
             detail: {
                 msg,
             }
         });
-        
+
         document.dispatchEvent(event);
     }
 
@@ -83,19 +73,20 @@ export class ArbitratorClient {
         this.websocket.send(stringifiedMsg);
     }
 
-    challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: TimeControl): Throwable<void> {
+    challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: "challenge",
             contentType: MessageContentType.CHALLENGE_REQUEST,
             content: {
-                challenge: new Challenge({
+                challenge: {
+                    uuid: "",
                     challengerKey: window.services.authManager.getArbitratorKeyset()!.publicKey,
                     challengedKey: playerKey,
                     isChallengerWhite: isWhite,
                     isChallengerBlack: isBlack,
                     timeControl: timeControl,
                     botName: "",
-                })
+                },
             },
             senderKey: "",
             privateKey: "",
@@ -103,19 +94,20 @@ export class ArbitratorClient {
         this.signAndSendMsg(msg);
     }
 
-    challengeBot(botType: BotType, isWhite: boolean, isBlack: boolean, timeControl: TimeControl): Throwable<void> {
+    challengeBot(botType: BotType, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: "challenge",
             contentType: MessageContentType.CHALLENGE_REQUEST,
             content: {
-                challenge: new Challenge({
+                challenge: {
+                    uuid: "",
                     challengerKey: window.services.authManager.getArbitratorKeyset()!.publicKey,
                     challengedKey: "",
                     isChallengerWhite: isWhite,
                     isChallengerBlack: isBlack,
                     timeControl: timeControl,
                     botName: botType,
-                }),
+                },
             },
             senderKey: "",
             privateKey: "",
@@ -140,7 +132,7 @@ export class ArbitratorClient {
             contentType: MessageContentType.MOVE,
             content: {
                 matchId,
-                move,
+                move: JSON.parse(JSON.stringify(move)),
             },
             senderKey: "",
             privateKey: "",

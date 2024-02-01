@@ -1,10 +1,10 @@
 import z from "zod";
 
-export const SubscribeRequestGrantedMessageContent = z.object({
+export const SubscribeRequestMessageContent = z.object({
     topic: z.string(),
 });
 
-export type SubscribeRequestGrantedMessageContent = z.infer<typeof SubscribeRequestGrantedMessageContent>;
+export type SubscribeRequestMessageContent = z.infer<typeof SubscribeRequestMessageContent>;
 
 // export class SubscribeRequestMessageContent extends Templated {
 //     topic: string;
