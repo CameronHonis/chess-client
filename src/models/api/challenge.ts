@@ -3,8 +3,8 @@ import z from "zod";
 
 export const ApiChallengeSchema = z.object({
     uuid: z.string().uuid(),
-    challengerKey: z.union([z.string().length(64), z.literal("")]),
-    challengedKey: z.string().length(64),
+    challengerKey: z.string().length(64),
+    challengedKey: z.union([z.string().length(64), z.literal("")]),
     isChallengerWhite: z.boolean(),
     isChallengerBlack: z.boolean(),
     timeControl: ApiTimeControlSchema,
