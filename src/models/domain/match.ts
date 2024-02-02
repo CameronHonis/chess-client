@@ -1,6 +1,6 @@
-import {ApiMatch} from "../api/match";
 import {BoardState} from "./board_state";
 import {TimeControl} from "./time_control";
+import {ApiMatch} from "../api/match";
 
 export class Match {
     uuid: string;

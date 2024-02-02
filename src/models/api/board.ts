@@ -1,14 +1,14 @@
 import z from "zod";
-import {ApiSquare} from "./square";
+import {ApiSquareSchema} from "./square";
 
 
-export const ApiBoard = z.object({
+export const ApiBoardSchema = z.object({
     pieces: z.array(
         z.array(
             z.number().int()
         ).length(8)
     ).length(8),
-    enPassantSquare: z.union([z.null(), ApiSquare]),
+    enPassantSquare: z.union([z.null(), ApiSquareSchema]),
     isWhiteTurn: z.boolean(),
     canWhiteCastleKingside: z.boolean(),
     canWhiteCastleQueenside: z.boolean(),
@@ -22,4 +22,4 @@ export const ApiBoard = z.object({
     isBlackWinner: z.boolean(),
 });
 
-export type ApiBoard = z.infer<typeof ApiBoard>;
+export type ApiBoard = z.infer<typeof ApiBoardSchema>;

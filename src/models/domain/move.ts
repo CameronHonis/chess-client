@@ -3,7 +3,6 @@ import {Square} from "./square";
 import {BoardState} from "./board_state";
 import {ChessPieceHelper} from "../../helpers/chess_piece_helper";
 import {GameHelper} from "../../helpers/game_helper";
-import {Templated} from "../../interfaces/templated";
 import {ApiMove} from "../api/move";
 
 export class Move {

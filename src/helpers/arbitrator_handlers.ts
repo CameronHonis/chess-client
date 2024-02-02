@@ -1,5 +1,4 @@
 import React from "react";
-import {MessageContentType} from "../models/messages/message_content_type";
 import {MatchUpdateReceived} from "../models/actions/match_update_received";
 import {AppStateAction} from "../models/actions/app_state_action";
 import {MoveReceived} from "../models/actions/move_received";
@@ -9,6 +8,7 @@ import {dispatchErr} from "../models/events/notif_event";
 import {Square} from "../models/domain/square";
 import {Move} from "../models/domain/move";
 import {Match} from "../models/domain/match";
+import {MessageContentType} from "../models/api/messages/message_content_type";
 
 export function registerOnAuthMsg() {
     document.addEventListener(parseEventName(MessageContentType.AUTH), (e) => {

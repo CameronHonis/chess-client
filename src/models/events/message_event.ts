@@ -1,5 +1,5 @@
-import {ArbitratorMessage} from "../messages/arbitrator_message";
-import {MessageContentType} from "../messages/message_content_type";
+import {MessageContentType} from "../api/messages/message_content_type";
+import {ArbitratorMessage} from "../api/messages/arbitrator_message";
 
 export interface ArbitratorMessageEventPayload<CT extends MessageContentType> {
     msg: ArbitratorMessage<CT>

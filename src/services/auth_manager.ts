@@ -1,5 +1,5 @@
-import {ArbitratorMessage} from "../models/messages/arbitrator_message";
 import {Throwable} from "../types";
+import {ArbitratorMessage} from "../models/api/messages/arbitrator_message";
 
 export interface AuthKeyset {
     publicKey: string

@@ -1,5 +1,5 @@
 import React from "react"
-import {ApiMatch} from "../models/api/match";
+import {ApiMatchSchema} from "../models/api/match";
 import "../styles/summary.css";
 import {ReturnedHome} from "../models/actions/returned_home";
 import {appStateContext} from "../App";

@@ -2,11 +2,11 @@ import {BotType} from "../models/state/bot_type";
 import {ARBITRATOR_URL} from "../constants";
 import {Throwable} from "../types";
 import {ArbitratorMessageEventPayload} from "../models/events/message_event";
-import {MessageContentType} from "../models/messages/message_content_type";
 import {parseEventName} from "../models/events/message_event_name";
 import {Move} from "../models/domain/move";
+import {ArbitratorMessage} from "../models/api/messages/arbitrator_message";
+import {MessageContentType} from "../models/api/messages/message_content_type";
 import {ApiTimeControl} from "../models/api/time_control";
-import {ArbitratorMessage} from "../models/messages/arbitrator_message";
 
 export class ArbitratorClient {
     websocket: WebSocket;

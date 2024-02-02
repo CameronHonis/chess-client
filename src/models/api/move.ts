@@ -1,14 +1,14 @@
 import z from "zod";
-import {ApiSquare} from "./square";
-import {ApiPiece} from "./piece";
+import {ApiSquareSchema} from "./square";
+import {ApiPieceSchema} from "./piece";
 
-export const ApiMove = z.object({
-    piece: ApiPiece,
-    startSquare: ApiSquare,
-    endSquare: ApiSquare,
+export const ApiMoveSchema = z.object({
+    piece: ApiPieceSchema,
+    startSquare: ApiSquareSchema,
+    endSquare: ApiSquareSchema,
     capturedPiece: z.number().int(),
-    kingCheckingSquares: z.array(ApiSquare),
+    kingCheckingSquares: z.array(ApiSquareSchema),
     pawnUpgradedTo: z.number().int(),
 });
 
-export type ApiMove = z.infer<typeof ApiMove>;
+export type ApiMove = z.infer<typeof ApiMoveSchema>;

@@ -1,5 +1,5 @@
 import {Page} from "./page";
-import {ApiMatch} from "../api/match";
+import {ApiMatchSchema} from "../api/match";
 import {BoardState} from "../domain/board_state";
 import {Move} from "../domain/move";
 import {newRapidTimeControl} from "../domain/challenge";

@@ -1,4 +1,4 @@
-import {ApiTimeControl} from "../api/time_control";
+import {ApiTimeControlSchema} from "../api/time_control";
 import {ApiChallenge} from "../api/challenge";
 import {TimeControl} from "./time_control";
 
@@ -8,7 +8,7 @@ export class Challenge {
     challengedKey: string;
     isChallengerWhite: boolean;
     isChallengerBlack: boolean;
-    timeControl: ApiTimeControl;
+    timeControl: TimeControl;
     botName: string;
 
     constructor(args: Challenge) {
