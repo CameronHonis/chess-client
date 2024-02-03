@@ -2,13 +2,13 @@ import {AppStateAction, AppStateActionType} from "./app_state_action";
 import {Match} from "../domain/match";
 
 export interface MatchUpdateReceivedPayload {
-    newMatch: Match;
+    newMatch: Match | null;
 }
 
 export class MatchUpdateReceived implements AppStateAction {
     type = AppStateActionType.MATCH_UPDATE_RECEIVED;
     payload: MatchUpdateReceivedPayload;
-    constructor(match: Match) {
+    constructor(match: Match | null) {
         this.payload = {
             newMatch: match,
         };

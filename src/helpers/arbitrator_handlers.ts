@@ -23,8 +23,9 @@ export function registerOnAuthMsg() {
 
 export function registerOnMatchUpdatedMsg(dispatch: React.Dispatch<AppStateAction>) {
     document.addEventListener(parseEventName(MessageContentType.MATCH_UPDATED), (e) => {
-        const newMatch = e.detail.msg.content.match;
-        dispatch(new MatchUpdateReceived(Match.fromApi(newMatch)));
+        const apiMatch = e.detail.msg.content.match;
+        const domainMatch = apiMatch ? Match.fromApi(apiMatch) : null;
+        dispatch(new MatchUpdateReceived(domainMatch));
     });
 }
 
