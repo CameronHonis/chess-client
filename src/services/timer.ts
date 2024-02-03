@@ -48,8 +48,8 @@ export class Timer {
     }
 
     setFromMatch(match: Match) {
-        this.whiteSeconds = match.whiteTimeRemaining;
-        this.blackSeconds = match.blackTimeRemaining;
+        this.whiteSeconds = match.whiteTimeRemainingSec;
+        this.blackSeconds = match.blackTimeRemainingSec;
         this.isWhiteTurn = match.board.isWhiteTurn;
         this.isPaused = match.board.isTerminal;
         this.resetInterval();

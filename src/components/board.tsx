@@ -71,7 +71,7 @@ export const Board: React.FC<BoardProps> = () => {
         return false;
     }, [getLandSquareHashes, match, squareSelected]);
 
-    const whiteId = match.whiteClientId;
+    const whiteId = match.whiteClientKey;
     const isWhitePerspective = React.useMemo((): Throwable<boolean> => {
         const arbitratorKeyset = window.services.authManager.getArbitratorKeyset();
         if (!arbitratorKeyset) {

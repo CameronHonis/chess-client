@@ -16,7 +16,7 @@ export const ApiBoardSchema = z.object({
     canBlackCastleQueenside: z.boolean(),
     halfMoveClockCount: z.number().int(),
     fullMoveCount: z.number().int(),
-    repetitionsByMiniFEN: z.map(z.string(), z.number().int()),
+    repetitionsByMiniFEN: z.record(z.number().int().positive()),
     isTerminal: z.boolean(),
     isWhiteWinner: z.boolean(),
     isBlackWinner: z.boolean(),

@@ -386,7 +386,7 @@ export class BoardState {
             isTerminal: apiBoard.isTerminal,
             isWhiteWinner: apiBoard.isWhiteWinner,
             isBlackWinner: apiBoard.isBlackWinner,
-            repetitionsByMiniFEN: apiBoard.repetitionsByMiniFEN,
+            repetitionsByMiniFEN: new Map(Object.entries(apiBoard.repetitionsByMiniFEN)),
         });
     }
 }

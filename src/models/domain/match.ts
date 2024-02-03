@@ -5,19 +5,19 @@ import {ApiMatch} from "../api/match";
 export class Match {
     uuid: string;
     board: BoardState;
-    whiteTimeRemaining: number;
-    whiteClientId: string;
-    blackTimeRemaining: number;
-    blackClientId: string;
+    whiteTimeRemainingSec: number;
+    whiteClientKey: string;
+    blackTimeRemainingSec: number;
+    blackClientKey: string;
     timeControl: TimeControl;
 
     constructor(args: Match) {
         this.uuid = args.uuid;
         this.board = args.board;
-        this.whiteTimeRemaining = args.whiteTimeRemaining;
-        this.whiteClientId = args.whiteClientId;
-        this.blackTimeRemaining = args.blackTimeRemaining;
-        this.blackClientId = args.blackClientId;
+        this.whiteTimeRemainingSec = args.whiteTimeRemainingSec;
+        this.whiteClientKey = args.whiteClientKey;
+        this.blackTimeRemainingSec = args.blackTimeRemainingSec;
+        this.blackClientKey = args.blackClientKey;
         this.timeControl = args.timeControl;
     }
 
@@ -25,10 +25,10 @@ export class Match {
         return new Match({
             uuid: apiMatch.uuid,
             board: BoardState.fromApi(apiMatch.board),
-            whiteTimeRemaining: apiMatch.whiteTimeRemaining,
-            whiteClientId: apiMatch.whiteClientId,
-            blackTimeRemaining: apiMatch.blackTimeRemaining,
-            blackClientId: apiMatch.blackClientId,
+            whiteTimeRemainingSec: apiMatch.whiteTimeRemainingSec,
+            whiteClientKey: apiMatch.whiteClientKey,
+            blackTimeRemainingSec: apiMatch.blackTimeRemainingSec,
+            blackClientKey: apiMatch.blackClientKey,
             timeControl: TimeControl.fromApi(apiMatch.timeControl),
         });
     }

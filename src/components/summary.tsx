@@ -12,8 +12,8 @@ export const Summary: React.FC<SummaryProps> = (props) => {
 
     const match = appState.match!;
     const board = match.board;
-    const whiteTimeRemaining = match.whiteTimeRemaining;
-    const blackTimeRemaining = match.blackTimeRemaining;
+    const whiteTimeRemaining = match.whiteTimeRemainingSec;
+    const blackTimeRemaining = match.blackTimeRemainingSec;
     const [outcomeDesc, outcomeExpl] = React.useMemo(() => {
         if (board.isWhiteWinner === board.isBlackWinner) {
             if (board.halfMoveClockCount >= 50) {

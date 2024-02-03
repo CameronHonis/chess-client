@@ -5,10 +5,10 @@ import {ApiBoardSchema} from "./board";
 export const ApiMatchSchema = z.object({
     uuid: z.string().uuid(),
     board: ApiBoardSchema,
-    whiteClientId: z.string().length(64),
-    whiteTimeRemaining: z.number(),
-    blackClientId: z.string().length(64),
-    blackTimeRemaining: z.number(),
+    whiteClientKey: z.string().length(64),
+    whiteTimeRemainingSec: z.number(),
+    blackClientKey: z.string().length(64),
+    blackTimeRemainingSec: z.number(),
     timeControl: ApiTimeControlSchema,
 });
 

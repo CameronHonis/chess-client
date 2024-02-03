@@ -11,10 +11,10 @@ board.isTerminal = true;
 const tempMatch = new Match({
     uuid: "asdf",
     board: board,
-    whiteTimeRemaining: 10,
-    whiteClientId: "whiteClientId",
-    blackTimeRemaining: 10,
-    blackClientId: "blackClientId",
+    whiteTimeRemainingSec: 10,
+    whiteClientKey: "whiteClientId",
+    blackTimeRemainingSec: 10,
+    blackClientKey: "blackClientId",
     timeControl: newRapidTimeControl(),
 });
 
