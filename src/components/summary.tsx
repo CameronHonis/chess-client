@@ -1,7 +1,7 @@
 import React from "react"
 import {ApiMatchSchema} from "../models/api/match";
 import "../styles/summary.css";
-import {ReturnedHome} from "../models/actions/returned_home";
+import {ReturnHomeAction} from "../models/actions/return_home_action";
 import {appStateContext} from "../App";
 
 export interface SummaryProps {
@@ -38,7 +38,7 @@ export const Summary: React.FC<SummaryProps> = (props) => {
     }, [board, whiteTimeRemaining, blackTimeRemaining]);
 
     const handleHomeClick = () => {
-        appDispatch(new ReturnedHome());
+        appDispatch(new ReturnHomeAction());
     }
 
     const handleRematchClick = () => {

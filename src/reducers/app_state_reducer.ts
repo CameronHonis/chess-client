@@ -1,22 +1,22 @@
 import {AppState} from "../models/state/app_state";
 import {AppStateAction} from "../models/actions/app_state_action";
 import {Page} from "../models/state/page";
-import {isMatchUpdateReceived} from "../models/actions/match_update_received";
-import {isReturnedHome} from "../models/actions/returned_home";
-import {isMoveReceived} from "../models/actions/move_received";
+import {isUpdateMatchAction} from "../models/actions/update_match_action";
+import {isReturnHomeAction} from "../models/actions/return_home_action";
+import {isIngestMoveAction} from "../models/actions/ingest_move_action";
 
 
 export const appStateReducer = (state: AppState, action: AppStateAction): AppState => {
-    if (isMatchUpdateReceived(action)) {
+    if (isUpdateMatchAction(action)) {
         return state.merge({
             page: Page.BOARD,
             match: action.payload.newMatch,
         });
-    } else if (isMoveReceived(action)) {
+    } else if (isIngestMoveAction(action)) {
         return state.merge({
             lastMove: action.payload.move,
         });
-    } else if (isReturnedHome(action)) {
+    } else if (isReturnHomeAction(action)) {
         if (state.match && !state.match.board.isTerminal) {
             throw new Error("Cannot return home while match is in progress");
         }

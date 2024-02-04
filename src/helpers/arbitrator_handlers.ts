@@ -1,7 +1,7 @@
 import React from "react";
-import {MatchUpdateReceived} from "../models/actions/match_update_received";
+import {UpdateMatchAction} from "../models/actions/update_match_action";
 import {AppStateAction} from "../models/actions/app_state_action";
-import {MoveReceived} from "../models/actions/move_received";
+import {IngestMoveAction} from "../models/actions/ingest_move_action";
 import {parseEventName} from "../models/events/message_event_name";
 import {AuthKeyset} from "../services/auth_manager";
 import {dispatchErr} from "../models/events/notif_event";
@@ -25,7 +25,7 @@ export function registerOnMatchUpdatedMsg(dispatch: React.Dispatch<AppStateActio
     document.addEventListener(parseEventName(MessageContentType.MATCH_UPDATED), (e) => {
         const apiMatch = e.detail.msg.content.match;
         const domainMatch = apiMatch ? Match.fromApi(apiMatch) : null;
-        dispatch(new MatchUpdateReceived(domainMatch));
+        dispatch(new UpdateMatchAction(domainMatch));
     });
 }
 
@@ -33,7 +33,7 @@ export function registerOnMoveMsg(dispatch: React.Dispatch<AppStateAction>) {
     document.addEventListener(parseEventName(MessageContentType.MOVE), (e) => {
         const move = e.detail.msg.content.move;
         window.services.boardAnimator.movePiece(Square.fromApi(move.startSquare), Square.fromApi(move.endSquare));
-        dispatch(new MoveReceived(Move.fromApi(move)));
+        dispatch(new IngestMoveAction(Move.fromApi(move)));
     });
 }
 
