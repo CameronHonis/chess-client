@@ -2,7 +2,7 @@ import {Page} from "./page";
 import {ApiMatchSchema} from "../api/match";
 import {BoardState} from "../domain/board_state";
 import {Move} from "../domain/move";
-import {newRapidTimeControl} from "../domain/challenge";
+import {Challenge, newRapidTimeControl} from "../domain/challenge";
 import {Match} from "../domain/match";
 
 // const board = BoardState.fromFEN("3k4/3Q4/3K4/8/8/8/8/8 b - - 0 1");
@@ -30,18 +30,24 @@ export class AppState {
     page: Page;
     match: Match | null;
     lastMove: Move | null;
+    inboundChallenges: Challenge[];
+    outboundChallenges: Challenge[];
 
     constructor(appState: Partial<AppState>) {
         this.page = appState.page || initAppState.page;
         this.match = appState.match || initAppState.match;
         this.lastMove = appState.lastMove || null;
+        this.inboundChallenges = appState.inboundChallenges || [];
+        this.outboundChallenges = appState.outboundChallenges || [];
     }
 
-    merge(appState: Partial<AppState>): AppState {
+    merge(newAppState: Partial<AppState>): AppState {
         return new AppState({
-            page: appState.page || this.page,
-            match: appState.match || this.match,
-            lastMove: appState.lastMove || this.lastMove,
+            page: newAppState.page || this.page,
+            match: newAppState.match || this.match,
+            lastMove: newAppState.lastMove || this.lastMove,
+            inboundChallenges: newAppState.inboundChallenges || this.inboundChallenges,
+            outboundChallenges: newAppState.outboundChallenges || this.outboundChallenges,
         });
     }
 }
