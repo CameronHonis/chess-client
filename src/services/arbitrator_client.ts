@@ -1,4 +1,4 @@
-import {BotType} from "../models/state/bot_type";
+import {BotType} from "../models/domain/bot_type";
 import {ARBITRATOR_URL} from "../constants";
 import {Throwable} from "../types";
 import {ArbitratorMessageEventPayload} from "../models/events/message_event";
@@ -7,6 +7,7 @@ import {Move} from "../models/domain/move";
 import {ArbitratorMessage} from "../models/api/messages/arbitrator_message";
 import {MessageContentType} from "../models/api/messages/message_content_type";
 import {ApiTimeControl} from "../models/api/time_control";
+import {AuthKeyset} from "../models/domain/auth_keyset";
 
 export class ArbitratorClient {
     websocket: WebSocket;
@@ -61,26 +62,28 @@ export class ArbitratorClient {
         console.warn(`arbitrator client websocket connection on ${url} closed`);
     }
 
-    signAndSendMsg(msg: ArbitratorMessage<any>, signed = true): Throwable<void> {
+    signAndSendMsg(msg: ArbitratorMessage<any>, auth: AuthKeyset): Throwable<void> {
         if (this.websocket.readyState !== 1) {
             throw new Error(`cannot send message, websocket not open. got readyState = ${this.websocket.readyState}`);
         }
-        if (signed) {
-            window.services.authManager.signMessage(msg);
-        }
+        const signedMsg = auth.sign(msg);
+        return this.sendMsg(signedMsg);
+    }
+
+    sendMsg(msg: ArbitratorMessage<any>): Throwable<void> {
         const stringifiedMsg = JSON.stringify(msg);
         console.log(`[${this.websocket.url}] << ${stringifiedMsg}`);
         this.websocket.send(stringifiedMsg);
     }
 
-    challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl): Throwable<void> {
+    challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl, auth: AuthKeyset): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: "challenge",
             contentType: MessageContentType.CHALLENGE_REQUEST,
             content: {
                 challenge: {
                     uuid: "",
-                    challengerKey: window.services.authManager.getArbitratorKeyset()!.publicKey,
+                    challengerKey: auth.publicKey,
                     challengedKey: playerKey,
                     isChallengerWhite: isWhite,
                     isChallengerBlack: isBlack,
@@ -91,17 +94,17 @@ export class ArbitratorClient {
             senderKey: "",
             privateKey: "",
         });
-        this.signAndSendMsg(msg);
+        this.signAndSendMsg(msg, auth);
     }
 
-    challengeBot(botType: BotType, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl): Throwable<void> {
+    challengeBot(botType: BotType, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl, auth: AuthKeyset): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: "challenge",
             contentType: MessageContentType.CHALLENGE_REQUEST,
             content: {
                 challenge: {
                     uuid: "",
-                    challengerKey: window.services.authManager.getArbitratorKeyset()!.publicKey,
+                    challengerKey: auth.publicKey,
                     challengedKey: "",
                     isChallengerWhite: isWhite,
                     isChallengerBlack: isBlack,
@@ -112,10 +115,10 @@ export class ArbitratorClient {
             senderKey: "",
             privateKey: "",
         });
-        this.signAndSendMsg(msg);
+        this.signAndSendMsg(msg, auth);
     }
 
-    findMatch(): Throwable<void> {
+    findMatch(auth: AuthKeyset): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: "findMatch",
             contentType: MessageContentType.FIND_MATCH,
@@ -123,10 +126,10 @@ export class ArbitratorClient {
             senderKey: "",
             privateKey: "",
         })
-        this.signAndSendMsg(msg);
+        this.signAndSendMsg(msg, auth);
     }
 
-    sendMove(matchId: string, move: Move): Throwable<void> {
+    sendMove(matchId: string, move: Move, auth: AuthKeyset): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: `match-${matchId}`,
             contentType: MessageContentType.MOVE,
@@ -137,6 +140,6 @@ export class ArbitratorClient {
             senderKey: "",
             privateKey: "",
         });
-        this.signAndSendMsg(msg);
+        this.signAndSendMsg(msg, auth);
     }
 }

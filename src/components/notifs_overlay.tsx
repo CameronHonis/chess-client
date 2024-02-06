@@ -1,6 +1,6 @@
 import React from "react";
 import {EasyQueue} from "../helpers/easy_queue";
-import {Notification, NotifType} from "../models/state/notification";
+import {Notification, NotifType} from "../models/domain/notification";
 import "../styles/notif.css";
 import {NOTIF_EVENT} from "../models/events/notif_event";
 

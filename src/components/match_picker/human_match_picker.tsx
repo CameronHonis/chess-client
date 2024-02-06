@@ -2,6 +2,8 @@ import React from "react"
 import {Button} from "../button";
 import {Dots} from "../dots";
 import "../../styles/match_picker/human_match_picker.css";
+import {appStateContext} from "../../App";
+import {dispatchErr} from "../../models/events/notif_event";
 
 export interface HumanMatchPickerProps {
     isSearchingMatch: boolean;
@@ -14,10 +16,16 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
         setIsSearchingMatch
     } = props;
 
+    const [appState] = React.useContext(appStateContext);
+
     const handlePlayButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
+        if (!appState.auth) {
+            dispatchErr("Authentication failed. Please refresh the page.");
+            return;
+        }
         setIsSearchingMatch(true);
-        window.services.arbitratorClient.findMatch();
-    }, [setIsSearchingMatch]);
+        window.services.arbitratorClient.findMatch(appState.auth);
+    }, [appState.auth, setIsSearchingMatch]);
 
     const handleCancelButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
         setIsSearchingMatch(false);

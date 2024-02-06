@@ -1,5 +1,5 @@
-import {Page} from "../../src/models/state/page";
-import {AppState} from "../../src/models/state/app_state";
+import {Page} from "../../src/models/domain/page";
+import {AppState} from "../../src/models/domain/app_state";
 import {Match} from "../../src/models/domain/match";
 import {BoardState} from "../../src/models/domain/board_state";
 import {Challenge, newBlitzTimeControl, newBulletTimeControl} from "../../src/models/domain/challenge";

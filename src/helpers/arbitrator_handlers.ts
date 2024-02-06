@@ -3,21 +3,22 @@ import {UpdateMatchAction} from "../models/actions/update_match_action";
 import {AppStateAction} from "../models/actions/app_state_action";
 import {IngestMoveAction} from "../models/actions/ingest_move_action";
 import {parseEventName} from "../models/events/message_event_name";
-import {AuthKeyset} from "../services/auth_manager";
+import {AuthKeyset} from "../models/domain/auth_keyset";
 import {dispatchErr} from "../models/events/notif_event";
 import {Square} from "../models/domain/square";
 import {Move} from "../models/domain/move";
 import {Match} from "../models/domain/match";
 import {MessageContentType} from "../models/api/messages/message_content_type";
+import {UpdateAuthAction} from "../models/actions/update_auth_action";
 
-export function registerOnAuthMsg() {
+export function registerOnAuthMsg(dispatch: React.Dispatch<AppStateAction>) {
     document.addEventListener(parseEventName(MessageContentType.AUTH), (e) => {
         const content = e.detail.msg.content
-        const keyset: AuthKeyset = {
+        const keyset: AuthKeyset = new AuthKeyset({
             publicKey: content.publicKey,
             privateKey: content.privateKey,
-        }
-        window.services.authManager.setArbitratorKeyset(keyset);
+        });
+        dispatch(new UpdateAuthAction(keyset.publicKey, keyset.privateKey));
     });
 }
 

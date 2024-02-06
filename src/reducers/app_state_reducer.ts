@@ -1,14 +1,24 @@
-import {AppState} from "../models/state/app_state";
+import {AppState} from "../models/domain/app_state";
 import {AppStateAction} from "../models/actions/app_state_action";
-import {Page} from "../models/state/page";
+import {Page} from "../models/domain/page";
 import {isUpdateMatchAction} from "../models/actions/update_match_action";
 import {isReturnHomeAction} from "../models/actions/return_home_action";
 import {isIngestMoveAction} from "../models/actions/ingest_move_action";
 import {isUpdateChallengeAction} from "../models/actions/update_challenge_action";
+import {isUpdateAuthAction} from "../models/actions/update_auth_action";
+import {AuthKeyset} from "../models/domain/auth_keyset";
 
 
 export const appStateReducer = (curr: AppState, action: AppStateAction): AppState => {
-    if (isUpdateMatchAction(action)) {
+    if (isUpdateAuthAction(action)) {
+        return new AppState({
+            ...curr,
+            auth: new AuthKeyset({
+                publicKey: action.payload.publicKey,
+                privateKey: action.payload.privateKey,
+            }),
+        });
+    } else if (isUpdateMatchAction(action)) {
         const newMatch = action.payload.newMatch;
         if (newMatch && !newMatch.board.isTerminal) {
             return new AppState({

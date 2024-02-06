@@ -1,4 +1,4 @@
-import {Notification, NotifType} from "../state/notification";
+import {Notification, NotifType} from "../domain/notification";
 
 export type NOTIF_EVENT = "notif";
 export const NOTIF_EVENT = "notif";

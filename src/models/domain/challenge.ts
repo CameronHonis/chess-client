@@ -1,4 +1,3 @@
-import {ApiTimeControlSchema} from "../api/time_control";
 import {ApiChallenge} from "../api/challenge";
 import {TimeControl} from "./time_control";
 

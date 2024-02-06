@@ -65,20 +65,16 @@ export const Board: React.FC<BoardProps> = () => {
         const isPieceTurn =
             (ChessPieceHelper.isWhite(pieceType) && match.board.isWhiteTurn) ||
             (ChessPieceHelper.isBlack(pieceType) && !match.board.isWhiteTurn);
-        if (isPieceTurn) {
-            return true;
-        }
-        return false;
+        return isPieceTurn;
     }, [getLandSquareHashes, match, squareSelected]);
 
     const whiteId = match.whiteClientKey;
     const isWhitePerspective = React.useMemo((): Throwable<boolean> => {
-        const arbitratorKeyset = window.services.authManager.getArbitratorKeyset();
-        if (!arbitratorKeyset) {
+        if (!appState.auth) {
             throw new Error("couldn't get isWhitePerspective: arbitrator keyset is not defined");
         }
-        return arbitratorKeyset.publicKey === whiteId;
-    }, [whiteId]);
+        return appState.auth.publicKey === whiteId;
+    }, [appState.auth, whiteId]);
 
     const handleTileMouseDown = React.useCallback((mouseSquare: Square) => {
         if (squareSelected && mouseSquare.equalTo(squareSelected)) {
@@ -124,11 +120,11 @@ export const Board: React.FC<BoardProps> = () => {
             if (!move) {
                 throw new Error(`couldn't find move with end square ${dropSquare.getHash()}`);
             }
-            window.services.arbitratorClient.sendMove(match.uuid, move);
+            window.services.arbitratorClient.sendMove(match.uuid, move, appState.auth!);
             setDraggingSquare(null);
             setSquareSelected(null);
         }
-    }, [squareSelected, draggingSquare, match.uuid, getLandSquareHashes, movesByStartSquareHash]);
+    }, [appState.auth, squareSelected, draggingSquare, match.uuid, getLandSquareHashes, movesByStartSquareHash]);
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
