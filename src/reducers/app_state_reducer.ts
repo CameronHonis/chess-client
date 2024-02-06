@@ -20,7 +20,7 @@ export const appStateReducer = (curr: AppState, action: AppStateAction): AppStat
         });
     } else if (isUpdateMatchAction(action)) {
         const newMatch = action.payload.newMatch;
-        if (newMatch && !newMatch.board.isTerminal) {
+        if (newMatch) {
             return new AppState({
                 ...curr,
                 page: Page.BOARD,

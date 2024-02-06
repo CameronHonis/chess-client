@@ -25,28 +25,8 @@ export const initAppState = {
     lastMove: null,
     // page: Page.BOARD,
     // match: tempMatch,
-    inboundChallenges: [
-        new Challenge({
-            uuid: "some-uuid",
-            challengerKey: "some-client-key",
-            challengedKey: "some-other-client-key",
-            timeControl: newRapidTimeControl(),
-            isChallengerWhite: true,
-            isChallengerBlack: false,
-            botName: "",
-        })
-    ],
-    outboundChallenges: [
-        new Challenge({
-            uuid: "some-uuid",
-            challengerKey: "some-client-key",
-            challengedKey: "some-other-client-key",
-            timeControl: newBulletTimeControl(),
-            isChallengerWhite: true,
-            isChallengerBlack: false,
-            botName: "",
-        })
-    ],
+    inboundChallenges: [],
+    outboundChallenges: [],
 };
 
 export class AppState {
