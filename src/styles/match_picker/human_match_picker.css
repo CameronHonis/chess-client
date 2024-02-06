@@ -28,3 +28,7 @@
     font-weight: 800;
     align-self: end;
 }
+
+.HumanMatchPicker button {
+    color: #024;
+}

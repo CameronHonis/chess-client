@@ -21,7 +21,7 @@ export class TimeControl {
     }
 
     repr(): string {
-        const initTimeMin = Math.floor(this.initialTimeSec + 1e-4 / 60);
+        const initTimeMin = Math.floor((this.initialTimeSec + 1e-4) / 60);
         const incrTimeSec = Math.floor(this.incrementSec + 1e-4);
         return `${initTimeMin}+${incrTimeSec}`;
     }

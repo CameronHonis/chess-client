@@ -1,0 +1,80 @@
+.Challenges {
+    position: absolute;
+    right: 10px;
+    bottom: 10vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.ChallengeCard {
+    background: #444;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 2px 5px 10px 0 rgba(0, 0, 0, 0.35);
+}
+
+.ChallengeCard-OppInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.ChallengeCard-OppName {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.ChallengeCard-OppRating {
+    margin-top: 2px;
+    font-size: 1rem;
+}
+
+.ChallengeCard-MatchInfo {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.ChallengeCard-ColorLabel {
+    margin-right: 10px;
+}
+
+
+.ChallengeCard-MatchInfo b {
+    font-weight: bold;
+}
+
+.ChallengeCard-Controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.ChallengeCard button {
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: bold;
+}
+
+.ChallengeCard-Accept {
+    background: #0c5;
+    color: #000;
+}
+
+.ChallengeCard-Accept:hover {
+    background: #0a3;
+}
+
+.ChallengeCard-Decline {
+    background: #c00;
+    color: #000;
+}
+
+.ChallengeCard-Decline:hover {
+    background: #a00;
+}

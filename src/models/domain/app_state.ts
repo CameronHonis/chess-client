@@ -62,8 +62,8 @@ export class AppState {
         this.page = appState.page || initAppState.page;
         this.match = appState.match || initAppState.match;
         this.lastMove = appState.lastMove || null;
-        this.inboundChallenges = appState.inboundChallenges || [];
-        this.outboundChallenges = appState.outboundChallenges || [];
+        this.inboundChallenges = appState.inboundChallenges || initAppState.inboundChallenges;
+        this.outboundChallenges = appState.outboundChallenges || initAppState.outboundChallenges;
     }
 }
 
