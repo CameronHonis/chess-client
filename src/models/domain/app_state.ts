@@ -1,30 +1,14 @@
 import {Page} from "./page";
-import {BoardState} from "./board_state";
 import {Move} from "./move";
-import {Challenge, newBulletTimeControl, newRapidTimeControl} from "./challenge";
+import {Challenge} from "./challenge";
 import {Match} from "./match";
 import {AuthKeyset} from "./auth_keyset";
-
-// const board = BoardState.fromFEN("3k4/3Q4/3K4/8/8/8/8/8 b - - 0 1");
-const board = BoardState.getInitBoardState();
-board.isTerminal = true;
-const tempMatch = new Match({
-    uuid: "asdf",
-    board: board,
-    whiteTimeRemainingSec: 10,
-    whiteClientKey: "whiteClientId",
-    blackTimeRemainingSec: 10,
-    blackClientKey: "blackClientId",
-    timeControl: newRapidTimeControl(),
-});
 
 export const initAppState = {
     auth: null,
     page: Page.HOME,
     match: null,
     lastMove: null,
-    // page: Page.BOARD,
-    // match: tempMatch,
     inboundChallenges: [],
     outboundChallenges: [],
 };

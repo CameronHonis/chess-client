@@ -10,6 +10,7 @@ export const ApiMatchSchema = z.object({
     blackClientKey: z.string().length(64),
     blackTimeRemainingSec: z.number(),
     timeControl: ApiTimeControlSchema,
+    botName: z.string(),
 });
 
 export type ApiMatch = z.infer<typeof ApiMatchSchema>;

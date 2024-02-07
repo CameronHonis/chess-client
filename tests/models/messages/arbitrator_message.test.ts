@@ -1,12 +1,5 @@
-import {ApiMatchSchema} from "../../../src/models/api/match";
-import {BoardState} from "../../../src/models/domain/board_state";
-import {ApiTimeControlSchema} from "../../../src/models/api/time_control";
 import {MessageContentType} from "../../../src/models/api/messages/message_content_type";
-import {
-    MatchUpdateMessageContentSchema
-} from "../../../src/models/api/messages/arbitrator_contents/match_update_message_content";
 import {ArbitratorMessage} from "../../../src/models/api/messages/arbitrator_message";
-import z from "zod";
 
 
 describe("parseMessageFromJson", () => {
@@ -43,7 +36,8 @@ describe("parseMessageFromJson", () => {
                         "incrementSec": 0,
                         "timeAfterMovesCount": 0,
                         "secAfterMoves": 0
-                    }
+                    },
+                    "botName": ""
                 }
             }
         };

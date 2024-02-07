@@ -10,6 +10,7 @@ export class Match {
     blackTimeRemainingSec: number;
     blackClientKey: string;
     timeControl: TimeControl;
+    botName: string;
 
     constructor(args: Match) {
         this.uuid = args.uuid;
@@ -19,6 +20,7 @@ export class Match {
         this.blackTimeRemainingSec = args.blackTimeRemainingSec;
         this.blackClientKey = args.blackClientKey;
         this.timeControl = args.timeControl;
+        this.botName = args.botName;
     }
 
     static fromApi(apiMatch: ApiMatch): Match {
@@ -30,6 +32,7 @@ export class Match {
             blackTimeRemainingSec: apiMatch.blackTimeRemainingSec,
             blackClientKey: apiMatch.blackClientKey,
             timeControl: TimeControl.fromApi(apiMatch.timeControl),
+            botName: apiMatch.botName,
         });
     }
 }

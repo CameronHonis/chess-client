@@ -16,6 +16,7 @@ function getSomeChallenge(): Challenge {
         isChallengerWhite: true,
         isChallengerBlack: false,
         botName: "",
+        timeCreated: new Date(),
     });
 }
 
@@ -41,6 +42,7 @@ describe("app_state_reducer", () => {
                     whiteTimeRemainingSec: 10,
                     blackTimeRemainingSec: 10,
                     timeControl: newBulletTimeControl(),
+                    botName: "",
                 }));
             });
             it("updates the match", () => {
