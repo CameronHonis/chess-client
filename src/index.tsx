@@ -6,7 +6,7 @@ import {ArbitratorClient} from "./services/arbitrator_client";
 import {Timer} from "./services/timer";
 import {BoardAnimator} from "./services/board_animator";
 import {NotifAnimator} from "./services/notif_animator";
-import {registerOnChallengeFailed} from "./helpers/arbitrator_handlers";
+import {registerOnChallengeFailedMsgHandler} from "./helpers/arbitrator_handlers";
 
 window.services = {
     arbitratorClient: new ArbitratorClient(),
@@ -15,7 +15,7 @@ window.services = {
     notifAnimator: new NotifAnimator(),
 };
 
-registerOnChallengeFailed();
+registerOnChallengeFailedMsgHandler();
 
 // // TEMPORARY
 // window.services.authManager.setArbitratorKeyset({

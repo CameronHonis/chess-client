@@ -2,7 +2,6 @@ import {AppStateAction, AppStateActionType} from "./app_state_action";
 import {Challenge} from "../domain/challenge";
 
 export interface UpdateChallangePayload {
-    isInbound: boolean;
     newChallenge: Challenge;
 }
 
@@ -10,9 +9,8 @@ export class UpdateChallengeAction implements AppStateAction {
     type = AppStateActionType.UPDATE_CHALLENGE;
     payload: UpdateChallangePayload;
 
-    constructor(isInbound: boolean, challenge: Challenge) {
+    constructor(challenge: Challenge) {
         this.payload = {
-            isInbound: isInbound,
             newChallenge: challenge,
         };
     }

@@ -34,8 +34,11 @@ export const appStateReducer = (curr: AppState, action: AppStateAction): AppStat
             });
         }
     } else if (isUpdateChallengeAction(action)) {
-        const {newChallenge, isInbound} = action.payload;
-        if (isInbound) {
+        if (!curr.auth) {
+            throw new Error("Cannot update challenge without auth");
+        }
+        const {newChallenge} = action.payload;
+        if (newChallenge.isInbound(curr.auth)) {
             for (let i = 0; i < curr.inboundChallenges.length; i++) {
                 if (curr.inboundChallenges[i].uuid === newChallenge.uuid) {
                     const newInboundChallenges = [...curr.inboundChallenges];

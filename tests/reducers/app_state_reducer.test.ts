@@ -6,6 +6,7 @@ import {Challenge, newBlitzTimeControl, newBulletTimeControl} from "../../src/mo
 import {appStateReducer} from "../../src/reducers/app_state_reducer";
 import {UpdateMatchAction} from "../../src/models/actions/update_match_action";
 import {UpdateChallengeAction} from "../../src/models/actions/update_challenge_action";
+import {AuthKeyset} from "../../src/models/domain/auth_keyset";
 
 function getSomeChallenge(): Challenge {
     return new Challenge({
@@ -72,6 +73,12 @@ describe("app_state_reducer", () => {
     describe("on UPDATE_CHALLENGE", () => {
         let updateChallengeAction: UpdateChallengeAction;
         describe("when the challenge is inbound", () => {
+            beforeEach(() => {
+                appState.auth = new AuthKeyset({
+                    publicKey: getSomeChallenge().challengedKey,
+                    privateKey: "some-private-key"
+                });
+            });
             describe("when the challenge already exists", () => {
                 beforeEach(() => {
                     const oldChallenge = new Challenge(getSomeChallenge());
@@ -83,7 +90,7 @@ describe("app_state_reducer", () => {
                         ...oldChallenge,
                         timeControl: newBlitzTimeControl(),
                     });
-                    updateChallengeAction = new UpdateChallengeAction(true, challenge);
+                    updateChallengeAction = new UpdateChallengeAction(challenge);
                 });
                 it("updates the challenge", () => {
                     const newAppState = appStateReducer(appState, updateChallengeAction);
@@ -93,7 +100,7 @@ describe("app_state_reducer", () => {
             });
             describe("when the challenge does not exist", () => {
                 beforeEach(() => {
-                    updateChallengeAction = new UpdateChallengeAction(true, getSomeChallenge());
+                    updateChallengeAction = new UpdateChallengeAction(getSomeChallenge());
                 });
 
                 it("adds an inbound challenge", () => {
@@ -104,6 +111,12 @@ describe("app_state_reducer", () => {
             });
         });
         describe("when the challenge is outbound", () => {
+            beforeEach(() => {
+                appState.auth = new AuthKeyset({
+                    publicKey: getSomeChallenge().challengerKey,
+                    privateKey: "some-private-key"
+                });
+            });
             describe("when the challenge already exists", () => {
                 beforeEach(() => {
                     const oldChallenge = new Challenge(getSomeChallenge());
@@ -115,7 +128,7 @@ describe("app_state_reducer", () => {
                         ...oldChallenge,
                         timeControl: newBlitzTimeControl(),
                     });
-                    updateChallengeAction = new UpdateChallengeAction(false, challenge);
+                    updateChallengeAction = new UpdateChallengeAction(challenge);
                 });
                 it("updates the challenge", () => {
                     const newAppState = appStateReducer(appState, updateChallengeAction);
@@ -125,7 +138,7 @@ describe("app_state_reducer", () => {
             });
             describe("when the challenge does not exist", () => {
                 beforeEach(() => {
-                    updateChallengeAction = new UpdateChallengeAction(false, getSomeChallenge());
+                    updateChallengeAction = new UpdateChallengeAction(getSomeChallenge());
                 });
 
                 it("adds an outbound challenge", () => {

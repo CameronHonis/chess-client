@@ -8,11 +8,11 @@ export function ChallengesOverlay() {
     const [isExpanded, setIsExpanded] = React.useState(false);
 
     const inboundCards = React.useMemo(() => {
-        return appState.inboundChallenges.map(challenge => <ChallengeCard challenge={challenge}/>);
+        return appState.inboundChallenges.map((challenge, idx) => <ChallengeCard challenge={challenge} key={idx}/>);
     }, [appState.inboundChallenges]);
 
     const outboundCards = React.useMemo(() => {
-        return appState.outboundChallenges.map(challenge => <ChallengeCard challenge={challenge}/>)
+        return appState.outboundChallenges.map((challenge, idx) => <ChallengeCard challenge={challenge} key={idx} />);
     }, [appState.outboundChallenges]);
 
     return <div className="Challenges">

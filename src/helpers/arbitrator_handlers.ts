@@ -10,8 +10,10 @@ import {Move} from "../models/domain/move";
 import {Match} from "../models/domain/match";
 import {MessageContentType} from "../models/api/messages/message_content_type";
 import {UpdateAuthAction} from "../models/actions/update_auth_action";
+import {UpdateChallengeAction} from "../models/actions/update_challenge_action";
+import {Challenge} from "../models/domain/challenge";
 
-export function registerOnAuthMsg(dispatch: React.Dispatch<AppStateAction>) {
+export function registerOnAuthMsgHandler(dispatch: React.Dispatch<AppStateAction>) {
     document.addEventListener(parseEventName(MessageContentType.AUTH), (e) => {
         const content = e.detail.msg.content
         const keyset: AuthKeyset = new AuthKeyset({
@@ -22,7 +24,7 @@ export function registerOnAuthMsg(dispatch: React.Dispatch<AppStateAction>) {
     });
 }
 
-export function registerOnMatchUpdatedMsg(dispatch: React.Dispatch<AppStateAction>) {
+export function registerOnMatchUpdatedMsgHandler(dispatch: React.Dispatch<AppStateAction>) {
     document.addEventListener(parseEventName(MessageContentType.MATCH_UPDATED), (e) => {
         const apiMatch = e.detail.msg.content.match;
         const domainMatch = apiMatch ? Match.fromApi(apiMatch) : null;
@@ -30,7 +32,7 @@ export function registerOnMatchUpdatedMsg(dispatch: React.Dispatch<AppStateActio
     });
 }
 
-export function registerOnMoveMsg(dispatch: React.Dispatch<AppStateAction>) {
+export function registerOnMoveMsgHandler(dispatch: React.Dispatch<AppStateAction>) {
     document.addEventListener(parseEventName(MessageContentType.MOVE), (e) => {
         const move = e.detail.msg.content.move;
         window.services.boardAnimator.movePiece(Square.fromApi(move.startSquare), Square.fromApi(move.endSquare));
@@ -38,7 +40,14 @@ export function registerOnMoveMsg(dispatch: React.Dispatch<AppStateAction>) {
     });
 }
 
-export function registerOnChallengeFailed() {
+export function registerOnChallengeUpdatedMsgHandler(dispatch: React.Dispatch<AppStateAction>) {
+    document.addEventListener(parseEventName(MessageContentType.CHALLENGE_UPDATED), (e) => {
+        const apiChallenge = e.detail.msg.content.challenge;
+        dispatch(new UpdateChallengeAction(Challenge.fromApi(apiChallenge)));
+    });
+}
+
+export function registerOnChallengeFailedMsgHandler() {
     document.addEventListener(parseEventName(MessageContentType.CHALLENGE_REQUEST_FAILED), (e) => {
         const reason = e.detail.msg.content.reason;
         dispatchErr(`challenge request failed: ${reason}`);
