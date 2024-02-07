@@ -1,6 +1,8 @@
 import {BoardState} from "./board_state";
 import {TimeControl} from "./time_control";
 import {ApiMatch} from "../api/match";
+import {BotType, isBotType} from "./bot_type";
+import {Throwable} from "../../types";
 
 export class Match {
     uuid: string;
@@ -10,7 +12,7 @@ export class Match {
     blackTimeRemainingSec: number;
     blackClientKey: string;
     timeControl: TimeControl;
-    botName: string;
+    botName: "" | BotType;
 
     constructor(args: Match) {
         this.uuid = args.uuid;
@@ -23,8 +25,8 @@ export class Match {
         this.botName = args.botName;
     }
 
-    static fromApi(apiMatch: ApiMatch): Match {
-        return new Match({
+    static fromApi(apiMatch: ApiMatch): Throwable<Match> {
+        const match = new Match({
             uuid: apiMatch.uuid,
             board: BoardState.fromApi(apiMatch.board),
             whiteTimeRemainingSec: apiMatch.whiteTimeRemainingSec,
@@ -32,7 +34,15 @@ export class Match {
             blackTimeRemainingSec: apiMatch.blackTimeRemainingSec,
             blackClientKey: apiMatch.blackClientKey,
             timeControl: TimeControl.fromApi(apiMatch.timeControl),
-            botName: apiMatch.botName,
+            botName: "",
         });
+        if (apiMatch.botName !== "") {
+            if (!isBotType(apiMatch.botName)) {
+                throw new Error(`invalid bot name: ${apiMatch.botName}`);
+            } else {
+                match.botName = apiMatch.botName;
+            }
+        }
+        return match;
     }
 }

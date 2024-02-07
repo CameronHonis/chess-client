@@ -18,3 +18,25 @@ Move: {
     ],
     "pawnUpgradedTo": 0
 }
+
+
+FEN: 'Q4bnr/p2p4/n3B1pp/5p1k/4P3/5N1P/PPP2PP1/RNB1K2R w KQ f6 3 15'
+Move: {
+    "piece": 1,
+    "startSquare": {
+        "rank": 2,
+        "file": 7
+    },
+    "endSquare": {
+        "rank": 4,
+        "file": 7
+    },
+    "kingCheckingSquares": [
+        {
+            "rank": 4,
+            "file": 7
+        }
+    ],
+    "capturedPiece": null,
+    "pawnUpgradedTo": null
+}
