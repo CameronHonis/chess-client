@@ -1,0 +1,20 @@
+FEN: '3qkbnr/Bp1npb1p/2Pp1p2/p4Pp1/4P3/2N5/PPP3PP/R2QKBNR w KQk g6 1 10'
+Move: {
+    "piece": 1,
+    "startSquare": {
+        "rank": 6,
+        "file": 3
+    },
+    "endSquare": {
+        "rank": 7,
+        "file": 4
+    },
+    "capturedPiece": 8,
+    "kingCheckingSquares": [
+        {
+            "rank": 7,
+            "file": 4
+        }
+    ],
+    "pawnUpgradedTo": 0
+}

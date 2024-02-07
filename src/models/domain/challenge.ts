@@ -9,6 +9,7 @@ export class Challenge {
     isChallengerBlack: boolean;
     timeControl: TimeControl;
     botName: string;
+    timeCreated: Date;
 
     constructor(args: Challenge) {
         this.uuid = args.uuid;
@@ -18,6 +19,7 @@ export class Challenge {
         this.isChallengerBlack = args.isChallengerBlack;
         this.timeControl = args.timeControl;
         this.botName = args.botName;
+        this.timeCreated = args.timeCreated;
     }
 
     static fromApi(apiChallenge: ApiChallenge): Challenge {
@@ -29,6 +31,7 @@ export class Challenge {
             isChallengerBlack: apiChallenge.isChallengerBlack,
             timeControl: TimeControl.fromApi(apiChallenge.timeControl),
             botName: apiChallenge.botName,
+            timeCreated: apiChallenge.timeCreated,
         });
     }
 }

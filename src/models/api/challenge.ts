@@ -9,6 +9,7 @@ export const ApiChallengeSchema = z.object({
     isChallengerBlack: z.boolean(),
     timeControl: ApiTimeControlSchema,
     botName: z.string(),
+    timeCreated: z.string().transform((val) => new Date(val)),
 });
 
 export type ApiChallenge = z.infer<typeof ApiChallengeSchema>;
