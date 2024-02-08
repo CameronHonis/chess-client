@@ -9,6 +9,7 @@ export interface SummaryProps {
 
 export const Summary: React.FC<SummaryProps> = (props) => {
     const [appState, appDispatch] = React.useContext(appStateContext);
+    const [isVisible, setIsVisible] = React.useState(true);
 
     const match = appState.match!;
     const board = match.board;
@@ -55,18 +56,24 @@ export const Summary: React.FC<SummaryProps> = (props) => {
         }
     }
 
-    return <div className={"SummaryFrame"}>
-        <div className={"Summary"}>
-            <div className={"Summary-Banner"}>
-                <p>{outcomeDesc}</p>
-            </div>
-            <div className={"Summary-Body"}>
-                <p>{outcomeExpl}</p>
-                <div className={"Summary-Buttons"}>
-                    <button onClick={handleHomeClick}>Home</button>
-                    <button onClick={handleRematchClick}>Rematch</button>
+    const handleBackgroundClick = () => {
+        setIsVisible(false);
+    }
+
+    return <div className={"SummaryFrame"} onClick={handleBackgroundClick}>
+        {isVisible &&
+            <div className={"Summary"}>
+                <div className={"Summary-Banner"}>
+                    <p>{outcomeDesc}</p>
+                </div>
+                <div className={"Summary-Body"}>
+                    <p>{outcomeExpl}</p>
+                    <div className={"Summary-Buttons"}>
+                        <button onClick={handleHomeClick}>Home</button>
+                        <button onClick={handleRematchClick}>Rematch</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
 }

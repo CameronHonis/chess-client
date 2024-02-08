@@ -11,6 +11,7 @@ export interface ChallengeArgs {
     timeControl: TimeControl;
     botName: string;
     timeCreated: Date;
+    isActive: boolean;
 }
 
 export class Challenge {
@@ -22,6 +23,7 @@ export class Challenge {
     timeControl: TimeControl;
     botName: string;
     timeCreated: Date;
+    isActive: boolean;
 
     constructor(args: ChallengeArgs) {
         this.uuid = args.uuid;
@@ -32,6 +34,7 @@ export class Challenge {
         this.timeControl = args.timeControl;
         this.botName = args.botName;
         this.timeCreated = args.timeCreated;
+        this.isActive = args.isActive;
     }
 
     isInbound(auth: AuthKeyset): boolean {
@@ -48,6 +51,7 @@ export class Challenge {
             timeControl: TimeControl.fromApi(apiChallenge.timeControl),
             botName: apiChallenge.botName,
             timeCreated: apiChallenge.timeCreated,
+            isActive: apiChallenge.isActive,
         });
     }
 }

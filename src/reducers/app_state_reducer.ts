@@ -7,9 +7,10 @@ import {isIngestMoveAction} from "../models/actions/ingest_move_action";
 import {isUpdateChallengeAction} from "../models/actions/update_challenge_action";
 import {isUpdateAuthAction} from "../models/actions/update_auth_action";
 import {AuthKeyset} from "../models/domain/auth_keyset";
+import {Throwable} from "../types";
 
 
-export const appStateReducer = (curr: AppState, action: AppStateAction): AppState => {
+export const appStateReducer = (curr: AppState, action: AppStateAction): Throwable<AppState> => {
     if (isUpdateAuthAction(action)) {
         return new AppState({
             ...curr,
@@ -37,38 +38,68 @@ export const appStateReducer = (curr: AppState, action: AppStateAction): AppStat
         if (!curr.auth) {
             throw new Error("Cannot update challenge without auth");
         }
+
         const {newChallenge} = action.payload;
         if (newChallenge.isInbound(curr.auth)) {
             for (let i = 0; i < curr.inboundChallenges.length; i++) {
                 if (curr.inboundChallenges[i].uuid === newChallenge.uuid) {
-                    const newInboundChallenges = [...curr.inboundChallenges];
-                    newInboundChallenges[i] = newChallenge;
-                    return new AppState({
-                        ...curr,
-                        inboundChallenges: newInboundChallenges,
-                    });
+                    if (newChallenge.isActive) {
+                        const newInboundChallenges = [...curr.inboundChallenges];
+                        newInboundChallenges[i] = newChallenge;
+                        return new AppState({
+                            ...curr,
+                            inboundChallenges: newInboundChallenges,
+                        });
+                    } else {
+                        const newInboundChallenges = [
+                            ...curr.inboundChallenges.slice(0, i),
+                            ...curr.inboundChallenges.slice(i + 1)
+                        ];
+                        return new AppState({
+                            ...curr,
+                            inboundChallenges: newInboundChallenges,
+                        });
+                    }
                 }
             }
-            return new AppState({
-                ...curr,
-                inboundChallenges: [...curr.inboundChallenges, newChallenge],
-            });
+            if (newChallenge.isActive) {
+                return new AppState({
+                    ...curr,
+                    inboundChallenges: [...curr.inboundChallenges, newChallenge],
+                });
+            } else {
+                return new AppState(curr);
+            }
         } else {
             for (let i = 0; i < curr.outboundChallenges.length; i++) {
                 if (curr.outboundChallenges[i].uuid === newChallenge.uuid) {
-                    const newOutboundChallenges = [...curr.outboundChallenges];
-                    newOutboundChallenges[i] = newChallenge;
-                    return new AppState({
-                        ...curr,
-                        outboundChallenges: newOutboundChallenges,
-                    });
-
+                    if (newChallenge.isActive) {
+                        const newOutboundChallenges = [...curr.outboundChallenges];
+                        newOutboundChallenges[i] = newChallenge;
+                        return new AppState({
+                            ...curr,
+                            outboundChallenges: newOutboundChallenges,
+                        });
+                    } else {
+                        const newOutboundChallenges = [
+                            ...curr.outboundChallenges.slice(0, i),
+                            ...curr.outboundChallenges.slice(i + 1)
+                        ];
+                        return new AppState({
+                            ...curr,
+                            outboundChallenges: newOutboundChallenges,
+                        });
+                    }
                 }
             }
-            return new AppState({
-                ...curr,
-                outboundChallenges: [...curr.outboundChallenges, newChallenge],
-            });
+            if (newChallenge.isActive) {
+                return new AppState({
+                    ...curr,
+                    outboundChallenges: [...curr.outboundChallenges, newChallenge],
+                });
+            } else {
+                return new AppState(curr);
+            }
         }
     } else if (isIngestMoveAction(action)) {
         return new AppState({

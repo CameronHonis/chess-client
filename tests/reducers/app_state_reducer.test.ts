@@ -18,6 +18,7 @@ function getSomeChallenge(): Challenge {
         isChallengerBlack: false,
         botName: "",
         timeCreated: new Date(),
+        isActive: true,
     });
 }
 
@@ -72,79 +73,152 @@ describe("app_state_reducer", () => {
 
     describe("on UPDATE_CHALLENGE", () => {
         let updateChallengeAction: UpdateChallengeAction;
-        describe("when the challenge is inbound", () => {
+        describe("when the challenge is active", () => {
             beforeEach(() => {
-                appState.auth = new AuthKeyset({
-                    publicKey: getSomeChallenge().challengedKey,
-                    privateKey: "some-private-key"
-                });
+                const challenge = getSomeChallenge();
+                updateChallengeAction = new UpdateChallengeAction(challenge);
             });
-            describe("when the challenge already exists", () => {
+            describe("when the challenge is inbound", () => {
                 beforeEach(() => {
-                    const oldChallenge = new Challenge(getSomeChallenge());
-                    appState.inboundChallenges = [
-                        oldChallenge,
-                    ];
-
-                    const challenge = new Challenge({
-                        ...oldChallenge,
-                        timeControl: newBlitzTimeControl(),
+                    appState.auth = new AuthKeyset({
+                        publicKey: getSomeChallenge().challengedKey,
+                        privateKey: "some-private-key"
                     });
-                    updateChallengeAction = new UpdateChallengeAction(challenge);
                 });
-                it("updates the challenge", () => {
-                    const newAppState = appStateReducer(appState, updateChallengeAction);
-                    expect(newAppState.inboundChallenges).toHaveLength(1);
-                    expect(newAppState.inboundChallenges[0]).toBe(updateChallengeAction.payload.newChallenge);
+                describe("when the challenge already exists", () => {
+                    beforeEach(() => {
+                        const oldChallenge = new Challenge(getSomeChallenge());
+                        oldChallenge.timeControl = newBlitzTimeControl();
+                        appState.inboundChallenges = [
+                            oldChallenge,
+                        ];
+                    });
+                    it("updates the challenge", () => {
+                        const newAppState = appStateReducer(appState, updateChallengeAction);
+                        expect(newAppState.inboundChallenges).toHaveLength(1);
+                        expect(newAppState.inboundChallenges[0]).toBe(updateChallengeAction.payload.newChallenge);
+                    });
+                });
+                describe("when the challenge does not exist", () => {
+                    it("adds an inbound challenge", () => {
+                        const newAppState = appStateReducer(appState, updateChallengeAction);
+                        expect(newAppState.inboundChallenges).toHaveLength(1);
+                        expect(newAppState.inboundChallenges[0]).toBe(updateChallengeAction.payload.newChallenge);
+                    });
                 });
             });
-            describe("when the challenge does not exist", () => {
+            describe("when the challenge is outbound", () => {
                 beforeEach(() => {
-                    updateChallengeAction = new UpdateChallengeAction(getSomeChallenge());
+                    appState.auth = new AuthKeyset({
+                        publicKey: getSomeChallenge().challengerKey,
+                        privateKey: "some-private-key"
+                    });
                 });
+                describe("when the challenge already exists", () => {
+                    beforeEach(() => {
+                        const oldChallenge = new Challenge(getSomeChallenge());
+                        appState.inboundChallenges = [
+                            oldChallenge,
+                        ];
 
-                it("adds an inbound challenge", () => {
-                    const newAppState = appStateReducer(appState, updateChallengeAction);
-                    expect(newAppState.inboundChallenges).toHaveLength(1);
-                    expect(newAppState.inboundChallenges[0]).toBe(updateChallengeAction.payload.newChallenge);
+                        const challenge = new Challenge({
+                            ...oldChallenge,
+                            timeControl: newBlitzTimeControl(),
+                        });
+                        updateChallengeAction = new UpdateChallengeAction(challenge);
+                    });
+                    it("updates the challenge", () => {
+                        const newAppState = appStateReducer(appState, updateChallengeAction);
+                        expect(newAppState.outboundChallenges).toHaveLength(1);
+                        expect(newAppState.outboundChallenges[0]).toBe(updateChallengeAction.payload.newChallenge);
+                    });
+                });
+                describe("when the challenge does not exist", () => {
+                    beforeEach(() => {
+                        updateChallengeAction = new UpdateChallengeAction(getSomeChallenge());
+                    });
+
+                    it("adds an outbound challenge", () => {
+                        const newAppState = appStateReducer(appState, updateChallengeAction);
+                        expect(newAppState.outboundChallenges).toHaveLength(1);
+                        expect(newAppState.outboundChallenges[0]).toBe(updateChallengeAction.payload.newChallenge);
+                    });
                 });
             });
         });
-        describe("when the challenge is outbound", () => {
+        describe("when the challenge is not active", () => {
             beforeEach(() => {
-                appState.auth = new AuthKeyset({
-                    publicKey: getSomeChallenge().challengerKey,
-                    privateKey: "some-private-key"
-                });
+                const challenge = getSomeChallenge();
+                challenge.isActive = false;
+                updateChallengeAction = new UpdateChallengeAction(challenge);
             });
-            describe("when the challenge already exists", () => {
+            describe("when the challenge is inbound", () => {
                 beforeEach(() => {
-                    const oldChallenge = new Challenge(getSomeChallenge());
-                    appState.inboundChallenges = [
-                        oldChallenge,
-                    ];
-
-                    const challenge = new Challenge({
-                        ...oldChallenge,
-                        timeControl: newBlitzTimeControl(),
+                    appState.auth = new AuthKeyset({
+                        publicKey: getSomeChallenge().challengedKey,
+                        privateKey: "some-private-key",
                     });
-                    updateChallengeAction = new UpdateChallengeAction(challenge);
                 });
-                it("updates the challenge", () => {
-                    const newAppState = appStateReducer(appState, updateChallengeAction);
-                    expect(newAppState.outboundChallenges).toHaveLength(1);
-                    expect(newAppState.outboundChallenges[0]).toBe(updateChallengeAction.payload.newChallenge);
+                describe("when the challenge exists", () => {
+                    beforeEach(() => {
+                        appState.inboundChallenges = [
+                            new Challenge(updateChallengeAction.payload.newChallenge),
+                        ]
+                    });
+                    it("removes the challenge", () => {
+                        const newAppState = appStateReducer(appState, updateChallengeAction);
+                        expect(newAppState.inboundChallenges).toHaveLength(0);
+                    });
+                });
+                describe("and the challenge does not exist", () => {
+                    beforeEach(() => {
+                        const otherChallenge = getSomeChallenge();
+                        otherChallenge.uuid = "some-other-uuid";
+                        otherChallenge.challengerKey = "some-other-client-key";
+                        appState.inboundChallenges = [
+                            otherChallenge,
+                        ];
+                    });
+                    it("does nothing", () => {
+                        const newAppState = appStateReducer(appState, updateChallengeAction);
+                        expect(newAppState.inboundChallenges).toHaveLength(1);
+                        expect(newAppState.inboundChallenges[0]).toBe(appState.inboundChallenges[0]);
+                    });
                 });
             });
-            describe("when the challenge does not exist", () => {
+            describe("when the challenge is outbound", () => {
                 beforeEach(() => {
-                    updateChallengeAction = new UpdateChallengeAction(getSomeChallenge());
+                    appState.auth = new AuthKeyset({
+                        publicKey: getSomeChallenge().challengerKey,
+                        privateKey: "some-private-key",
+                    });
                 });
-
-                it("adds an outbound challenge", () => {
-                    const newAppState = appStateReducer(appState, updateChallengeAction);
-                    expect(newAppState.outboundChallenges).toHaveLength(1);
-                    expect(newAppState.outboundChallenges[0]).toBe(updateChallengeAction.payload.newChallenge);
+                describe("when the challenge exists", () => {
+                    beforeEach(() => {
+                        const challenge = new Challenge(updateChallengeAction.payload.newChallenge);
+                        appState.outboundChallenges = [
+                            challenge,
+                        ];
+                    });
+                    it("removes the challenge", () => {
+                        const newAppState = appStateReducer(appState, updateChallengeAction);
+                        expect(newAppState.outboundChallenges).toHaveLength(0);
+                    });
+                });
+                describe("and the challenge does not exist", () => {
+                    beforeEach(() => {
+                        const otherChallenge = getSomeChallenge();
+                        otherChallenge.uuid = "some-other-uuid";
+                        otherChallenge.challengerKey = "some-other-client-key";
+                        appState.outboundChallenges = [
+                            otherChallenge,
+                        ];
+                    });
+                    it("does nothing", () => {
+                        const newAppState = appStateReducer(appState, updateChallengeAction);
+                        expect(newAppState.outboundChallenges).toHaveLength(1);
+                        expect(newAppState.outboundChallenges[0]).toBe(appState.outboundChallenges[0]);
+                    });
                 });
             });
         });
