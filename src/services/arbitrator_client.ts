@@ -8,6 +8,9 @@ import {ArbitratorMessage} from "../models/api/messages/arbitrator_message";
 import {MessageContentType} from "../models/api/messages/message_content_type";
 import {ApiTimeControl} from "../models/api/time_control";
 import {AuthKeyset} from "../models/domain/auth_keyset";
+import {
+    DeclineChallengeMessageContentSchema
+} from "../models/api/messages/arbitrator_contents/challenge_request_denied_message_content";
 
 export class ArbitratorClient {
     websocket: WebSocket;
@@ -115,6 +118,45 @@ export class ArbitratorClient {
                     timeCreated: new Date(),
                     isActive: true,
                 },
+            },
+            senderKey: "",
+            privateKey: "",
+        });
+        this.signAndSendMsg(msg, auth);
+    }
+
+    declineChallenge(challengeId: string, challengerKey: string, auth: AuthKeyset): Throwable<void> {
+        const msg = new ArbitratorMessage({
+            topic: `challenge-${challengeId}`,
+            contentType: MessageContentType.DECLINE_CHALLENGE,
+            content: {
+                challengerClientKey: challengerKey,
+            },
+            senderKey: "",
+            privateKey: "",
+        });
+        this.signAndSendMsg(msg, auth);
+    }
+
+    acceptChallenge(challengeId: string, challengerKey: string, auth: AuthKeyset): Throwable<void> {
+        const msg = new ArbitratorMessage({
+            topic: `challenge-${challengeId}`,
+            contentType: MessageContentType.ACCEPT_CHALLENGE,
+            content: {
+                challengerClientKey: challengerKey,
+            },
+            senderKey: "",
+            privateKey: "",
+        });
+        this.signAndSendMsg(msg, auth);
+    }
+
+    revokeChallenge(challengeId: string, auth: AuthKeyset): Throwable<void> {
+        const msg = new ArbitratorMessage({
+            topic: `challenge-${challengeId}`,
+            contentType: MessageContentType.REVOKE_CHALLENGE,
+            content: {
+                challengerClientKey: auth.publicKey,
             },
             senderKey: "",
             privateKey: "",

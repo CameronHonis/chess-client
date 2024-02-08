@@ -9,10 +9,14 @@ export interface ChallengeCardProps {
 export function ChallengeCard(props: ChallengeCardProps) {
     const [appState] = React.useContext(appStateContext);
     const onAcceptClick = () => {
-
+        window.services.arbitratorClient.acceptChallenge(
+            props.challenge.uuid, props.challenge.challengerKey, appState.auth!);
     }
 
-    const onDeclineClick = () => { }
+    const onDeclineClick = () => {
+        window.services.arbitratorClient.declineChallenge(
+            props.challenge.uuid, props.challenge.challengerKey, appState.auth!);
+    }
 
     const [isOutgoing, opponentName, selfColor] = React.useMemo(() => {
         if (!appState.auth)
@@ -26,7 +30,8 @@ export function ChallengeCard(props: ChallengeCardProps) {
         } else {
             const color = isColorsRandom ?
                 "Random" : props.challenge.isChallengerWhite ? "Black" : "White";
-            return [false, props.challenge.challengerKey, color];
+            return [true, props.challenge.challengerKey, color];
+            // return [false, props.challenge.challengerKey, color];
         }
     }, [appState.auth, props.challenge]);
 

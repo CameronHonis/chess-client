@@ -1,6 +1,6 @@
 import {Page} from "./page";
 import {Move} from "./move";
-import {Challenge} from "./challenge";
+import {Challenge, newBlitzTimeControl} from "./challenge";
 import {Match} from "./match";
 import {AuthKeyset} from "./auth_keyset";
 
@@ -10,7 +10,19 @@ export const initAppState = {
     match: null,
     lastMove: null,
     inboundChallenges: [],
-    outboundChallenges: [],
+    outboundChallenges: [
+        new Challenge({
+            uuid: "uuid",
+            challengerKey: "challengerKey",
+            challengedKey: "challengedKey",
+            isChallengerWhite: true,
+            isChallengerBlack: false,
+            timeControl: newBlitzTimeControl(),
+            botName: "",
+            timeCreated: new Date(),
+            isActive: true,
+        })
+    ],
 };
 
 export class AppState {

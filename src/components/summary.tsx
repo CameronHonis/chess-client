@@ -60,8 +60,8 @@ export const Summary: React.FC<SummaryProps> = (props) => {
         setIsVisible(false);
     }
 
-    return <div className={"SummaryFrame"} onClick={handleBackgroundClick}>
-        {isVisible &&
+    return <>
+        {isVisible && <div className={"SummaryFrame"} onClick={handleBackgroundClick}>
             <div className={"Summary"}>
                 <div className={"Summary-Banner"}>
                     <p>{outcomeDesc}</p>
@@ -74,6 +74,6 @@ export const Summary: React.FC<SummaryProps> = (props) => {
                     </div>
                 </div>
             </div>
-        }
-    </div>
+        </div>}
+    </>
 }
