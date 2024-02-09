@@ -3,6 +3,7 @@ import {TimeControl} from "./time_control";
 import {ApiMatch} from "../api/match";
 import {BotType, isBotType} from "./bot_type";
 import {Throwable} from "../../types";
+import {MatchResult, matchResultFromApi} from "./match_result";
 
 export class Match {
     uuid: string;
@@ -13,6 +14,7 @@ export class Match {
     blackClientKey: string;
     timeControl: TimeControl;
     botName: "" | BotType;
+    result: MatchResult;
 
     constructor(args: Match) {
         this.uuid = args.uuid;
@@ -23,6 +25,7 @@ export class Match {
         this.blackClientKey = args.blackClientKey;
         this.timeControl = args.timeControl;
         this.botName = args.botName;
+        this.result = args.result;
     }
 
     static fromApi(apiMatch: ApiMatch): Throwable<Match> {
@@ -35,6 +38,7 @@ export class Match {
             blackClientKey: apiMatch.blackClientKey,
             timeControl: TimeControl.fromApi(apiMatch.timeControl),
             botName: "",
+            result: matchResultFromApi(apiMatch.result),
         });
         if (apiMatch.botName !== "") {
             if (!isBotType(apiMatch.botName)) {

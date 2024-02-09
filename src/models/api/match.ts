@@ -1,6 +1,7 @@
 import {ApiTimeControlSchema} from "./time_control";
 import z from "zod";
 import {ApiBoardSchema} from "./board";
+import {ApiMatchResultSchema} from "./match_result";
 
 export const ApiMatchSchema = z.object({
     uuid: z.string().uuid(),
@@ -11,6 +12,7 @@ export const ApiMatchSchema = z.object({
     blackTimeRemainingSec: z.number(),
     timeControl: ApiTimeControlSchema,
     botName: z.string(),
+    result: ApiMatchResultSchema,
 });
 
 export type ApiMatch = z.infer<typeof ApiMatchSchema>;

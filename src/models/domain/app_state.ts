@@ -11,17 +11,17 @@ export const initAppState = {
     lastMove: null,
     inboundChallenges: [],
     outboundChallenges: [
-        new Challenge({
-            uuid: "uuid",
-            challengerKey: "challengerKey",
-            challengedKey: "challengedKey",
-            isChallengerWhite: true,
-            isChallengerBlack: false,
-            timeControl: newBlitzTimeControl(),
-            botName: "",
-            timeCreated: new Date(),
-            isActive: true,
-        })
+        // new Challenge({
+        //     uuid: "uuid",
+        //     challengerKey: "challengerKey",
+        //     challengedKey: "challengedKey",
+        //     isChallengerWhite: true,
+        //     isChallengerBlack: false,
+        //     timeControl: newBlitzTimeControl(),
+        //     botName: "",
+        //     timeCreated: new Date(),
+        //     isActive: true,
+        // })
     ],
 };
 

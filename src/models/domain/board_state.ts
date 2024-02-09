@@ -373,6 +373,9 @@ export class BoardState {
     }
 
     static fromApi(apiBoard: ApiBoard): BoardState {
+        const isTerminal = apiBoard.result !== "in_progress";
+        const isWhiteWinner = apiBoard.result.startsWith("white_wins");
+        const isBlackWinner = apiBoard.result.startsWith("black_wins");
         return new BoardState({
             pieces: apiBoard.pieces.map(row => row.map(ChessPieceFromApi)),
             enPassantSquare: apiBoard.enPassantSquare ? Square.fromApi(apiBoard.enPassantSquare) : null,
@@ -383,9 +386,9 @@ export class BoardState {
             canBlackCastleQueenside: apiBoard.canBlackCastleQueenside,
             halfMoveClockCount: apiBoard.halfMoveClockCount,
             fullMoveCount: apiBoard.fullMoveCount,
-            isTerminal: apiBoard.isTerminal,
-            isWhiteWinner: apiBoard.isWhiteWinner,
-            isBlackWinner: apiBoard.isBlackWinner,
+            isTerminal,
+            isWhiteWinner,
+            isBlackWinner,
             repetitionsByMiniFEN: new Map(Object.entries(apiBoard.repetitionsByMiniFEN)),
         });
     }

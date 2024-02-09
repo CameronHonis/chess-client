@@ -7,9 +7,9 @@ import {ChessPiece} from "../models/domain/chess_piece";
 import {Move} from "../models/domain/move";
 import {appStateContext} from "../App";
 import {ReactComp, Throwable} from "../types";
-import {Clock} from "./clock";
 import {Summary} from "./summary";
 import {AnimTile} from "./anim_tile";
+import {BoardLeftGutter} from "./board_left_gutter";
 
 export interface BoardProps {
 }
@@ -175,10 +175,7 @@ export const Board: React.FC<BoardProps> = () => {
 
 
     return <div className={"BoardFrame"}>
-        <div className={"Clocks"}>
-            <Clock isWhite={!isWhitePerspective}/>
-            <Clock isWhite={isWhitePerspective} isHomeClock/>
-        </div>
+        <BoardLeftGutter isWhitePerspective={isWhitePerspective} />
         <div className={"Board"}>
             {tiles}
             {animTile}

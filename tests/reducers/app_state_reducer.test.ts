@@ -7,6 +7,7 @@ import {appStateReducer} from "../../src/reducers/app_state_reducer";
 import {UpdateMatchAction} from "../../src/models/actions/update_match_action";
 import {UpdateChallengeAction} from "../../src/models/actions/update_challenge_action";
 import {AuthKeyset} from "../../src/models/domain/auth_keyset";
+import {MatchResult} from "../../src/models/domain/match_result";
 
 function getSomeChallenge(): Challenge {
     return new Challenge({
@@ -45,6 +46,7 @@ describe("app_state_reducer", () => {
                     blackTimeRemainingSec: 10,
                     timeControl: newBulletTimeControl(),
                     botName: "",
+                    result: MatchResult.IN_PROGRESS,
                 }));
             });
             it("updates the match", () => {

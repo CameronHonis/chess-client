@@ -1,5 +1,6 @@
 import z from "zod";
 import {ApiSquareSchema} from "./square";
+import {ApiBoardResultSchema} from "./board_result";
 
 
 export const ApiBoardSchema = z.object({
@@ -17,9 +18,7 @@ export const ApiBoardSchema = z.object({
     halfMoveClockCount: z.number().int(),
     fullMoveCount: z.number().int(),
     repetitionsByMiniFEN: z.record(z.number().int().positive()),
-    isTerminal: z.boolean(),
-    isWhiteWinner: z.boolean(),
-    isBlackWinner: z.boolean(),
+    result: ApiBoardResultSchema,
 });
 
 export type ApiBoard = z.infer<typeof ApiBoardSchema>;

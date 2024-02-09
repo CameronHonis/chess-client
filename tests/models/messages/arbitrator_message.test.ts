@@ -23,9 +23,7 @@ describe("parseMessageFromJson", () => {
                         "halfMoveClockCount": 0,
                         "fullMoveCount": 1,
                         "repetitionsByMiniFEN": {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -": 1},
-                        "isTerminal": false,
-                        "isWhiteWinner": false,
-                        "isBlackWinner": false
+                        "result": "in_progress",
                     },
                     "whiteClientKey": "b0d7dfd5f91ce83b7baae3c17e05aa05729b143d30768abc89c74c8762b59ce4",
                     "whiteTimeRemainingSec": 300,
@@ -37,7 +35,8 @@ describe("parseMessageFromJson", () => {
                         "timeAfterMovesCount": 0,
                         "secAfterMoves": 0
                     },
-                    "botName": ""
+                    "botName": "",
+                    "result": "in_progress",
                 }
             }
         };
@@ -54,6 +53,7 @@ describe("parseMessageFromJson", () => {
         expect(parsedMsg.content.match!.blackClientKey).toBe("948669118cf13b879a9f63da87c8392d77ba22383f7e61feb8e94ee0ee5c2ef2");
         expect(parsedMsg.content.match!.blackTimeRemainingSec).toBe(300);
         expect(parsedMsg.content.match!.board).not.toBe(null);
+        expect(parsedMsg.content.match!.board.result).toBe("in_progress");
         expect(parsedMsg.content.match!.timeControl).not.toBe(null);
     });
 });
