@@ -8,6 +8,7 @@ import {isUpdateChallengeAction} from "../models/actions/update_challenge_action
 import {isUpdateAuthAction} from "../models/actions/update_auth_action";
 import {AuthKeyset} from "../models/domain/auth_keyset";
 import {Throwable} from "../types";
+import {MatchResult} from "../models/domain/match_result";
 
 
 export const appStateReducer = (curr: AppState, action: AppStateAction): Throwable<AppState> => {
@@ -107,7 +108,7 @@ export const appStateReducer = (curr: AppState, action: AppStateAction): Throwab
             lastMove: action.payload.move,
         });
     } else if (isReturnHomeAction(action)) {
-        if (curr.match && !curr.match.board.isTerminal) {
+        if (curr.match && curr.match.result === MatchResult.IN_PROGRESS) {
             throw new Error("Cannot return home while match is in progress");
         }
         return new AppState({

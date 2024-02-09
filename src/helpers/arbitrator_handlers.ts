@@ -27,7 +27,7 @@ export function registerOnAuthMsgHandler(dispatch: React.Dispatch<AppStateAction
 export function registerOnMatchUpdatedMsgHandler(dispatch: React.Dispatch<AppStateAction>) {
     document.addEventListener(parseEventName(MessageContentType.MATCH_UPDATED), (e) => {
         const apiMatch = e.detail.msg.content.match;
-        const domainMatch = apiMatch ? Match.fromApi(apiMatch) : null;
+        const domainMatch = Match.fromApi(apiMatch);
         dispatch(new UpdateMatchAction(domainMatch));
     });
 }

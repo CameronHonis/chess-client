@@ -1,8 +1,8 @@
 import React from "react"
-import {ApiMatchSchema} from "../models/api/match";
 import "../styles/summary.css";
 import {ReturnHomeAction} from "../models/actions/return_home_action";
 import {appStateContext} from "../App";
+import {MatchResult} from "../models/domain/match_result";
 
 export interface SummaryProps {
 }
@@ -10,33 +10,34 @@ export interface SummaryProps {
 export const Summary: React.FC<SummaryProps> = (props) => {
     const [appState, appDispatch] = React.useContext(appStateContext);
     const [isVisible, setIsVisible] = React.useState(true);
-
     const match = appState.match!;
-    const board = match.board;
-    const whiteTimeRemaining = match.whiteTimeRemainingSec;
-    const blackTimeRemaining = match.blackTimeRemainingSec;
+
     const [outcomeDesc, outcomeExpl] = React.useMemo(() => {
-        if (board.isWhiteWinner === board.isBlackWinner) {
-            if (board.halfMoveClockCount >= 50) {
+        switch (match.result) {
+            case MatchResult.WHITE_WINS_BY_CHECKMATE:
+                return ["White wins", "by checkmate"];
+            case MatchResult.BLACK_WINS_BY_CHECKMATE:
+                return ["Black wins", "by checkmate"];
+            case MatchResult.WHITE_WINS_BY_RESIGNATION:
+                return ["White wins", "by resignation"];
+            case MatchResult.BLACK_WINS_BY_RESIGNATION:
+                return ["Black wins", "by resignation"];
+            case MatchResult.WHITE_WINS_BY_TIMEOUT:
+                return ["White wins", "by timeout"];
+            case MatchResult.BLACK_WINS_BY_TIMEOUT:
+                return ["Black wins", "by timeout"];
+            case MatchResult.DRAW_BY_INSUFFICIENT_MATERIAL:
+                return ["Draw", "by insufficient material"];
+            case MatchResult.DRAW_BY_THREEFOLD_REPETITION:
+                return ["Draw", "by threefold repetition"];
+            case MatchResult.DRAW_BY_FIFTY_MOVE_RULE:
                 return ["Draw", "by 50-move rule"];
-            } else if (!board.getHasLegalMoves()) {
+            case MatchResult.DRAW_BY_STALEMATE:
                 return ["Draw", "by stalemate"];
-            } else if (!board.isDrawByRepetition()) {
-                return ["Draw", "by repetition"];
-            } else {
-                return ["Draw", "by agreement"];
-            }
-        } else {
-            const colorName = board.isWhiteWinner ? "White" : "Black";
-            if (!board.getHasLegalMoves()) {
-                return [`${colorName} wins`, "by checkmate"];
-            } else if (whiteTimeRemaining < .0001 || blackTimeRemaining < .0001) {
-                return [`${colorName} wins`, "by timeout"];
-            } else {
-                return [`${colorName} wins`, "by resignation"];
-            }
+            default:
+                throw new Error("Unhandled match result: " + match.result);
         }
-    }, [board, whiteTimeRemaining, blackTimeRemaining]);
+    }, [match.result]);
 
     const handleHomeClick = () => {
         appDispatch(new ReturnHomeAction());

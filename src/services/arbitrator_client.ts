@@ -188,4 +188,17 @@ export class ArbitratorClient {
         });
         this.signAndSendMsg(msg, auth);
     }
+
+    resignMatch(matchId: string, auth: AuthKeyset): Throwable<void> {
+        const msg = new ArbitratorMessage({
+            topic: `match-${matchId}`,
+            contentType: MessageContentType.RESIGN_MATCH,
+            content: {
+                matchId,
+            },
+            senderKey: "",
+            privateKey: "",
+        });
+        this.signAndSendMsg(msg, auth);
+    }
 }

@@ -10,6 +10,7 @@ import {ReactComp, Throwable} from "../types";
 import {Summary} from "./summary";
 import {AnimTile} from "./anim_tile";
 import {BoardLeftGutter} from "./board_left_gutter";
+import {MatchResult} from "../models/domain/match_result";
 
 export interface BoardProps {
 }
@@ -181,6 +182,6 @@ export const Board: React.FC<BoardProps> = () => {
             {animTile}
             {draggingTile}
         </div>
-        {match.board.isTerminal && <Summary/>}
+        {match.result !== MatchResult.IN_PROGRESS && <Summary/>}
     </div>
 }

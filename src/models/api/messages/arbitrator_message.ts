@@ -65,6 +65,10 @@ import {
     SubscribeRequestMessageContent,
     SubscribeRequestMessageContentSchema
 } from "./arbitrator_contents/subscribe_request_message_content";
+import {
+    ResignMatchMessageContent,
+    ResignMatchMessageContentSchema
+} from "./arbitrator_contents/resign_match_message_content";
 
 export class ArbitratorMessage<T extends MessageContentType> {
     topic: string;
@@ -116,6 +120,7 @@ const ContentZodByContentType: { [K in keyof typeof MessageContentType]: z.ZodOb
     [MessageContentType.AUTH]: AuthMessageContentSchema,
     [MessageContentType.FIND_MATCH]: FindMatchMessageContentSchema,
     [MessageContentType.MOVE]: MoveMessageContentSchema,
+    [MessageContentType.RESIGN_MATCH]: ResignMatchMessageContentSchema,
     [MessageContentType.SUBSCRIBE_REQUEST]: SubscribeRequestMessageContentSchema,
     [MessageContentType.UPGRADE_AUTH_REQUEST]: UpgradeAuthRequestMessageContentSchema,
     [MessageContentType.CHALLENGE_REQUEST]: RequestChallengeMessageContentSchema,
@@ -139,6 +144,7 @@ type ContentByContentType = {
     "AUTH": AuthMessageContent,
     "FIND_MATCH": FindMatchMessageContent,
     "MOVE": MoveMessageContent,
+    "RESIGN_MATCH": ResignMatchMessageContent,
     "SUBSCRIBE_REQUEST": SubscribeRequestMessageContent,
     "UPGRADE_AUTH_REQUEST": UpgradeAuthRequestMessageContent,
     "CHALLENGE_REQUEST": RequestChallengeMessageContent,

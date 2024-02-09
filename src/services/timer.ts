@@ -1,6 +1,7 @@
 import React from "react";
 import {formatTimeForTimer} from "../helpers/format_time";
 import {Match} from "../models/domain/match";
+import {MatchResult} from "../models/domain/match_result";
 
 export class Timer {
     whiteSeconds: number;
@@ -51,7 +52,7 @@ export class Timer {
         this.whiteSeconds = match.whiteTimeRemainingSec;
         this.blackSeconds = match.blackTimeRemainingSec;
         this.isWhiteTurn = match.board.isWhiteTurn;
-        this.isPaused = match.board.isTerminal;
+        this.isPaused = match.result !== MatchResult.IN_PROGRESS;
         this.resetInterval();
     }
 
