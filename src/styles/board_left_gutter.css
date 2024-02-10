@@ -6,14 +6,8 @@
     height: 75vh;
 }
 
-.Resign {
-    border-radius: .5rem;
-    padding: .5rem 1rem;
-    font-size: 1.5rem;
-    font-weight: bold;
-    background-color: #444;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin: 10px 0;
+.LeftGutter-Bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }

@@ -1,0 +1,52 @@
+.Button {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.PlayButton {
+    background: rgb(255, 255, 255, 0.25);
+    border: none;
+    border-radius: 10px;
+    font-size: 2rem;
+    width: 180px;
+    padding: 5px 0;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.PlayButton:hover {
+    background: rgb(255, 255, 255, .5);
+}
+
+.CancelMatchmakingButton {
+    background: #666;
+    border: none;
+    border-radius: 10px;
+    font-size: 2rem;
+    width: 180px;
+    padding: 5px 0;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.ResignButton {
+    width: 7.5rem;
+    border-radius: .5rem;
+    padding: .5rem 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-color: #444;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.ResignButton-Unlocked {
+    background: #c00;
+}

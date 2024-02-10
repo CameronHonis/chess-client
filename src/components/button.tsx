@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/buttons.css";
 
 export interface ExpButtonProps {
     isDebounced: boolean,
@@ -52,7 +53,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
     const options = extractOptions(props);
     return <button
         onClick={e => debouncedOnClick(e)}
-        className={className}
+        className={`Button ${className}`}
         {...options}
     >{content}</button>
 }

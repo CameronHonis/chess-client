@@ -2,7 +2,6 @@ import React from "react";
 import {HumanMatchPicker} from "./human_match_picker";
 import {BotMatchPicker} from "./bot_match_picker";
 import "../../styles/match_picker/match_picker.css";
-import "../../styles/match_picker/buttons.css";
 
 
 export const MatchPicker: React.FC = () => {
