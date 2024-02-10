@@ -1,6 +1,7 @@
 import React from "react";
 import {Challenge} from "../../models/domain/challenge";
 import {appStateContext} from "../../App";
+import {formatKey} from "../../helpers/format_key";
 
 export interface ChallengeCardProps {
     challenge: Challenge;
@@ -31,7 +32,6 @@ export function ChallengeCard(props: ChallengeCardProps) {
             const color = isColorsRandom ?
                 "Random" : props.challenge.isChallengerWhite ? "Black" : "White";
             return [true, props.challenge.challengerKey, color];
-            // return [false, props.challenge.challengerKey, color];
         }
     }, [appState.auth, props.challenge]);
 
@@ -50,7 +50,7 @@ export function ChallengeCard(props: ChallengeCardProps) {
             :
             <div className="ChallengeCard">
                 <div className="ChallengeCard-OppInfo">
-                    <p className="ChallengeCard-OppName">{opponentName}</p>
+                    <p className="ChallengeCard-OppName">{formatKey(opponentName)}</p>
                     <p className="ChallengeCard-OppRating">Rating: 1200</p>
                 </div>
                 <div className="ChallengeCard-MatchInfo">

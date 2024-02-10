@@ -11,6 +11,7 @@ import {Summary} from "./summary";
 import {AnimTile} from "./anim_tile";
 import {BoardLeftGutter} from "./board_left_gutter";
 import {MatchResult} from "../models/domain/match_result";
+import {formatKey} from "../helpers/format_key";
 
 export interface BoardProps {
 }
@@ -174,13 +175,25 @@ export const Board: React.FC<BoardProps> = () => {
         return <AnimTile piece={match.board.getPieceBySquare(draggingSquare)} isDragging/>;
     }, [match.board, draggingSquare]);
 
+    const [selfClientKey, oppClientKey] = React.useMemo(() => {
+        if (isWhitePerspective) {
+            return [match.whiteClientKey, match.blackClientKey];
+        } else {
+            return [match.blackClientKey, match.whiteClientKey];
+        }
+    }, [isWhitePerspective, match.whiteClientKey, match.blackClientKey]);
+
 
     return <div className={"BoardFrame"}>
         <BoardLeftGutter isWhitePerspective={isWhitePerspective} />
-        <div className={"Board"}>
-            {tiles}
-            {animTile}
-            {draggingTile}
+        <div className={"BoardWrapped"}>
+            <p className={"NameTag OppNameTag"}>{formatKey(oppClientKey)}</p>
+            <div className={"Board"}>
+                {tiles}
+                {animTile}
+                {draggingTile}
+            </div>
+            <p className={"NameTag SelfNameTag"}>{formatKey(selfClientKey)}</p>
         </div>
         {match.result !== MatchResult.IN_PROGRESS && <Summary/>}
     </div>
