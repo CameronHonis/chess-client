@@ -31,7 +31,7 @@ export function ChallengeCard(props: ChallengeCardProps) {
         } else {
             const color = isColorsRandom ?
                 "Random" : props.challenge.isChallengerWhite ? "Black" : "White";
-            return [true, props.challenge.challengerKey, color];
+            return [false, props.challenge.challengerKey, color];
         }
     }, [appState.auth, props.challenge]);
 

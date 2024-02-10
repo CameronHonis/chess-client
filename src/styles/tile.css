@@ -31,10 +31,11 @@
     z-index: 1;
 }
 
+
 .Tile svg, .Tile img {
-    width: 95%;
-    height: 95%;
-    margin: 12.5%;
+    width: 100%;
+    height: 100%;
+    padding: 2.5%;
     fill: white;
     user-select: none;
 }
@@ -46,6 +47,10 @@
 .Tile .BlackQueen,
 .Tile .BlackKing {
     fill: black;
+}
+
+.Tile.Checking img {
+    background: radial-gradient(circle, rgba(255,0,0,0) 0%, rgba(255,0,0,.5) 100%);
 }
 
 .Tile .TileDot {

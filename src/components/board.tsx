@@ -12,6 +12,7 @@ import {AnimTile} from "./anim_tile";
 import {BoardLeftGutter} from "./board_left_gutter";
 import {MatchResult} from "../models/domain/match_result";
 import {formatKey} from "../helpers/format_key";
+import {GameHelper} from "../helpers/game_helper";
 
 export interface BoardProps {
 }
@@ -131,6 +132,7 @@ export const Board: React.FC<BoardProps> = () => {
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
         const landSquareHashes = squareSelected ? getLandSquareHashes(squareSelected) : new Set<string>();
+        const checkingSquares = GameHelper.getPieceSquaresCheckingKing(match.board, match.board.isWhiteTurn);
         for (let r = 7; r >= 0; r--) {
             for (let c = 0; c < 8; c++) {
                 let rank: number, file: number;
@@ -146,6 +148,7 @@ export const Board: React.FC<BoardProps> = () => {
                 const isSelected = !!squareSelected && square.equalTo(squareSelected);
                 const isDotVisible = landSquareHashes.has(square.getHash())
                 const pieceType = !!match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY;
+                const isCheckingKing = checkingSquares.filter(_square => _square.equalTo(square)).length > 0;
                 tiles.push(<Tile square={square}
                                  pieceType={pieceType}
                                  isSelected={isSelected}
@@ -155,6 +158,7 @@ export const Board: React.FC<BoardProps> = () => {
                                  rank={r}
                                  file={c}
                                  isInteractable={getIsInteractable(square)}
+                                 isCheckingKing={isCheckingKing}
                                  key={idx}/>);
             }
         }
@@ -185,7 +189,7 @@ export const Board: React.FC<BoardProps> = () => {
 
 
     return <div className={"BoardFrame"}>
-        <BoardLeftGutter isWhitePerspective={isWhitePerspective} />
+        <BoardLeftGutter isWhitePerspective={isWhitePerspective}/>
         <div className={"BoardWrapped"}>
             <p className={"NameTag OppNameTag"}>{formatKey(oppClientKey)}</p>
             <div className={"Board"}>

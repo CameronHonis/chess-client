@@ -20,6 +20,7 @@ interface Props {
     rank: number;
     file: number;
     isInteractable: boolean;
+    isCheckingKing: boolean;
 }
 
 export const Tile: React.FC<Props> = (props) => {
@@ -47,18 +48,26 @@ export const Tile: React.FC<Props> = (props) => {
     } else if (pieceType === ChessPiece.WHITE_KING || pieceType === ChessPiece.BLACK_KING) {
         tileIcon = <King isWhite={isWhite}/>;
     }
-    const classNames = [];
-    classNames.push("Tile");
-    classNames.push(square.isDarkSquare() ? "DarkSquare" : "LightSquare");
-    if (isSelected) {
-        classNames.push("Selected");
-    }
-    if (isDotVisible) {
-        classNames.push("Dotted");
-    }
-    if (props.isInteractable) {
-        classNames.push("Interactable");
-    }
+
+    const classNames = React.useMemo(() => {
+        const classNames = [];
+        classNames.push("Tile");
+        classNames.push(square.isDarkSquare() ? "DarkSquare" : "LightSquare");
+        if (isSelected) {
+            classNames.push("Selected");
+        }
+        if (isDotVisible) {
+            classNames.push("Dotted");
+        }
+        if (props.isInteractable) {
+            classNames.push("Interactable");
+        }
+        if (props.isCheckingKing) {
+            classNames.push("Checking");
+        }
+        return classNames;
+    }, [square, isSelected, isDotVisible, props.isInteractable, props.isCheckingKing]);
+
     return <div
         className={classNames.join(" ")}
         id={`Tile${square.getHash()}`}
