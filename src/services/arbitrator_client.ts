@@ -11,6 +11,7 @@ import {AuthKeyset} from "../models/domain/auth_keyset";
 import {
     DeclineChallengeMessageContentSchema
 } from "../models/api/messages/arbitrator_contents/challenge_request_denied_message_content";
+import {Challenge} from "../models/domain/challenge";
 
 export class ArbitratorClient {
     websocket: WebSocket;
@@ -151,12 +152,12 @@ export class ArbitratorClient {
         this.signAndSendMsg(msg, auth);
     }
 
-    revokeChallenge(challengeId: string, auth: AuthKeyset): Throwable<void> {
+    revokeChallenge(challenge: Challenge, auth: AuthKeyset): Throwable<void> {
         const msg = new ArbitratorMessage({
-            topic: `challenge-${challengeId}`,
+            topic: `challenge-${challenge.uuid}`,
             contentType: MessageContentType.REVOKE_CHALLENGE,
             content: {
-                challengerClientKey: auth.publicKey,
+                challengedClientKey: challenge.challengedKey,
             },
             senderKey: "",
             privateKey: "",

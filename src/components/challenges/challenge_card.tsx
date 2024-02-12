@@ -9,15 +9,22 @@ export interface ChallengeCardProps {
 
 export function ChallengeCard(props: ChallengeCardProps) {
     const [appState] = React.useContext(appStateContext);
-    const onAcceptClick = () => {
-        window.services.arbitratorClient.acceptChallenge(
-            props.challenge.uuid, props.challenge.challengerKey, appState.auth!);
-    }
+    const auth = appState.auth!;
 
-    const onDeclineClick = () => {
+    const onAcceptClick = React.useCallback(() => {
+        window.services.arbitratorClient.acceptChallenge(
+            props.challenge.uuid, props.challenge.challengerKey, auth);
+    }, [props.challenge, auth]);
+
+    const onDeclineClick = React.useCallback(() => {
         window.services.arbitratorClient.declineChallenge(
-            props.challenge.uuid, props.challenge.challengerKey, appState.auth!);
-    }
+            props.challenge.uuid, props.challenge.challengerKey, auth);
+    }, [props.challenge, auth]);
+
+    const onRevokeClick = React.useCallback(()=> {
+        window.services.arbitratorClient.revokeChallenge(
+            props.challenge, auth);
+    }, [props.challenge, auth]);
 
     const [isOutgoing, opponentName, selfColor] = React.useMemo(() => {
         if (!appState.auth)
@@ -41,7 +48,7 @@ export function ChallengeCard(props: ChallengeCardProps) {
 
     const colorLabel = React.useMemo(() => {
         const textColor = selfColor === "White" ? "white" : "black";
-        return <p className="ChallengeCard-ColorLabel">Playing as: <b style={{color: textColor}}>{selfColor}</b></p>;
+        return <p className="ChallengeCard-ColorLabel">as: <b style={{color: textColor}}>{selfColor}</b></p>;
     }, [selfColor]);
 
     return (
@@ -58,10 +65,14 @@ export function ChallengeCard(props: ChallengeCardProps) {
                     <p className="ChallengeCard-TimeControl">{timeControlRepr}</p>
                 </div>
                 {isOutgoing ?
-                    <p className="ChallengeCard-OutMsg">
-                        Waiting for response...
-                    </p> :
-                    <div className="ChallengeCard-Controls">
+                    <div className={"ChallengeCard-OutboundControls"}>
+                        <p className="ChallengeCard-OutMsg">
+                            Waiting for response...
+                        </p>
+                        <button onClick={onRevokeClick} className={"ChallengeCard-Revoke"}>Cancel</button>
+                    </div>
+                    :
+                    <div className="ChallengeCard-InboundControls">
                         <button onClick={onAcceptClick} className="ChallengeCard-Accept">Accept</button>
                         <button onClick={onDeclineClick} className="ChallengeCard-Decline">Decline</button>
                     </div>
