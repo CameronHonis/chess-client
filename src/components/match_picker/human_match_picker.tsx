@@ -20,19 +20,17 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
 
     const [appState] = React.useContext(appStateContext);
     const [selectedTimeControlPreset, setSelectedTimeControlPreset] = React.useState(TimeControlPreset.RAPID);
+    const auth = appState.auth!;
 
     const handlePlayButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
-        if (!appState.auth) {
-            dispatchErr("Authentication failed. Please refresh the page.");
-            return;
-        }
         setIsSearchingMatch(true);
-        window.services.arbitratorClient.findMatch(TimeControl.fromPreset(selectedTimeControlPreset), appState.auth);
-    }, [appState.auth, setIsSearchingMatch, selectedTimeControlPreset]);
+        window.services.arbitratorClient.joinMatchmaking(TimeControl.fromPreset(selectedTimeControlPreset), auth);
+    }, [auth, setIsSearchingMatch, selectedTimeControlPreset]);
 
     const handleCancelButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
         setIsSearchingMatch(false);
-    }, [setIsSearchingMatch]);
+        window.services.arbitratorClient.leaveMatchmaking(auth);
+    }, [auth, setIsSearchingMatch]);
 
     return <div className={"HumanMatchPicker"}>
         <h2>A Human</h2>

@@ -8,9 +8,6 @@ import {ArbitratorMessage} from "../models/api/messages/arbitrator_message";
 import {MessageContentType} from "../models/api/messages/message_content_type";
 import {ApiTimeControl} from "../models/api/time_control";
 import {AuthKeyset} from "../models/domain/auth_keyset";
-import {
-    DeclineChallengeMessageContentSchema
-} from "../models/api/messages/arbitrator_contents/challenge_request_denied_message_content";
 import {Challenge} from "../models/domain/challenge";
 import {TimeControl} from "../models/domain/time_control";
 
@@ -82,126 +79,82 @@ export class ArbitratorClient {
     }
 
     challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl, auth: AuthKeyset): Throwable<void> {
-        const msg = new ArbitratorMessage({
-            topic: "challenge",
-            contentType: MessageContentType.CHALLENGE_REQUEST,
-            content: {
-                challenge: {
-                    uuid: "",
-                    challengerKey: auth.publicKey,
-                    challengedKey: playerKey,
-                    isChallengerWhite: isWhite,
-                    isChallengerBlack: isBlack,
-                    timeControl: timeControl,
-                    botName: "",
-                    timeCreated: new Date(),
-                    isActive: true,
-                },
+        const msg = ArbitratorMessage.withContent(MessageContentType.CHALLENGE_REQUEST, {
+            challenge: {
+                uuid: "",
+                challengerKey: auth.publicKey,
+                challengedKey: playerKey,
+                isChallengerWhite: isWhite,
+                isChallengerBlack: isBlack,
+                timeControl: timeControl,
+                botName: "",
+                timeCreated: new Date(),
+                isActive: true,
             },
-            senderKey: "",
-            privateKey: "",
         });
         this.signAndSendMsg(msg, auth);
     }
 
     challengeBot(botType: BotType, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl, auth: AuthKeyset): Throwable<void> {
-        const msg = new ArbitratorMessage({
-            topic: "challenge",
-            contentType: MessageContentType.CHALLENGE_REQUEST,
-            content: {
-                challenge: {
-                    uuid: "",
-                    challengerKey: auth.publicKey,
-                    challengedKey: "",
-                    isChallengerWhite: isWhite,
-                    isChallengerBlack: isBlack,
-                    timeControl: timeControl,
-                    botName: botType,
-                    timeCreated: new Date(),
-                    isActive: true,
-                },
+        const msg = ArbitratorMessage.withContent(MessageContentType.CHALLENGE_REQUEST, {
+            challenge: {
+                uuid: "",
+                challengerKey: auth.publicKey,
+                challengedKey: "",
+                isChallengerWhite: isWhite,
+                isChallengerBlack: isBlack,
+                timeControl: timeControl,
+                botName: botType,
+                timeCreated: new Date(),
+                isActive: true,
             },
-            senderKey: "",
-            privateKey: "",
         });
         this.signAndSendMsg(msg, auth);
     }
 
     declineChallenge(challengeId: string, challengerKey: string, auth: AuthKeyset): Throwable<void> {
-        const msg = new ArbitratorMessage({
-            topic: `challenge-${challengeId}`,
-            contentType: MessageContentType.DECLINE_CHALLENGE,
-            content: {
-                challengerClientKey: challengerKey,
-            },
-            senderKey: "",
-            privateKey: "",
+        const msg = ArbitratorMessage.withContent(MessageContentType.DECLINE_CHALLENGE, {
+            challengerClientKey: challengerKey,
         });
         this.signAndSendMsg(msg, auth);
     }
 
     acceptChallenge(challengeId: string, challengerKey: string, auth: AuthKeyset): Throwable<void> {
-        const msg = new ArbitratorMessage({
-            topic: `challenge-${challengeId}`,
-            contentType: MessageContentType.ACCEPT_CHALLENGE,
-            content: {
-                challengerClientKey: challengerKey,
-            },
-            senderKey: "",
-            privateKey: "",
+        const msg = ArbitratorMessage.withContent(MessageContentType.ACCEPT_CHALLENGE, {
+            challengerClientKey: challengerKey,
         });
         this.signAndSendMsg(msg, auth);
     }
 
     revokeChallenge(challenge: Challenge, auth: AuthKeyset): Throwable<void> {
-        const msg = new ArbitratorMessage({
-            topic: `challenge-${challenge.uuid}`,
-            contentType: MessageContentType.REVOKE_CHALLENGE,
-            content: {
-                challengedClientKey: challenge.challengedKey,
-            },
-            senderKey: "",
-            privateKey: "",
+        const msg = ArbitratorMessage.withContent(MessageContentType.REVOKE_CHALLENGE, {
+            challengedClientKey: challenge.challengedKey,
         });
         this.signAndSendMsg(msg, auth);
     }
 
-    findMatch(timeControl: TimeControl, auth: AuthKeyset): Throwable<void> {
-        const msg = new ArbitratorMessage({
-            topic: "findMatch",
-            contentType: MessageContentType.FIND_MATCH,
-            content: {
-                timeControl: timeControl,
-            },
-            senderKey: "",
-            privateKey: "",
-        })
+    joinMatchmaking(timeControl: TimeControl, auth: AuthKeyset): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.JOIN_MATCHMAKING, {timeControl});
+        this.signAndSendMsg(msg, auth);
+    }
+
+    leaveMatchmaking(auth: AuthKeyset): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.LEAVE_MATCHMAKING, {}
+        );
         this.signAndSendMsg(msg, auth);
     }
 
     sendMove(matchId: string, move: Move, auth: AuthKeyset): Throwable<void> {
-        const msg = new ArbitratorMessage({
-            topic: `match-${matchId}`,
-            contentType: MessageContentType.MOVE,
-            content: {
-                matchId,
-                move: JSON.parse(JSON.stringify(move)),
-            },
-            senderKey: "",
-            privateKey: "",
+        const msg = ArbitratorMessage.withContent(MessageContentType.MOVE, {
+            matchId,
+            move: JSON.parse(JSON.stringify(move)),
         });
         this.signAndSendMsg(msg, auth);
     }
 
     resignMatch(matchId: string, auth: AuthKeyset): Throwable<void> {
-        const msg = new ArbitratorMessage({
-            topic: `match-${matchId}`,
-            contentType: MessageContentType.RESIGN_MATCH,
-            content: {
-                matchId,
-            },
-            senderKey: "",
-            privateKey: "",
+        const msg = ArbitratorMessage.withContent(MessageContentType.RESIGN_MATCH, {
+            matchId,
         });
         this.signAndSendMsg(msg, auth);
     }

@@ -38,7 +38,7 @@ import {
 import {EmptyMessageContent, EmptyMessageContentSchema} from "./arbitrator_contents/empty_message_content";
 import {EchoMessageContent, EchoMessageContentSchema} from "./arbitrator_contents/echo_message_content";
 import {AuthMessageContent, AuthMessageContentSchema} from "./arbitrator_contents/auth_message_content";
-import {FindMatchMessageContent, FindMatchMessageContentSchema} from "./arbitrator_contents/find_match_message_content";
+import {JoinMatchmakingMessageContent, JoinMatchmakingMessageContentSchema} from "./arbitrator_contents/join_matchmaking_message_content";
 import {MoveMessageContent, MoveMessageContentSchema} from "./arbitrator_contents/move_message_content";
 import {
     UpgradeAuthRequestMessageContent,
@@ -69,6 +69,10 @@ import {
     ResignMatchMessageContent,
     ResignMatchMessageContentSchema
 } from "./arbitrator_contents/resign_match_message_content";
+import {
+    LeaveMatchmakingMessageContent,
+    LeaveMatchmakingMessageContentSchema
+} from "./arbitrator_contents/leave_matchmaking_message_content";
 
 export class ArbitratorMessage<T extends MessageContentType> {
     topic: string;
@@ -83,6 +87,16 @@ export class ArbitratorMessage<T extends MessageContentType> {
         this.content = args.content;
         this.senderKey = args.senderKey;
         this.privateKey = args.privateKey;
+    }
+
+    static withContent<T extends MessageContentType>(contentType: T, content: ContentByContentType[T]): ArbitratorMessage<T> {
+        return new ArbitratorMessage<T>({
+            topic: "",
+            senderKey: "",
+            privateKey: "",
+            contentType,
+            content,
+        });
     }
 
     static fromJson<T extends MessageContentType>(jsonObj: { content: T }): ArbitratorMessage<T> {
@@ -118,7 +132,8 @@ const ContentZodByContentType: { [K in keyof typeof MessageContentType]: z.ZodOb
     [MessageContentType.EMPTY]: EmptyMessageContentSchema,
     [MessageContentType.ECHO]: EchoMessageContentSchema,
     [MessageContentType.AUTH]: AuthMessageContentSchema,
-    [MessageContentType.FIND_MATCH]: FindMatchMessageContentSchema,
+    [MessageContentType.JOIN_MATCHMAKING]: JoinMatchmakingMessageContentSchema,
+    [MessageContentType.LEAVE_MATCHMAKING]: LeaveMatchmakingMessageContentSchema,
     [MessageContentType.MOVE]: MoveMessageContentSchema,
     [MessageContentType.RESIGN_MATCH]: ResignMatchMessageContentSchema,
     [MessageContentType.SUBSCRIBE_REQUEST]: SubscribeRequestMessageContentSchema,
@@ -142,7 +157,8 @@ type ContentByContentType = {
     "EMPTY": EmptyMessageContent,
     "ECHO": EchoMessageContent,
     "AUTH": AuthMessageContent,
-    "FIND_MATCH": FindMatchMessageContent,
+    "JOIN_MATCHMAKING": JoinMatchmakingMessageContent,
+    "LEAVE_MATCHMAKING": LeaveMatchmakingMessageContent,
     "MOVE": MoveMessageContent,
     "RESIGN_MATCH": ResignMatchMessageContent,
     "SUBSCRIBE_REQUEST": SubscribeRequestMessageContent,
