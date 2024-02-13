@@ -15,7 +15,6 @@ export const BotDroplistItem: React.FC<BotDroplistItemProps> = (props) => {
         setSelectedBotName
     } = props;
     return <div className={"BotDroplistItem" + (isSelected ? " Selected" : "")} onClick={() => setSelectedBotName(botName)}>
-        <div className={"BotDroplistItem-SelectedDot" + (isSelected ? " Selected" : "")}/>
         <p className={"BotDroplistItem-Nametag"}>{botName}</p>
     </div>
 }

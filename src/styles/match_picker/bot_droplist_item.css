@@ -1,9 +1,11 @@
 .BotDroplistItem {
-    width: 25vw;
+    color: rgba(255,255,255, 0.7);
+    width: 100%;
     padding: 10px 2.5vw;
     display: flex;
     justify-content: center;
     cursor: pointer;
+    border-radius: .5rem;
 }
 
 .BotDroplistItem:hover {
@@ -13,6 +15,7 @@
 
 .BotDroplistItem.Selected {
     background: rgba(255, 255, 255, .5);
+    color: white;
 }
 
 .BotDroplistItem-SelectedDot {

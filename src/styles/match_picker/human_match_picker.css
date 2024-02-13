@@ -4,7 +4,7 @@
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    width: 25vw;
+    width: 25rem;
     padding: 4vw;
     background: #3c5978;
     border-radius: 20px;
@@ -57,5 +57,5 @@
 }
 
 .HumanMatchPicker .TimeControls {
-    box-shadow: 0 2px 5px inset rgba(0,0,0, 0.3);
+    box-shadow: 0 2px 8px inset rgba(0,0,0, 0.2);
 }
