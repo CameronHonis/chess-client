@@ -1,7 +1,7 @@
 import {Notification, NotifType} from "../domain/notification";
 
-export type NOTIF_EVENT = "notif";
 export const NOTIF_EVENT = "notif";
+export type NOTIF_EVENT = typeof NOTIF_EVENT;
 
 export interface NotifEventPayload {
     notif: Notification;

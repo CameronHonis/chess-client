@@ -16,6 +16,7 @@ import {
 } from "./helpers/arbitrator_handlers";
 import {ChallengesOverlay} from "./components/challenges/challenges_overlay";
 import {Home} from "./components/home";
+import {DisconnectedOverlay} from "./components/disconnected_overlay";
 
 export const appStateContext = React.createContext<[AppState, React.Dispatch<AppStateAction>]>([new AppState({}), () => {
 }]);
@@ -39,6 +40,7 @@ function App() {
         <div className="App">
             <appStateContext.Provider value={[state, dispatch]}>
                 <Header/>
+                <DisconnectedOverlay />
                 <NotifsOverlay/>
                 <ChallengesOverlay/>
                 {state.page === Page.HOME && <Home/>}

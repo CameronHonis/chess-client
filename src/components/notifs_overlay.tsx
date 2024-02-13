@@ -2,7 +2,8 @@ import React from "react";
 import {EasyQueue} from "../helpers/easy_queue";
 import {Notification, NotifType} from "../models/domain/notification";
 import "../styles/notif.css";
-import {NOTIF_EVENT} from "../models/events/notif_event";
+import {NOTIF_EVENT, NotifEvent} from "../models/events/notif_event";
+import {sleep} from "../helpers/sleep";
 
 export const NotifsOverlay: React.FC<{}> = (props) => {
     const [notifQueue, setNotifQueue] = React.useState(new EasyQueue<Notification>());
@@ -16,24 +17,27 @@ export const NotifsOverlay: React.FC<{}> = (props) => {
     }, [notifQueue, setNotifQueue]);
 
     React.useEffect(() => {
-        document.addEventListener(NOTIF_EVENT, (ev) => {
+        const handleNotifEvent = (ev: NotifEvent) => {
             pushQueue(ev.detail.notif);
-        });
+        }
+        document.addEventListener(NOTIF_EVENT, handleNotifEvent);
         if (notifQueue.size() > 0) {
             window.services.notifAnimator.startNewNotifAnim();
         }
+
+        return () => document.removeEventListener(NOTIF_EVENT, handleNotifEvent);
     });
 
     React.useEffect(() => {
-        setTimeout(() => {
+        (async () => {
+            await sleep(5000);
             if (notifQueue.size() > 0) {
                 notifQueue.pop();
                 setNotifQueue(notifQueue.copy());
                 window.services.notifAnimator.startNewNotifAnim();
             }
-        }, 5000);
+        })();
     }, [notifQueue, setNotifQueue]);
-
 
     const notif = notifQueue.size() ? notifQueue.first() : null;
     if (!notif) {

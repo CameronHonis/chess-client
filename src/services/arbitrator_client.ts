@@ -10,39 +10,37 @@ import {ApiTimeControl} from "../models/api/time_control";
 import {AuthKeyset} from "../models/domain/auth_keyset";
 import {Challenge} from "../models/domain/challenge";
 import {TimeControl} from "../models/domain/time_control";
+import {sleep} from "../helpers/sleep";
+import {dispatchDisconnectedEvent} from "../models/events/disconnected_event";
+import {dispatchConnectedEvent} from "../models/events/connected_event";
 
 export class ArbitratorClient {
     websocket: WebSocket;
 
     constructor() {
-        this.websocket = new WebSocket(`wss://${ARBITRATOR_URL}`);
+        this.websocket = new WebSocket(ARBITRATOR_URL);
+        this._attachWsHandlers();
+    }
+
+    private _attachWsHandlers() {
         this.websocket.onopen = (e) => this._handleOpen(e);
         this.websocket.onmessage = (e) => this._handleMessage(e);
         this.websocket.onclose = (e) => this._handleClose(e);
-        this.websocket.onerror = () => {
-            console.warn("Could not establish websocket connection on secure channel, reverting to unsecured channel")
-            this.websocket = new WebSocket(`ws://${ARBITRATOR_URL}`);
-            this.websocket.onopen = (e) => this._handleOpen(e);
-            this.websocket.onmessage = (e) => this._handleMessage(e);
-            this.websocket.onclose = (e) => this._handleClose(e);
-            this.websocket.onerror = (e) => {
-                console.warn("Could not establish websocket connection");
-                throw e;
-            }
-        }
+        this.websocket.onerror = (e) => this._handleErr(e);
     }
 
     private _handleOpen(e: Event) {
         const url = (e.currentTarget as WebSocket).url;
         console.log(`websocket connection established with websocket on ${url}`);
+        dispatchConnectedEvent(ARBITRATOR_URL);
     }
 
     private _handleMessage(e: MessageEvent): Throwable<void> {
         if (typeof e.data !== "string") {
-            console.warn(`Flushing unhandled websocket data type: ${typeof e.data}`)
+            console.warn(`Flushing unhandled websocket data type: ${typeof e.data}`);
             return;
         }
-        const url = (e.currentTarget as WebSocket).url
+        const url = (e.currentTarget as WebSocket).url;
         console.log(`[${url}] >> ${e.data}`);
 
         const msgJsonObj = JSON.parse(e.data);
@@ -60,8 +58,18 @@ export class ArbitratorClient {
     }
 
     private _handleClose(e: CloseEvent) {
-        const url = (e.currentTarget as WebSocket).url
-        console.warn(`arbitrator client websocket connection on ${url} closed`);
+        dispatchDisconnectedEvent(ARBITRATOR_URL);
+        sleep(1000).then(() => {
+            this._retryConnection();
+        });
+    }
+
+    private _handleErr(e: Event) {
+    }
+
+    private _retryConnection() {
+        this.websocket = new WebSocket(ARBITRATOR_URL);
+        this._attachWsHandlers();
     }
 
     signAndSendMsg(msg: ArbitratorMessage<any>, auth: AuthKeyset): Throwable<void> {

@@ -1,1 +1,1 @@
-export const ARBITRATOR_URL = "localhost:8080";
+export const ARBITRATOR_URL = "ws://localhost:8080";
