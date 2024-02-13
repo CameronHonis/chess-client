@@ -12,6 +12,7 @@ import {
     DeclineChallengeMessageContentSchema
 } from "../models/api/messages/arbitrator_contents/challenge_request_denied_message_content";
 import {Challenge} from "../models/domain/challenge";
+import {TimeControl} from "../models/domain/time_control";
 
 export class ArbitratorClient {
     websocket: WebSocket;
@@ -165,11 +166,13 @@ export class ArbitratorClient {
         this.signAndSendMsg(msg, auth);
     }
 
-    findMatch(auth: AuthKeyset): Throwable<void> {
+    findMatch(timeControl: TimeControl, auth: AuthKeyset): Throwable<void> {
         const msg = new ArbitratorMessage({
             topic: "findMatch",
             contentType: MessageContentType.FIND_MATCH,
-            content: {},
+            content: {
+                timeControl: timeControl,
+            },
             senderKey: "",
             privateKey: "",
         })

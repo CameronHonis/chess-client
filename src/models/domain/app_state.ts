@@ -1,8 +1,8 @@
 import {Page} from "./page";
 import {Move} from "./move";
-import {Challenge, newBlitzTimeControl} from "./challenge";
 import {Match} from "./match";
 import {AuthKeyset} from "./auth_keyset";
+import {Challenge} from "./challenge";
 
 export const initAppState = {
     auth: null,

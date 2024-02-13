@@ -4,6 +4,8 @@ import {Dots} from "../dots";
 import "../../styles/match_picker/human_match_picker.css";
 import {appStateContext} from "../../App";
 import {dispatchErr} from "../../models/events/notif_event";
+import {TimeControl, TimeControlPreset} from "../../models/domain/time_control";
+import {TimeControlOptions} from "../../styles/match_picker/time_control_options";
 
 export interface HumanMatchPickerProps {
     isSearchingMatch: boolean;
@@ -17,6 +19,7 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
     } = props;
 
     const [appState] = React.useContext(appStateContext);
+    const [selectedTimeControlPreset, setSelectedTimeControlPreset] = React.useState(TimeControlPreset.RAPID);
 
     const handlePlayButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
         if (!appState.auth) {
@@ -24,8 +27,8 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
             return;
         }
         setIsSearchingMatch(true);
-        window.services.arbitratorClient.findMatch(appState.auth);
-    }, [appState.auth, setIsSearchingMatch]);
+        window.services.arbitratorClient.findMatch(TimeControl.fromPreset(selectedTimeControlPreset), appState.auth);
+    }, [appState.auth, setIsSearchingMatch, selectedTimeControlPreset]);
 
     const handleCancelButtonClick = React.useCallback((_: React.MouseEvent<HTMLButtonElement>) => {
         setIsSearchingMatch(false);
@@ -48,6 +51,10 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
                         <p id={"EloTag"}>Elo: 1000</p>
                         <p>and your...</p>
                         <p id={"WinstreakTag"}>Winstreak: +0</p>
+                    </div>
+                    <div className={"HumanMatchPicker-Controls"}>
+                        <TimeControlOptions selectedTimeControlPreset={selectedTimeControlPreset}
+                                            setSelectedTimeControlPreset={setSelectedTimeControlPreset}/>
                     </div>
                     <Button content="Play" className="PlayButton" isDebounced onClick={handlePlayButtonClick}/>
                 </>

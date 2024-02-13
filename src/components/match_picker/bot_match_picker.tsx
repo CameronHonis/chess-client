@@ -3,9 +3,9 @@ import {BotDroplistItem} from "./bot_droplist_item";
 import "../../styles/match_picker/bot_match_picker.css";
 import {Button} from "../button";
 import {BotType} from "../../models/domain/bot_type";
-import {newBlitzTimeControl} from "../../models/domain/challenge";
 import {appStateContext} from "../../App";
 import {dispatchErr} from "../../models/events/notif_event";
+import {newBlitzTimeControl} from "../../models/domain/time_control";
 
 export interface BotMatchPickerProps {
 }

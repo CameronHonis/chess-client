@@ -3,7 +3,7 @@ import "../styles/buttons.css";
 
 export interface ExpButtonProps {
     isDebounced: boolean,
-    content: string,
+    content: any,
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => any
     className: string
 }

@@ -1,0 +1,26 @@
+.TimeControlOption {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    border-radius: .5rem;
+    padding: .5rem 1rem;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.TimeControlOption img {
+    width: 2rem;
+    height: 2rem;
+}
+
+.TimeControlOption p {
+    color: white;
+    font-weight: bold;
+    font-size: .8rem;
+}
+
+.TimeControlOption.Selected {
+    background: rgba(255,255,255, 0.3);
+    box-shadow: 0 0 5px rgba(0,0,0, 0.3);
+    opacity: 1;
+}

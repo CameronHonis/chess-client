@@ -56,29 +56,3 @@ export class Challenge {
     }
 }
 
-export function newBulletTimeControl(): TimeControl {
-    return new TimeControl({
-        initialTimeSec: 60,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    });
-}
-
-export function newBlitzTimeControl(): TimeControl {
-    return new TimeControl({
-        initialTimeSec: 300,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    });
-}
-
-export function newRapidTimeControl(): TimeControl {
-    return new TimeControl({
-        initialTimeSec: 900,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    });
-}

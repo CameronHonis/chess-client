@@ -7,6 +7,12 @@ export interface TimeControlArgs {
     secAfterMoves: number;
 }
 
+export enum TimeControlPreset {
+    BULLET = "bullet",
+    BLITZ = "blitz",
+    RAPID = "rapid",
+}
+
 export class TimeControl {
     initialTimeSec: number;
     incrementSec: number;
@@ -34,4 +40,45 @@ export class TimeControl {
             secAfterMoves: apiTimeControl.secAfterMoves,
         });
     }
+
+    static fromPreset(timeControlPreset: TimeControlPreset) {
+        switch(timeControlPreset){
+            case TimeControlPreset.BLITZ:
+                return newBlitzTimeControl();
+            case TimeControlPreset.RAPID:
+                return newRapidTimeControl();
+            case TimeControlPreset.BULLET:
+                return newBulletTimeControl();
+            default:
+                throw new Error(`timeControl preset '${timeControlPreset}' not valid`);
+        }
+    }
+}
+
+
+export function newBulletTimeControl(): TimeControl {
+    return new TimeControl({
+        initialTimeSec: 60,
+        incrementSec: 0,
+        timeAfterMovesCount: 0,
+        secAfterMoves: 0,
+    });
+}
+
+export function newBlitzTimeControl(): TimeControl {
+    return new TimeControl({
+        initialTimeSec: 300,
+        incrementSec: 0,
+        timeAfterMovesCount: 0,
+        secAfterMoves: 0,
+    });
+}
+
+export function newRapidTimeControl(): TimeControl {
+    return new TimeControl({
+        initialTimeSec: 900,
+        incrementSec: 0,
+        timeAfterMovesCount: 0,
+        secAfterMoves: 0,
+    });
 }
