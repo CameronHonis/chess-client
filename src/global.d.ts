@@ -38,6 +38,6 @@ declare global {
             timer: Timer;
             boardAnimator: BoardAnimator;
             notifAnimator: NotifAnimator;
-        }
+        };
     }
 }
