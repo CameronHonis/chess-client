@@ -63,3 +63,8 @@
 .HumanMatchPicker .TimeControls {
     box-shadow: 0 2px 8px inset rgba(0,0,0, 0.2);
 }
+
+.MatchmakingContext {
+    font-size: 1.5rem;
+    color: #ddd;
+}

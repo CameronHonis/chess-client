@@ -37,8 +37,8 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
         {
             isSearchingMatch ?
                 <>
-                    <p>finding a match based on your elo</p>
                     <Dots style={{width: "50%", height: "20%"}}/>
+                    <p className={"MatchmakingContext"}>Searching for a match</p>
                     <Button content="Cancel" className="CancelMatchmakingButton" isDebounced
                             onClick={handleCancelButtonClick}/>
                 </>
