@@ -1,1 +1,0 @@
-export const ARBITRATOR_URL = "ws://localhost:8080";

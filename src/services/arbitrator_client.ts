@@ -1,5 +1,4 @@
 import {BotType} from "../models/domain/bot_type";
-import {ARBITRATOR_URL} from "../constants";
 import {Throwable} from "../types";
 import {ArbitratorMessageEventPayload} from "../models/events/message_event";
 import {parseEventName} from "../models/events/message_event_name";
@@ -13,12 +12,15 @@ import {TimeControl} from "../models/domain/time_control";
 import {sleep} from "../helpers/sleep";
 import {dispatchDisconnectedEvent} from "../models/events/disconnected_event";
 import {dispatchConnectedEvent} from "../models/events/connected_event";
+import {getSecret, Secret} from "../helpers/secrets";
 
 export class ArbitratorClient {
+    readonly url: string;
     websocket: WebSocket;
 
     constructor() {
-        this.websocket = new WebSocket(ARBITRATOR_URL);
+        this.url = getSecret(Secret.ARBITRATOR_URL);
+        this.websocket = new WebSocket(this.url);
         this._attachWsHandlers();
     }
 
@@ -32,7 +34,7 @@ export class ArbitratorClient {
     private _handleOpen(e: Event) {
         const url = (e.currentTarget as WebSocket).url;
         console.log(`websocket connection established with websocket on ${url}`);
-        dispatchConnectedEvent(ARBITRATOR_URL);
+        dispatchConnectedEvent(this.url);
     }
 
     private _handleMessage(e: MessageEvent): Throwable<void> {
@@ -58,7 +60,7 @@ export class ArbitratorClient {
     }
 
     private _handleClose(e: CloseEvent) {
-        dispatchDisconnectedEvent(ARBITRATOR_URL);
+        dispatchDisconnectedEvent(this.url);
         sleep(1000).then(() => {
             this._retryConnection();
         });
@@ -68,7 +70,7 @@ export class ArbitratorClient {
     }
 
     private _retryConnection() {
-        this.websocket = new WebSocket(ARBITRATOR_URL);
+        this.websocket = new WebSocket(this.url);
         this._attachWsHandlers();
     }
 
