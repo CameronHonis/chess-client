@@ -1,5 +1,4 @@
 import React from 'react';
-import {MatchPicker} from "./components/match_picker/match_picker";
 import {Header} from "./components/header";
 import {Board} from "./components/board";
 import "./styles/app.css";

@@ -1,4 +1,4 @@
-import {ApiTimeControl, ApiTimeControlSchema} from "../api/time_control";
+import {ApiTimeControl} from "../api/time_control";
 
 export interface TimeControlArgs {
     initialTimeSec: number;

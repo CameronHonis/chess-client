@@ -1,6 +1,7 @@
 import {Notification, NotifType} from "../domain/notification";
 
 export const NOTIF_EVENT = "notif";
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type NOTIF_EVENT = typeof NOTIF_EVENT;
 
 export interface NotifEventPayload {

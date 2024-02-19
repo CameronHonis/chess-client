@@ -3,7 +3,6 @@ import {Button} from "../button";
 import {Dots} from "../dots";
 import "../../styles/match_picker/human_match_picker.css";
 import {appStateContext} from "../../App";
-import {dispatchErr} from "../../models/events/notif_event";
 import {TimeControl, TimeControlPreset} from "../../models/domain/time_control";
 import {TimeControlOptions} from "../../styles/match_picker/time_control_options";
 

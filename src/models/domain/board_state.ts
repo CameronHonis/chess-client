@@ -3,7 +3,6 @@ import {Square} from "./square";
 import {Move} from "./move";
 import {GameHelper} from "../../helpers/game_helper";
 import {Material} from "./material";
-import {Templated} from "../../interfaces/templated";
 import {ApiBoard} from "../api/board";
 
 interface BoardStateConstructorArgs {
