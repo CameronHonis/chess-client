@@ -15,12 +15,12 @@ import {dispatchConnectedEvent} from "../models/events/connected_event";
 import {getSecret, Secret} from "../helpers/secrets";
 
 export class ArbitratorClient {
-    readonly url: string;
+    readonly wsUrl: string;
     websocket: WebSocket;
 
     constructor() {
-        this.url = getSecret(Secret.ARBITRATOR_URL);
-        this.websocket = new WebSocket(this.url);
+        this.wsUrl = `ws://${getSecret(Secret.ARBITRATOR_URL)}`;
+        this.websocket = new WebSocket(this.wsUrl);
         this._attachWsHandlers();
     }
 
@@ -34,7 +34,7 @@ export class ArbitratorClient {
     private _handleOpen(e: Event) {
         const url = (e.currentTarget as WebSocket).url;
         console.log(`websocket connection established with websocket on ${url}`);
-        dispatchConnectedEvent(this.url);
+        dispatchConnectedEvent(this.wsUrl);
     }
 
     private _handleMessage(e: MessageEvent): Throwable<void> {
@@ -59,18 +59,18 @@ export class ArbitratorClient {
         document.dispatchEvent(event);
     }
 
-    private _handleClose(e: CloseEvent) {
-        dispatchDisconnectedEvent(this.url);
+    private _handleClose(_: CloseEvent) {
+        dispatchDisconnectedEvent(this.wsUrl);
         sleep(1000).then(() => {
             this._retryConnection();
         });
     }
 
-    private _handleErr(e: Event) {
+    private _handleErr(_: Event) {
     }
 
     private _retryConnection() {
-        this.websocket = new WebSocket(this.url);
+        this.websocket = new WebSocket(this.wsUrl);
         this._attachWsHandlers();
     }
 

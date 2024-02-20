@@ -2,12 +2,13 @@ import {Page} from "../../src/models/domain/page";
 import {AppState} from "../../src/models/domain/app_state";
 import {Match} from "../../src/models/domain/match";
 import {BoardState} from "../../src/models/domain/board_state";
-import {Challenge, newBlitzTimeControl, newBulletTimeControl} from "../../src/models/domain/challenge";
+import {Challenge } from "../../src/models/domain/challenge";
 import {appStateReducer} from "../../src/reducers/app_state_reducer";
 import {UpdateMatchAction} from "../../src/models/actions/update_match_action";
 import {UpdateChallengeAction} from "../../src/models/actions/update_challenge_action";
 import {AuthKeyset} from "../../src/models/domain/auth_keyset";
 import {MatchResult} from "../../src/models/domain/match_result";
+import {newBlitzTimeControl, newBulletTimeControl} from "../../src/models/domain/time_control";
 
 function getSomeChallenge(): Challenge {
     return new Challenge({

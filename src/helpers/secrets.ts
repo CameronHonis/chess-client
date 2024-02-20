@@ -5,7 +5,7 @@ export enum Secret {
 }
 
 export function getSecret(secretName: Secret): Throwable<string> {
-    const secret = process.env[secretName];
+    const secret = process.env[`REACT_APP_${secretName}`];
     if (!secret)
         throw new Error(`secret ${secretName} not configured`);
     return secret;
