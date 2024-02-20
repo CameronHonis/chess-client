@@ -15,6 +15,8 @@ import {ChessPiece} from "./models/domain/chess_piece";
 import {Square} from "./models/domain/square";
 import {ArbitratorMessage} from "./models/api/messages/arbitrator_message";
 
+console.log("secrets\n", process.env);
+
 window.services = {
     arbitratorClient: new ArbitratorClient(),
     timer: new Timer(),
