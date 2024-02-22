@@ -2,6 +2,7 @@
 
 # NOTE: this is meant to be applied to a react app after it has been built.
 #       allows for environment variables to be inserted after build time.
+#       only injects env vars that are prefixed with REACT_APP_
 #       handy in CI/CD workflows that inject configuration into pre-built images
 
 echo "injecting environment variables..."
@@ -14,10 +15,10 @@ FILE_NAME_TO_SUBSTRING_PAIRS=$(grep -roP "$TARGET_STRING_REGEX" | sort | uniq)
 while IFS=: read -r file match
 do
   printf 'found existing config in %s:\n\t%s\n' "$file" "$match"
-  match="${match:1:-1}" # remove squirly braces
+  match_contents="${match:1:-1}"
   WRITE_STRING='{'
 
-  IFS=',' read -ra parts <<< "$match"
+  IFS=',' read -ra parts <<< "$match_contents"
   for part in "${parts[@]}"; do
     IFS=":" read -r key val <<< "$part"
     if [[ $key == REACT_APP_* && -v $key ]]; then
