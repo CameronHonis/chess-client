@@ -429,6 +429,23 @@ describe("Move", () => {
                 });
             });
         });
+        describe("when the last move was a double pawn move", () => {
+            it("nullifies the en passant square", () => {
+                const boardState = BoardState.fromFEN("rnbqkbnr/ppppp2p/5p2/6p1/3PP3/8/PPP2PPP/RNBQKBNR w KQkq g6 1 3");
+                const move = new Move(ChessPiece.WHITE_QUEEN, new Square(1, 4), new Square(5, 8), [new Square(5, 8)], null, null);
+                const resultingBoardState = move.getResultingBoardState(boardState);
+                const expResultingBoardState = boardState.copy();
+                expResultingBoardState.halfMoveClockCount++;
+                expResultingBoardState.isWhiteTurn = false;
+                expResultingBoardState.isTerminal = true;
+                expResultingBoardState.enPassantSquare = null;
+                expResultingBoardState.isWhiteWinner = true;
+                expResultingBoardState.isBlackWinner = false;
+                expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_QUEEN, new Square(5, 8));
+                expResultingBoardState.setPieceOnSquare(ChessPiece.EMPTY, new Square(1, 4));
+                compareBoardStates(expResultingBoardState, resultingBoardState);
+            });
+        });
     });
     describe("::equalTo", () => {
         describe("when the two instances have identical data on all fields", () => {
