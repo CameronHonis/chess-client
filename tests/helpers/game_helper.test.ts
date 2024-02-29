@@ -37,6 +37,19 @@ describe("GameHelper", () => {
                     const actualMoves = GameHelper.getLegalMovesForPawn(boardState, new Square(4, 6));
                     compareMoves(expMoves, actualMoves);
                 });
+                describe("and the capture results in a check", () => {
+                    it("returns the correct moves", () => {
+                        const fen = "3qkbnr/Bp1npb1p/2Pp1p2/p4Pp1/4P3/2N5/PPP3PP/R2QKBNR w KQk g6 1 10";
+                        const boardState = BoardState.fromFEN(fen);
+                        const expMoves = [
+                            new Move(ChessPiece.WHITE_PAWN, new Square(6, 3), new Square(7, 4), [new Square(7, 4)], ChessPiece.BLACK_KNIGHT, null),
+                            new Move(ChessPiece.WHITE_PAWN, new Square(6, 3), new Square(7, 3), [], null, null),
+                            new Move(ChessPiece.WHITE_PAWN, new Square(6, 3), new Square(7, 2), [], ChessPiece.BLACK_PAWN, null),
+                        ];
+                        const actualMoves = GameHelper.getLegalMovesForPawn(boardState, new Square(6, 3));
+                        compareMoves(expMoves, actualMoves);
+                    });
+                });
             });
             describe("and the square in front is occupied", () => {
                 it("returns the correct moves", () => {
