@@ -35,6 +35,12 @@ export const Board: React.FC<BoardProps> = () => {
         window.services.boardAnimator.holdPiece(draggingSquare);
     }, [draggingSquare]);
 
+    const [ isWhiteKingChecked, isBlackKingChecked ] = useMemo(() => {
+        const whiteKingCheckingSquares = GameHelper.getPieceSquaresCheckingKing(match.board, true);
+        const blackKingCheckingSquares = GameHelper.getPieceSquaresCheckingKing(match.board, false);
+        return [ whiteKingCheckingSquares.length > 0, blackKingCheckingSquares.length > 0 ];
+    }, [match.board]);
+
     const movesByStartSquareHash = useMemo(() => {
         if (squareSelected != null) {
             console.log("squareSelected", squareSelected.getHash());
@@ -132,7 +138,6 @@ export const Board: React.FC<BoardProps> = () => {
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
         const landSquareHashes = squareSelected ? getLandSquareHashes(squareSelected) : new Set<string>();
-        const checkingSquares = GameHelper.getPieceSquaresCheckingKing(match.board, match.board.isWhiteTurn);
         for (let r = 7; r >= 0; r--) {
             for (let c = 0; c < 8; c++) {
                 let rank: number, file: number;
@@ -147,8 +152,9 @@ export const Board: React.FC<BoardProps> = () => {
                 const idx = 8 * r + c;
                 const isSelected = !!squareSelected && square.equalTo(squareSelected);
                 const isDotVisible = landSquareHashes.has(square.getHash())
-                const pieceType = !!match ? match.board.getPieceBySquare(square) : ChessPiece.EMPTY;
-                const isCheckingKing = checkingSquares.filter(_square => _square.equalTo(square)).length > 0;
+                const pieceType = match.board.getPieceBySquare(square);
+                let isChecked = (pieceType === ChessPiece.WHITE_KING && isWhiteKingChecked) ||
+                    (pieceType === ChessPiece.BLACK_KING && isBlackKingChecked)
                 tiles.push(<Tile square={square}
                                  pieceType={pieceType}
                                  isSelected={isSelected}
@@ -158,12 +164,12 @@ export const Board: React.FC<BoardProps> = () => {
                                  rank={r}
                                  file={c}
                                  isInteractable={getIsInteractable(square)}
-                                 isCheckingKing={isCheckingKing}
+                                 isChecked={isChecked}
                                  key={idx}/>);
             }
         }
         return tiles;
-    }, [squareSelected, getLandSquareHashes, isWhitePerspective, match, handleTileMouseDown, handleTileMouseUp, getIsInteractable]);
+    }, [squareSelected, getLandSquareHashes, isWhitePerspective, match.board, isWhiteKingChecked, isBlackKingChecked, handleTileMouseDown, handleTileMouseUp, getIsInteractable]);
 
     const animTile = React.useMemo((): ReactComp<typeof AnimTile> | null => {
         if (!appState.lastMove) {

@@ -20,7 +20,7 @@ interface Props {
     rank: number;
     file: number;
     isInteractable: boolean;
-    isCheckingKing: boolean;
+    isChecked: boolean;
 }
 
 export const Tile: React.FC<Props> = (props) => {
@@ -62,11 +62,11 @@ export const Tile: React.FC<Props> = (props) => {
         if (props.isInteractable) {
             classNames.push("Interactable");
         }
-        if (props.isCheckingKing) {
-            classNames.push("Checking");
+        if (props.isChecked) {
+            classNames.push("Checked");
         }
         return classNames;
-    }, [square, isSelected, isDotVisible, props.isInteractable, props.isCheckingKing]);
+    }, [square, isSelected, isDotVisible, props.isInteractable, props.isChecked]);
 
     return <div
         className={classNames.join(" ")}
