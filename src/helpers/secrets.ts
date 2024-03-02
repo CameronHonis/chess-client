@@ -1,7 +1,8 @@
 import {Throwable} from "../types";
 
 export enum Secret {
-    ARBITRATOR_URL = "ARBITRATOR_URL",
+    ARBITRATOR_DOMAIN = "ARBITRATOR_DOMAIN",
+    ARBITRATOR_PORT = "ARBITRATOR_PORT"
 }
 
 export function getSecret(secretName: Secret): Throwable<string> {
