@@ -20,9 +20,14 @@ export class ArbitratorClient {
 
     constructor() {
         const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+        let location: string;
         const domain = getSecret(Secret.ARBITRATOR_DOMAIN);
-        const port = getSecret(Secret.ARBITRATOR_PORT);
-        const location = port ? `${domain}:${port}` : domain;
+        try {
+            const port = getSecret(Secret.ARBITRATOR_PORT);
+            location = `${domain}:${port}`;
+        } catch {
+            location = domain;
+        }
         this.wsUrl = `${protocol}://${location}`;
         this.websocket = new WebSocket(this.wsUrl);
         this._attachWsHandlers();
