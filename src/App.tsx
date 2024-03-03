@@ -21,11 +21,13 @@ export const appStateContext = React.createContext<[AppState, React.Dispatch<App
 }]);
 
 function App() {
-    const [state, dispatch] = React.useReducer(appStateReducer, new AppState({}));
+    const [state, dispatch] = React.useReducer(appStateReducer, AppState.fromLocalStorage("appState"));
 
     React.useEffect(() => {
         window.appState = state;
         window.appDispatch = dispatch;
+
+        state.toLocalStorage("appState");
     }, [state, dispatch]);
 
     React.useEffect(() => {

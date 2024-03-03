@@ -22,4 +22,16 @@ export class AuthKeyset {
             privateKey: this.privateKey,
         });
     }
+
+    toLocalStorage(key: string) {
+        window.localStorage.setItem(key, JSON.stringify(this));
+    }
+
+    static fromLocalStorage(key: string): AuthKeyset | null {
+        const authJsonStr = window.localStorage.getItem(key);
+        if (authJsonStr) {
+            return new AuthKeyset(JSON.parse(authJsonStr));
+        }
+        return null;
+    }
 }

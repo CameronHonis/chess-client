@@ -41,5 +41,19 @@ export class AppState {
         this.inboundChallenges = appState.inboundChallenges || initAppState.inboundChallenges;
         this.outboundChallenges = appState.outboundChallenges || initAppState.outboundChallenges;
     }
+
+    toLocalStorage(key: string) {
+        if (this.auth) {
+            this.auth.toLocalStorage(`${key}.auth`);
+        }
+    }
+
+    static fromLocalStorage(key: string) {
+        const appStateArgs: Partial<AppState> = {};
+
+        appStateArgs.auth = AuthKeyset.fromLocalStorage(`${key}.auth`);
+
+        return new AppState(appStateArgs);
+    }
 }
 
