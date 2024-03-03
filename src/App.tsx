@@ -16,6 +16,7 @@ import {
 import {ChallengesOverlay} from "./components/challenges/challenges_overlay";
 import {Home} from "./components/home";
 import {DisconnectedOverlay} from "./components/disconnected_overlay";
+import {AuthKeyset} from "./models/domain/auth_keyset";
 
 export const appStateContext = React.createContext<[AppState, React.Dispatch<AppStateAction>]>([new AppState({}), () => {
 }]);
@@ -35,6 +36,7 @@ function App() {
         registerOnMatchUpdatedMsgHandler(dispatch);
         registerOnMoveMsgHandler(dispatch);
         registerOnChallengeUpdatedMsgHandler(dispatch);
+
     }, []);
 
     return (

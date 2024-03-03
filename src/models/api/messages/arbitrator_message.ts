@@ -73,6 +73,10 @@ import {
     LeaveMatchmakingMessageContent,
     LeaveMatchmakingMessageContentSchema
 } from "./arbitrator_contents/leave_matchmaking_message_content";
+import {
+    RefreshAuthMessageContent,
+    RefreshAuthMessageContentSchema
+} from "./arbitrator_contents/refresh_auth_message_content";
 
 export class ArbitratorMessage<T extends MessageContentType> {
     topic: string;
@@ -120,6 +124,8 @@ export const ArbitratorMessageSchema = z.object({
 });
 
 const ContentZodByContentType: { [K in keyof typeof MessageContentType]: z.ZodObject<any> } = {
+    [MessageContentType.AUTH]: AuthMessageContentSchema,
+    [MessageContentType.REFRESH_AUTH]: RefreshAuthMessageContentSchema,
     [MessageContentType.MATCH_UPDATED]: MatchUpdateMessageContentSchema,
     [MessageContentType.CHALLENGE_UPDATED]: ChallengeUpdatedMessageContentSchema,
     [MessageContentType.MOVE_FAILED]: MoveFailedMessageContentSchema,
@@ -131,7 +137,6 @@ const ContentZodByContentType: { [K in keyof typeof MessageContentType]: z.ZodOb
     [MessageContentType.MATCH_CREATION_FAILED]: MatchCreationFailedMessageContentSchema,
     [MessageContentType.EMPTY]: EmptyMessageContentSchema,
     [MessageContentType.ECHO]: EchoMessageContentSchema,
-    [MessageContentType.AUTH]: AuthMessageContentSchema,
     [MessageContentType.JOIN_MATCHMAKING]: JoinMatchmakingMessageContentSchema,
     [MessageContentType.LEAVE_MATCHMAKING]: LeaveMatchmakingMessageContentSchema,
     [MessageContentType.MOVE]: MoveMessageContentSchema,
@@ -145,6 +150,8 @@ const ContentZodByContentType: { [K in keyof typeof MessageContentType]: z.ZodOb
 };
 
 type ContentByContentType = {
+    "AUTH": AuthMessageContent,
+    "REFRESH_AUTH": RefreshAuthMessageContent,
     "MATCH_UPDATED": MatchUpdateMessageContent,
     "CHALLENGE_UPDATED": ChallengeUpdatedMessageContent,
     "MOVE_FAILED": MoveFailedMessageContent,
@@ -156,7 +163,6 @@ type ContentByContentType = {
     "MATCH_CREATION_FAILED": MatchCreationFailedMessageContent,
     "EMPTY": EmptyMessageContent,
     "ECHO": EchoMessageContent,
-    "AUTH": AuthMessageContent,
     "JOIN_MATCHMAKING": JoinMatchmakingMessageContent,
     "LEAVE_MATCHMAKING": LeaveMatchmakingMessageContent,
     "MOVE": MoveMessageContent,

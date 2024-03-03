@@ -1,5 +1,7 @@
 export enum MessageContentType {
     // inbound
+    AUTH = "AUTH",
+    REFRESH_AUTH = "REFRESH_AUTH",
     MATCH_UPDATED = "MATCH_UPDATED",
     CHALLENGE_UPDATED = "CHALLENGE_UPDATED",
     MOVE_FAILED = "MOVE_FAILED",
@@ -13,7 +15,6 @@ export enum MessageContentType {
     // outbound
     EMPTY = "EMPTY",
     ECHO = "ECHO",
-    AUTH = "AUTH",
     JOIN_MATCHMAKING = "JOIN_MATCHMAKING",
     LEAVE_MATCHMAKING = "LEAVE_MATCHMAKING",
     MOVE = "MOVE",

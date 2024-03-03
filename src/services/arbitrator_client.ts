@@ -44,6 +44,9 @@ export class ArbitratorClient {
         const url = (e.currentTarget as WebSocket).url;
         console.log(`websocket connection established with websocket on ${url}`);
         dispatchConnectedEvent(this.wsUrl);
+
+        const existingAuth = AuthKeyset.fromLocalStorage("appState.auth");
+        window.services.arbitratorClient.refreshAuth(existingAuth);
     }
 
     private _handleMessage(e: MessageEvent): Throwable<void> {
@@ -95,6 +98,13 @@ export class ArbitratorClient {
         const stringifiedMsg = JSON.stringify(msg);
         console.log(`[${this.websocket.url}] << ${stringifiedMsg}`);
         this.websocket.send(stringifiedMsg);
+    }
+
+    refreshAuth(existingAuth?: AuthKeyset): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.REFRESH_AUTH, {
+            existingAuth: existingAuth,
+        });
+        this.sendMsg(msg);
     }
 
     challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl, auth: AuthKeyset): Throwable<void> {

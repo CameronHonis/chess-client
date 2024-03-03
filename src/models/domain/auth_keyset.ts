@@ -27,11 +27,11 @@ export class AuthKeyset {
         window.localStorage.setItem(key, JSON.stringify(this));
     }
 
-    static fromLocalStorage(key: string): AuthKeyset | null {
+    static fromLocalStorage(key: string): AuthKeyset | undefined {
         const authJsonStr = window.localStorage.getItem(key);
         if (authJsonStr) {
             return new AuthKeyset(JSON.parse(authJsonStr));
         }
-        return null;
+        return undefined;
     }
 }
