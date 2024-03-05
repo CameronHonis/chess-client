@@ -2,17 +2,21 @@ import React from "react";
 import {DISCONNECTED_EVENT, DisconnectedEvent} from "../models/events/disconnected_event";
 import {CONNECTED_EVENT, ConnectedEvent} from "../models/events/connected_event";
 import "../styles/disconnected_overlay.css";
+import {DisconnectedOverlayAnimator} from "../services/disconnected_overlay_animator";
 
 export function DisconnectedOverlay() {
-    const [isConnected, setIsConnected] = React.useState(true);
+    const overlayRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
+        if (!overlayRef.current)
+            return
+        const animator = new DisconnectedOverlayAnimator(overlayRef.current);
         const handleDisconnectedEvent = (_: DisconnectedEvent) => {
-            setIsConnected(false);
+            animator.setDisconnected();
         }
 
         const handleConnectedEvent = (_: ConnectedEvent) => {
-            setIsConnected(true);
+            animator.setConnected();
         }
 
         document.addEventListener(DISCONNECTED_EVENT, handleDisconnectedEvent);
@@ -22,18 +26,11 @@ export function DisconnectedOverlay() {
             document.removeEventListener(DISCONNECTED_EVENT, handleDisconnectedEvent);
             document.removeEventListener(CONNECTED_EVENT, handleConnectedEvent);
         }
-    }, [setIsConnected]);
-
-    React.useEffect(() => {
-        if (!isConnected) {
-
-        }
-    }, [isConnected]);
+    }, [overlayRef]);
 
     return <>
-        {!isConnected &&
-        <div className={"DisconnectedOverlay"}>
+        <div ref={overlayRef}>
             <p>Trying to reconnect...</p>
-        </div>}
+        </div>
     </>
 }

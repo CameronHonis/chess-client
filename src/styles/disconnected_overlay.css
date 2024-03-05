@@ -14,6 +14,25 @@
     pointer-events: all;
 }
 
+@keyframes fadeIn {
+    from { opacity: 0;}
+    to { opacity: 1;}
+}
+@keyframes fadeOut {
+    from { opacity: 1;}
+    to { opacity: 0;}
+}
+
+.DisconnectedOverlay.Visible {
+    opacity: 1;
+    animation: fadeIn 1s;
+}
+
+.DisconnectedOverlay:not(.Visible) {
+    opacity: 0;
+    animation: fadeOut 1s;
+}
+
 .DisconnectedOverlay p {
     color: white;
     font-size: 4rem;
