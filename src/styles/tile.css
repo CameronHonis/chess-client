@@ -61,8 +61,9 @@
     background-color: white;
     position: absolute;
     z-index: 18;
-    opacity: 50%;
+    opacity: 70%;
     border-radius: 20%;
+    box-shadow: 0 0 5px 1px black;
 }
 
 .Tile .Highlight {
@@ -73,7 +74,7 @@
 }
 
 .Tile .Highlight.LastMoveStart {
-    opacity: 20%;
+    opacity: 30%;
     background-color: orange;
 }
 
