@@ -29,7 +29,7 @@ export function DisconnectedOverlay() {
     }, [overlayRef]);
 
     return <>
-        <div ref={overlayRef}>
+        <div className={"DisconnectedOverlay"} ref={overlayRef}>
             <p>Trying to reconnect...</p>
         </div>
     </>
