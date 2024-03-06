@@ -56,9 +56,11 @@ export const Tile: React.FC<Props> = (props) => {
             return <div className={"Highlight LastMoveStart"}/>;
         } else if (props.isLastMoveEnd) {
             return <div className={"Highlight LastMoveEnd"}/>;
+        } else if (props.isSelected) {
+            return <div className={"Highlight Selected"}/>;
         }
         return null;
-    }, [props.isLastMoveStart, props.isLastMoveEnd]);
+    }, [props.isSelected, props.isLastMoveStart, props.isLastMoveEnd]);
 
     const classNames = React.useMemo(() => {
         const classNames = [];

@@ -19,19 +19,6 @@
     background-color: #669cd5;
 }
 
-.Tile.DarkSquare.Selected {
-    background-color: #3c5978;
-}
-
-.Tile.LightSquare.Selected {
-    background-color: #a1c4e9;
-}
-
-.Tile.Selected {
-    border: solid orange 4px;
-}
-
-
 .Tile svg, .Tile img {
     width: 100%;
     height: 100%;
@@ -81,6 +68,15 @@
 .Tile .Highlight.LastMoveEnd {
     opacity: 50%;
     background-color: orange;
+}
+
+.Tile .Highlight.Selected {
+    opacity: 30%;
+    background: radial-gradient(circle, rgba(255,255,255,1) 20%, rgba(255,255,255,.25) 80%)
+}
+
+.Tile.LightSquare .Highlight.Selected {
+    opacity: 70%;
 }
 
 #AnimatedTile, #DraggingTile{
