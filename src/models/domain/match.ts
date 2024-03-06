@@ -4,10 +4,12 @@ import {ApiMatch} from "../api/match";
 import {BotType, isBotType} from "./bot_type";
 import {Throwable} from "../../types";
 import {MatchResult, matchResultFromApi} from "./match_result";
+import {Move} from "./move";
 
 export class Match {
     uuid: string;
     board: BoardState;
+    lastMove: Move | null;
     whiteTimeRemainingSec: number;
     whiteClientKey: string;
     blackTimeRemainingSec: number;
@@ -19,6 +21,7 @@ export class Match {
     constructor(args: Match) {
         this.uuid = args.uuid;
         this.board = args.board;
+        this.lastMove = args.lastMove;
         this.whiteTimeRemainingSec = args.whiteTimeRemainingSec;
         this.whiteClientKey = args.whiteClientKey;
         this.blackTimeRemainingSec = args.blackTimeRemainingSec;
@@ -32,6 +35,7 @@ export class Match {
         const match = new Match({
             uuid: apiMatch.uuid,
             board: BoardState.fromApi(apiMatch.board),
+            lastMove: apiMatch.lastMove === null ? null : Move.fromApi(apiMatch.lastMove),
             whiteTimeRemainingSec: apiMatch.whiteTimeRemainingSec,
             whiteClientKey: apiMatch.whiteClientKey,
             blackTimeRemainingSec: apiMatch.blackTimeRemainingSec,

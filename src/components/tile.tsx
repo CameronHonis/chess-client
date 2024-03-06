@@ -21,6 +21,8 @@ interface Props {
     file: number;
     isInteractable: boolean;
     isChecked: boolean;
+    isLastMoveStart: boolean;
+    isLastMoveEnd: boolean;
 }
 
 export const Tile: React.FC<Props> = (props) => {
@@ -49,6 +51,15 @@ export const Tile: React.FC<Props> = (props) => {
         tileIcon = <King isWhite={isWhite}/>;
     }
 
+    const highlight = React.useMemo(() => {
+        if (props.isLastMoveStart) {
+            return <div className={"Highlight LastMoveStart"}/>;
+        } else if (props.isLastMoveEnd) {
+            return <div className={"Highlight LastMoveEnd"}/>;
+        }
+        return null;
+    }, [props.isLastMoveStart, props.isLastMoveEnd]);
+
     const classNames = React.useMemo(() => {
         const classNames = [];
         classNames.push("Tile");
@@ -65,8 +76,14 @@ export const Tile: React.FC<Props> = (props) => {
         if (props.isChecked) {
             classNames.push("Checked");
         }
+        if (props.isLastMoveStart) {
+            classNames.push("LastMoveStart");
+        }
+        if (props.isLastMoveEnd) {
+            classNames.push("LastMoveEnd");
+        }
         return classNames;
-    }, [square, isSelected, isDotVisible, props.isInteractable, props.isChecked]);
+    }, [square, isSelected, isDotVisible, props.isInteractable, props.isChecked, props.isLastMoveStart, props.isLastMoveEnd]);
 
     return <div
         className={classNames.join(" ")}
@@ -75,6 +92,7 @@ export const Tile: React.FC<Props> = (props) => {
         onMouseUp={() => handleSquareMouseUp(square)}
     >
         {tileIcon}
+        {highlight}
         {isDotVisible && <div className="TileDot"/>}
     </div>
 }

@@ -35,10 +35,10 @@ export const Board: React.FC<BoardProps> = () => {
         window.services.boardAnimator.holdPiece(draggingSquare);
     }, [draggingSquare]);
 
-    const [ isWhiteKingChecked, isBlackKingChecked ] = useMemo(() => {
+    const [isWhiteKingChecked, isBlackKingChecked] = useMemo(() => {
         const whiteKingCheckingSquares = GameHelper.getPieceSquaresCheckingKing(match.board, true);
         const blackKingCheckingSquares = GameHelper.getPieceSquaresCheckingKing(match.board, false);
-        return [ whiteKingCheckingSquares.length > 0, blackKingCheckingSquares.length > 0 ];
+        return [whiteKingCheckingSquares.length > 0, blackKingCheckingSquares.length > 0];
     }, [match.board]);
 
     const movesByStartSquareHash = useMemo(() => {
@@ -138,6 +138,7 @@ export const Board: React.FC<BoardProps> = () => {
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
         const landSquareHashes = squareSelected ? getLandSquareHashes(squareSelected) : new Set<string>();
+        const lastMove = appState.lastMove;
         for (let r = 7; r >= 0; r--) {
             for (let c = 0; c < 8; c++) {
                 let rank: number, file: number;
@@ -153,8 +154,10 @@ export const Board: React.FC<BoardProps> = () => {
                 const isSelected = !!squareSelected && square.equalTo(squareSelected);
                 const isDotVisible = landSquareHashes.has(square.getHash())
                 const pieceType = match.board.getPieceBySquare(square);
-                let isChecked = (pieceType === ChessPiece.WHITE_KING && isWhiteKingChecked) ||
+                const isChecked = (pieceType === ChessPiece.WHITE_KING && isWhiteKingChecked) ||
                     (pieceType === ChessPiece.BLACK_KING && isBlackKingChecked)
+                const isLastMoveStart = !!lastMove && lastMove.startSquare.equalTo(square);
+                const isLastMoveEnd = !!lastMove && lastMove.endSquare.equalTo(square);
                 tiles.push(<Tile square={square}
                                  pieceType={pieceType}
                                  isSelected={isSelected}
@@ -165,6 +168,8 @@ export const Board: React.FC<BoardProps> = () => {
                                  file={c}
                                  isInteractable={getIsInteractable(square)}
                                  isChecked={isChecked}
+                                 isLastMoveStart={isLastMoveStart}
+                                 isLastMoveEnd={isLastMoveEnd}
                                  key={idx}/>);
             }
         }
