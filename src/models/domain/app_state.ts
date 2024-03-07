@@ -3,26 +3,36 @@ import {Move} from "./move";
 import {Match} from "./match";
 import {AuthKeyset} from "./auth_keyset";
 import {Challenge} from "./challenge";
+import {BoardState} from "./board_state";
+import {ChessPiece} from "./chess_piece";
+import {Square} from "./square";
+import {newRapidTimeControl} from "./time_control";
+import {MatchResult} from "./match_result";
 
 export const initAppState = {
+    // auth: new AuthKeyset({
+    //     publicKey: "white-client-key",
+    //     privateKey: "some-private-key",
+    // }),
+    // page: Page.BOARD,
+    // match: new Match({
+    //     uuid: "some-uuid",
+    //     board: BoardState.fromFEN("r7/6P1/1k6/8/8/8/8/6RK w - - 1 63"),
+    //     lastMove: new Move(ChessPiece.BLACK_ROOK, new Square(7, 1), new Square(8, 1), [], null, null),
+    //     whiteTimeRemainingSec: 44.7,
+    //     whiteClientKey: "white-client-key",
+    //     blackTimeRemainingSec: 93.6,
+    //     blackClientKey: "black-client-key",
+    //     timeControl: newRapidTimeControl(),
+    //     botName: "",
+    //     result: MatchResult.IN_PROGRESS,
+    // }),
     auth: null,
     page: Page.HOME,
     match: null,
     lastMove: null,
     inboundChallenges: [],
-    outboundChallenges: [
-        // new Challenge({
-        //     uuid: "uuid",
-        //     challengerKey: "challengerKey",
-        //     challengedKey: "challengedKey",
-        //     isChallengerWhite: true,
-        //     isChallengerBlack: false,
-        //     timeControl: newBlitzTimeControl(),
-        //     botName: "",
-        //     timeCreated: new Date(),
-        //     isActive: true,
-        // })
-    ],
+    outboundChallenges: [],
 };
 
 export class AppState {

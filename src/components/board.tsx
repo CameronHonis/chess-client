@@ -13,6 +13,7 @@ import {BoardLeftGutter} from "./board_left_gutter";
 import {MatchResult} from "../models/domain/match_result";
 import {formatKey} from "../helpers/format_key";
 import {GameHelper} from "../helpers/game_helper";
+import {PromoteOverlay} from "./promote_overlay";
 
 export interface BoardProps {
 }
@@ -21,6 +22,7 @@ export const Board: React.FC<BoardProps> = () => {
     const [appState] = React.useContext(appStateContext);
     const [squareSelected, setSquareSelected] = useState<Square | null>(null);
     const [draggingSquare, setDraggingSquare] = useState<Square | null>(null);
+    const [promoteMove, setPromoteMove] = useState<Move | null>(null);
     const match = appState.match!;
 
     React.useEffect(() => {
@@ -103,37 +105,50 @@ export const Board: React.FC<BoardProps> = () => {
     }, [squareSelected, match.board]);
 
     const handleTileMouseUp = React.useCallback((dropSquare: Square) => {
-        if (squareSelected) {
-            if (dropSquare.equalTo(squareSelected)) {
-                if (draggingSquare) {
-                    setDraggingSquare(null);
-                } else {
-                    setSquareSelected(null);
-                }
-                return;
-            }
-            const landSquareHashes = getLandSquareHashes(squareSelected);
-            const dropSquareHash = dropSquare.getHash();
-            if (!landSquareHashes.has(dropSquareHash)) {
+        if (!squareSelected) {
+            return;
+        }
+
+        if (dropSquare.equalTo(squareSelected)) {
+            if (draggingSquare) {
                 setDraggingSquare(null);
+            } else {
                 setSquareSelected(null);
-                return;
             }
-            let move: Move | null = null;
-            for (const m of movesByStartSquareHash[squareSelected.getHash()]) {
-                if (m.endSquare.equalTo(dropSquare)) {
-                    move = m;
-                    break;
-                }
-            }
-            if (!move) {
-                throw new Error(`couldn't find move with end square ${dropSquare.getHash()}`);
-            }
-            window.services.arbitratorClient.sendMove(match.uuid, move, appState.auth!);
+            return;
+        }
+
+        const landSquareHashes = getLandSquareHashes(squareSelected);
+        const dropSquareHash = dropSquare.getHash();
+        const isLegalMove = landSquareHashes.has(dropSquareHash);
+        if (!isLegalMove) {
             setDraggingSquare(null);
             setSquareSelected(null);
+            return;
+        }
+
+        const move = movesByStartSquareHash[squareSelected.getHash()].find(m => {
+            return m.endSquare.equalTo(dropSquare);
+        });
+
+        if (!move)
+            throw new Error(`couldn't find move with end square ${dropSquare.getHash()}`);
+
+        const isPromotion = (move.endSquare.rank === 1 || move.endSquare.rank === 8)
+            && ChessPieceHelper.isPawn(move.piece);
+        if (isPromotion) {
+            setPromoteMove(move);
+        } else {
+            sendMove(move);
         }
     }, [appState.auth, squareSelected, draggingSquare, match.uuid, getLandSquareHashes, movesByStartSquareHash]);
+
+    const sendMove = React.useCallback((move: Move) => {
+        window.services.arbitratorClient.sendMove(match.uuid, move, appState.auth!);
+        setDraggingSquare(null);
+        setSquareSelected(null);
+        setPromoteMove(null);
+    }, [appState.auth, match.uuid]);
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         const tiles: React.ReactElement[] = []
@@ -174,7 +189,7 @@ export const Board: React.FC<BoardProps> = () => {
             }
         }
         return tiles;
-    }, [squareSelected, getLandSquareHashes, isWhitePerspective, match.board, isWhiteKingChecked, isBlackKingChecked, handleTileMouseDown, handleTileMouseUp, getIsInteractable]);
+    }, [squareSelected, getLandSquareHashes, appState.lastMove, isWhitePerspective, match.board, isWhiteKingChecked, isBlackKingChecked, handleTileMouseDown, handleTileMouseUp, getIsInteractable]);
 
     const animTile = React.useMemo((): ReactComp<typeof AnimTile> | null => {
         if (!appState.lastMove) {
@@ -210,6 +225,8 @@ export const Board: React.FC<BoardProps> = () => {
             </div>
             <p className={"NameTag SelfNameTag"}>{formatKey(selfClientKey)}</p>
         </div>
+        {promoteMove && <PromoteOverlay isWhite={isWhitePerspective} move={promoteMove} onPromote={sendMove}
+                                        onCancel={() => setPromoteMove(null)}/>}
         {match.result !== MatchResult.IN_PROGRESS && <Summary/>}
     </div>
 }

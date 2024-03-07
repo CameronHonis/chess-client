@@ -1,0 +1,41 @@
+.PromoteOverlay-Pieces {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 19;
+    display: flex;
+    flex-direction: column;
+}
+
+.PromoteOverlay-Pieces div {
+    display: flex;
+    justify-content: center;
+}
+
+.PromoteOverlay-Piece {
+    background: none;
+    border: none;
+    cursor: pointer;
+    background: rgba(255,255,255, 0.5);
+    margin: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0,0,0, 0.4);
+}
+
+.PromoteOverlay-Piece:hover {
+    background: rgba(255,255,255, 0.7);
+}
+
+.PromoteOverlay-Piece img {
+    width: 5rem;
+    height: 5rem;
+}
+
+.PromoteOverlay-Cancel {
+    position: absolute;
+    z-index: 18;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
