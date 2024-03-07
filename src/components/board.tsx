@@ -217,7 +217,7 @@ export const Board: React.FC<BoardProps> = () => {
     return <div className={"BoardFrame"}>
         <BoardLeftGutter isWhitePerspective={isWhitePerspective}/>
         <div className={"BoardWrapped"}>
-            <p className={"NameTag OppNameTag"}>{formatKey(oppClientKey)}</p>
+            <p className={"NameTag OppNameTag"}>{match.botName === "" ? formatKey(oppClientKey) : `${match.botName} bot`}</p>
             <div className={"Board"}>
                 {tiles}
                 {animTile}
