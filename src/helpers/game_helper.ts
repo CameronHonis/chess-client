@@ -31,6 +31,38 @@ export class GameHelper {
         throw new Error(`Unhandled piece type: ${piece}`);
     }
 
+    static getPossibleLandSquaresForSquare(boardState: BoardState, square: Square): Square[] {
+        const piece = boardState.getPieceBySquare(square);
+        if (piece === ChessPiece.EMPTY)
+            return [];
+        if (ChessPieceHelper.isPawn(piece)) {
+            return getPossibleLandSquaresForPawn(ChessPieceHelper.isWhite(piece), square);
+        } else if (ChessPieceHelper.isKnight(piece)) {
+            return getPossibleLandSquaresForKnight(square);
+        } else if (ChessPieceHelper.isBishop(piece)) {
+            return getPossibleLandSquaresForBishop(square);
+        } else if (ChessPieceHelper.isRook(piece)) {
+            return getPossibleLandSquaresForRook(square);
+        } else if (ChessPieceHelper.isQueen(piece)) {
+            return getPossibleLandSquaresForQueen(square);
+        } else {
+            let canKingsideCastle = false;
+            let canQueensideCastle = false;
+            if (boardState.isWhiteTurn) {
+                canKingsideCastle = boardState.canWhiteCastleKingside;
+                canQueensideCastle = boardState.canWhiteCastleQueenside;
+            } else {
+                canKingsideCastle = boardState.canBlackCastleKingside;
+                canQueensideCastle = boardState.canBlackCastleQueenside;
+            }
+            return getPossibleLandSquaresForKing(
+                canKingsideCastle,
+                canQueensideCastle,
+                square
+            );
+        }
+    }
+
     static getLegalMovesForPawn(boardState: BoardState, square: Square): Move[] {
         let moves: Move[] = [];
         const piece = boardState.getPieceBySquare(square);
@@ -98,18 +130,9 @@ export class GameHelper {
     }
 
     static getLegalMovesForKnight(boardState: BoardState, square: Square): Move[] {
-        const landSquares = [
-            new Square(square.rank + 2, square.file + 1),
-            new Square(square.rank + 2, square.file - 1),
-            new Square(square.rank + 1, square.file + 2),
-            new Square(square.rank + 1, square.file - 2),
-            new Square(square.rank - 1, square.file + 2),
-            new Square(square.rank - 1, square.file - 2),
-            new Square(square.rank - 2, square.file + 1),
-            new Square(square.rank - 2, square.file - 1),
-        ];
         const piece = boardState.getPieceBySquare(square);
         let moves: Move[] = [];
+        const landSquares = getPossibleLandSquaresForKnight(square);
         for (let landSquare of landSquares) {
             if (landSquare.isOutsideBoard()) continue;
             const landPiece = boardState.getPieceBySquare(landSquare);
@@ -426,4 +449,124 @@ export class GameHelper {
         }
         return moves;
     }
+}
+
+export function getPossibleLandSquaresForPawn(isWhite: boolean, square: Square): Square[] {
+    const moves: Square[] = [];
+    const rankDir = isWhite ? 1 : -1;
+    const squareInFront = new Square(square.rank + rankDir, square.file);
+    moves.push(squareInFront);
+    const leftCaptureSquare = new Square(square.rank + rankDir, square.file - 1);
+    moves.push(leftCaptureSquare);
+    const rightCaptureSquare = new Square(square.rank + rankDir, square.file + 1);
+    moves.push(rightCaptureSquare);
+    if (square.rank === 2) {
+        const squareTwoInFront = new Square(square.rank + 2 * rankDir, square.file);
+        moves.push(squareTwoInFront);
+    } else if (square.rank === 7) {
+        const squareTwoInFront = new Square(square.rank + 2 * rankDir, square.file);
+        moves.push(squareTwoInFront);
+    }
+    return moves.filter(square => !square.isOutsideBoard())
+}
+
+export function getPossibleLandSquaresForKnight(square: Square): Square[] {
+    const landSquares = [
+        new Square(square.rank + 2, square.file + 1),
+        new Square(square.rank + 2, square.file - 1),
+        new Square(square.rank + 1, square.file + 2),
+        new Square(square.rank + 1, square.file - 2),
+        new Square(square.rank - 1, square.file + 2),
+        new Square(square.rank - 1, square.file - 2),
+        new Square(square.rank - 2, square.file + 1),
+        new Square(square.rank - 2, square.file - 1),
+    ];
+    return landSquares.filter(square => !square.isOutsideBoard());
+}
+
+export function getPossibleLandSquaresForBishop(square: Square): Square[] {
+    const landSquares: Square[] = [];
+    const dirs = [
+        [1, 1],
+        [1, -1],
+        [-1, 1],
+        [-1, -1]
+    ];
+    for (let dir of dirs) {
+        for (let i = 1; i < 8; i++) {
+            const landSquare = new Square(
+                square.rank + i * dir[0],
+                square.file + i * dir[1]
+            );
+            if (landSquare.isOutsideBoard()) break;
+            landSquares.push(landSquare);
+        }
+    }
+    return landSquares;
+}
+
+export function getPossibleLandSquaresForRook(square: Square): Square[] {
+    const landSquares: Square[] = [];
+    const dirs = [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1]
+    ];
+    for (let dir of dirs) {
+        for (let i = 1; i < 8; i++) {
+            const landSquare = new Square(
+                square.rank + i * dir[0],
+                square.file + i * dir[1]
+            );
+            if (landSquare.isOutsideBoard()) break;
+            landSquares.push(landSquare);
+        }
+    }
+    return landSquares;
+}
+
+export function getPossibleLandSquaresForQueen(square: Square): Square[] {
+    const landSquares: Square[] = [];
+    const dirs = [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+        [1, 1],
+        [-1, 1],
+        [1, -1],
+        [-1, -1]
+    ];
+    for (let dir of dirs) {
+        for (let i = 1; i < 8; i++) {
+            const landSquare = new Square(
+                square.rank + i * dir[0],
+                square.file + i * dir[1]
+            );
+            if (landSquare.isOutsideBoard()) break;
+            landSquares.push(landSquare);
+        }
+    }
+    return landSquares;
+}
+
+export function getPossibleLandSquaresForKing(canKingsideCastle: boolean, canQueensideCastle: boolean, square: Square): Square[] {
+    const landSquares: Square[] = [
+        new Square(square.rank + 1, square.file - 1),
+        new Square(square.rank + 1, square.file),
+        new Square(square.rank + 1, square.file + 1),
+        new Square(square.rank, square.file - 1),
+        new Square(square.rank, square.file + 1),
+        new Square(square.rank - 1, square.file - 1),
+        new Square(square.rank - 1, square.file),
+        new Square(square.rank - 1, square.file + 1),
+    ];
+    if (canKingsideCastle) {
+        landSquares.push(new Square(square.rank, 7));
+    }
+    if (canQueensideCastle) {
+        landSquares.push(new Square(square.rank, 3));
+    }
+    return landSquares.filter(square => !square.isOutsideBoard());
 }

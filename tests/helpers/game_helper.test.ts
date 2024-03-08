@@ -1,9 +1,31 @@
-import {GameHelper} from "../../src/helpers/game_helper";
+import {
+    GameHelper,
+    getPossibleLandSquaresForBishop,
+    getPossibleLandSquaresForKing,
+    getPossibleLandSquaresForKnight,
+    getPossibleLandSquaresForPawn,
+    getPossibleLandSquaresForQueen,
+    getPossibleLandSquaresForRook
+} from "../../src/helpers/game_helper";
 import {BoardState} from "../../src/models/domain/board_state";
 import {Square} from "../../src/models/domain/square";
 import {Move} from "../../src/models/domain/move";
 import {ChessPiece} from "../../src/models/domain/chess_piece";
 
+const compareSquares = (expSquares: Square[], acSquares: Square[]) => {
+    expect(acSquares).toBeInstanceOf(Array);
+    expect(acSquares).toHaveLength(expSquares.length);
+    for (let acSquare of acSquares) {
+        let hasFoundMatch = false;
+        for (let expSquare of expSquares) {
+            if (acSquare.equalTo(expSquare)) {
+                hasFoundMatch = true;
+                break;
+            }
+        }
+        expect(hasFoundMatch).toBeTruthy();
+    }
+}
 const compareMoves = (expMoves: Move[], actualMoves: Move[]) => {
     expect(actualMoves).toBeInstanceOf(Array);
     expect(actualMoves).toHaveLength(expMoves.length);
@@ -23,6 +45,328 @@ const compareMoves = (expMoves: Move[], actualMoves: Move[]) => {
 }
 
 describe("GameHelper", () => {
+    describe("#getPossibleLandSquaresForPawn", () => {
+        describe("its white", () => {
+            describe("when the pawn is in the middle of the board", () => {
+                it("returns the 3 correct moves", () => {
+                    const landSquares = getPossibleLandSquaresForPawn(true, new Square(4, 5));
+                    const expSquares = [
+                        new Square(5, 5),
+                        new Square(5, 4),
+                        new Square(5, 6),
+                    ];
+                    compareSquares(expSquares, landSquares);
+                });
+            });
+            describe("when the pawn is on the starting row", () => {
+                it("includes the double jump square", () => {
+                    const landSquares = getPossibleLandSquaresForPawn(true, new Square(2, 2));
+                    const includesDoubleJumpSquare = !!landSquares.find(square => square.equalTo(new Square(4, 2)));
+                    expect(includesDoubleJumpSquare).toBeTruthy();
+                });
+            });
+            describe("when the pawn is on the edge of the board", () => {
+                it("excludes the square off of the board", () => {
+                    const landSquares = getPossibleLandSquaresForPawn(true, new Square(4, 8));
+                    const includesOffBoardSquare = !!landSquares.find(square => square.equalTo(new Square(5, 9)));
+                    expect(includesOffBoardSquare).toBeFalsy();
+                });
+            });
+        });
+        describe("its black", () => {
+            describe("when the pawn is in the middle of the board", () => {
+                it("returns the 3 correct moves", () => {
+                    const landSquares = getPossibleLandSquaresForPawn(false, new Square(4, 5));
+                    const expSquares = [
+                        new Square(3, 5),
+                        new Square(3, 4),
+                        new Square(3, 6),
+                    ];
+                    compareSquares(expSquares, landSquares);
+                });
+            });
+            describe("when the pawn is on the starting row", () => {
+                it("includes the double jump square", () => {
+                    const landSquares = getPossibleLandSquaresForPawn(false, new Square(7, 2));
+                    const includesDoubleJumpSquare = !!landSquares.find(square => square.equalTo(new Square(5, 2)));
+                    expect(includesDoubleJumpSquare).toBeTruthy();
+                });
+            });
+            describe("when the pawn is on the edge of the board", () => {
+                it("excludes the square off of the board", () => {
+                    const landSquares = getPossibleLandSquaresForPawn(false, new Square(4, 1));
+                    const includesOffBoardSquare = !!landSquares.find(square => square.equalTo(new Square(3, 0)));
+                    expect(includesOffBoardSquare).toBeFalsy();
+                });
+            });
+        });
+    });
+
+    describe("#getPossibleLandSquaresForKnight", () => {
+        describe("its in the middle of the board", () => {
+            it("returns the correct 8 squares", () => {
+                const landSquares = getPossibleLandSquaresForKnight(new Square(4, 5));
+                const expSquares = [
+                    new Square(6, 4),
+                    new Square(6, 6),
+                    new Square(5, 3),
+                    new Square(5, 7),
+                    new Square(3, 3),
+                    new Square(3, 7),
+                    new Square(2, 4),
+                    new Square(2, 6),
+                ];
+                compareSquares(expSquares, landSquares);
+            });
+        });
+        describe("its in a corner", () => {
+            it("excludes all squares off the board", () => {
+                const landSquares = getPossibleLandSquaresForKnight(new Square(1, 1));
+                const expSquares = [
+                    new Square(3, 2),
+                    new Square(2, 3),
+                ];
+                compareSquares(expSquares, landSquares);
+            });
+        });
+    });
+
+    describe("#getPossibleLandSquaresForBishop", () => {
+        describe("its on a light square", () => {
+            it("returns the correct squares", () => {
+                const landSquares = getPossibleLandSquaresForBishop(new Square(4, 5));
+                const expSquares = [
+                    new Square(1, 2),
+                    new Square(2, 3),
+                    new Square(3, 4),
+                    new Square(5, 6),
+                    new Square(6, 7),
+                    new Square(7, 8),
+                    new Square(1, 8),
+                    new Square(2, 7),
+                    new Square(3, 6),
+                    new Square(5, 4),
+                    new Square(6, 3),
+                    new Square(7, 2),
+                    new Square(8, 1),
+                ];
+                compareSquares(expSquares, landSquares);
+            });
+        });
+        describe("its on a dark square", () => {
+            it("returns the correct squares", () => {
+                const landSquares = getPossibleLandSquaresForBishop(new Square(5, 5));
+                const expSquares = [
+                    new Square(1, 1),
+                    new Square(2, 2),
+                    new Square(3, 3),
+                    new Square(4, 4),
+                    new Square(6, 6),
+                    new Square(7, 7),
+                    new Square(8, 8),
+                    new Square(8, 2),
+                    new Square(7, 3),
+                    new Square(6, 4),
+                    new Square(4, 6),
+                    new Square(3, 7),
+                    new Square(2, 8),
+                ];
+                compareSquares(expSquares, landSquares);
+            });
+        });
+    });
+
+    describe("#getPossibleLandSquaresForRook", () => {
+        describe("its in the middle of the board", () => {
+            it("returns the correct squares", () => {
+                const landSquares = getPossibleLandSquaresForRook(new Square(4, 5));
+                const expSquares = [
+                    new Square(4, 1),
+                    new Square(4, 2),
+                    new Square(4, 3),
+                    new Square(4, 4),
+                    new Square(4, 6),
+                    new Square(4, 7),
+                    new Square(4, 8),
+                    new Square(1, 5),
+                    new Square(2, 5),
+                    new Square(3, 5),
+                    new Square(5, 5),
+                    new Square(6, 5),
+                    new Square(7, 5),
+                    new Square(8, 5),
+                ];
+                compareSquares(expSquares, landSquares);
+            });
+        });
+        describe("its in a corner", () => {
+            it("returns the correct squares", () => {
+                const landSquares = getPossibleLandSquaresForRook(new Square(1, 1));
+                const expSquares = [
+                    new Square(1, 2),
+                    new Square(1, 3),
+                    new Square(1, 4),
+                    new Square(1, 5),
+                    new Square(1, 6),
+                    new Square(1, 7),
+                    new Square(1, 8),
+                    new Square(2, 1),
+                    new Square(3, 1),
+                    new Square(4, 1),
+                    new Square(5, 1),
+                    new Square(6, 1),
+                    new Square(7, 1),
+                    new Square(8, 1),
+                ];
+                compareSquares(expSquares, landSquares);
+            });
+        });
+    });
+
+    describe("#getPossibleLandSquaresForQueen", () => {
+        describe("its in the middle of the board", () => {
+            it("returns the correct squares", () => {
+                const landSquares = getPossibleLandSquaresForQueen(new Square(4, 5));
+                const expSquares = [
+                    new Square(4, 1),
+                    new Square(4, 2),
+                    new Square(4, 3),
+                    new Square(4, 4),
+                    new Square(4, 6),
+                    new Square(4, 7),
+                    new Square(4, 8),
+
+                    new Square(1, 5),
+                    new Square(2, 5),
+                    new Square(3, 5),
+                    new Square(5, 5),
+                    new Square(6, 5),
+                    new Square(7, 5),
+                    new Square(8, 5),
+
+                    new Square(1, 2),
+                    new Square(2, 3),
+                    new Square(3, 4),
+                    new Square(5, 6),
+                    new Square(6, 7),
+                    new Square(7, 8),
+
+                    new Square(1, 8),
+                    new Square(2, 7),
+                    new Square(3, 6),
+                    new Square(5, 4),
+                    new Square(6, 3),
+                    new Square(7, 2),
+                    new Square(8, 1),
+                ];
+                compareSquares(expSquares, landSquares);
+            });
+        });
+        describe("its in a corner", () => {
+            const landSquares = getPossibleLandSquaresForQueen(new Square(1, 1));
+            const expSquares = [
+                new Square(1, 2),
+                new Square(1, 3),
+                new Square(1, 4),
+                new Square(1, 5),
+                new Square(1, 6),
+                new Square(1, 7),
+                new Square(1, 8),
+
+                new Square(2, 1),
+                new Square(3, 1),
+                new Square(4, 1),
+                new Square(5, 1),
+                new Square(6, 1),
+                new Square(7, 1),
+                new Square(8, 1),
+
+                new Square(2, 2),
+                new Square(3, 3),
+                new Square(4, 4),
+                new Square(5, 5),
+                new Square(6, 6),
+                new Square(7, 7),
+                new Square(8, 8),
+            ];
+            compareSquares(expSquares, landSquares);
+        });
+    });
+
+    describe("#getPossibleLandSquaresForKing", () => {
+        describe("it has castle rights", () => {
+            let landSquares: Square[];
+            describe("it has kingside castle rights only", () => {
+                beforeEach(() => {
+                    landSquares = getPossibleLandSquaresForKing(true, false, new Square(1, 5));
+                });
+                it("includes kingside castle land square", () => {
+                    const includesKingsideCastleLandSquare = !!landSquares.find(square => square.equalTo(new Square(1, 7)));
+                    expect(includesKingsideCastleLandSquare).toBeTruthy();
+                });
+                it("does not include queenside castle land square", () => {
+                    const includesQueensideCastleLandSquare = !!landSquares.find(square => square.equalTo(new Square(1, 3)));
+                    expect(includesQueensideCastleLandSquare).toBeFalsy();
+                });
+            });
+            describe("it has queenside castle rights only", () => {
+                beforeEach(() => {
+                    landSquares = getPossibleLandSquaresForKing(false, true, new Square(1, 5));
+                });
+                it("includes queenside castle land square", () => {
+                    const includesQueensideCastleLandSquare = !!landSquares.find(square => square.equalTo(new Square(1, 3)));
+                    expect(includesQueensideCastleLandSquare).toBeTruthy();
+                });
+                it("does not include kingside castle land square", () => {
+                    const includesKingsideCastleLandSquare = !!landSquares.find(square => square.equalTo(new Square(1, 7)));
+                    expect(includesKingsideCastleLandSquare).toBeFalsy();
+                });
+            });
+            describe("it has both kingside and queenside castle rights", () => {
+                beforeEach(() => {
+                    landSquares = getPossibleLandSquaresForKing(true, true, new Square(1, 5));
+                });
+                it("includes kingside castle land square", () => {
+                    const includesKingsideCastleLandSquare = !!landSquares.find(square => square.equalTo(new Square(1, 7)));
+                    expect(includesKingsideCastleLandSquare).toBeTruthy();
+                });
+                it("includes queenside castle land square", () => {
+                    const includesQueensideCastleLandSquare = !!landSquares.find(square => square.equalTo(new Square(1, 3)));
+                    expect(includesQueensideCastleLandSquare).toBeTruthy();
+                });
+            });
+        });
+        describe("it does not have castle rights", () => {
+            describe("its in the middle of the board", () => {
+                it("returns all non-castle moves", () => {
+                    const landSquares = getPossibleLandSquaresForKing(false, false, new Square(4, 5));
+                    const expLandSquares = [
+                        new Square(3, 4),
+                        new Square(3, 5),
+                        new Square(3, 6),
+                        new Square(4, 4),
+                        new Square(4, 6),
+                        new Square(5, 4),
+                        new Square(5, 5),
+                        new Square(5, 6),
+                    ];
+                    compareSquares(landSquares, expLandSquares);
+                });
+            });
+            describe("its in a corner", () => {
+                it("does not return moves off board", () => {
+                    const landSquares = getPossibleLandSquaresForKing(false, false, new Square(1, 1));
+                    const expLandSquares = [
+                        new Square(1, 2),
+                        new Square(2, 1),
+                        new Square(2, 2),
+                    ];
+                    compareSquares(expLandSquares, landSquares);
+                });
+            });
+        });
+    });
+
     describe("#getLegalMovesForPawn", () => {
         describe("when the pawn can capture either direction", () => {
             describe("and the square in front is not occupied", () => {
