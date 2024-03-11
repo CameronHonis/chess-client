@@ -47,4 +47,23 @@ export class EasyQueue<T> implements Queue<T> {
     copy(): EasyQueue<T> {
         return new EasyQueue(...this._eles.slice(this.firstIdx));
     }
+
+    [Symbol.iterator](): Iterator<T> {
+        let index = this.firstIdx;
+        return {
+            next: () => {
+                if (index < this._eles.length) {
+                    return {
+                        value: this._eles[index++],
+                        done: false
+                    }
+                } else {
+                    return {
+                        value: undefined,
+                        done: true
+                    }
+                }
+            }
+        }
+    }
 }

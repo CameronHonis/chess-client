@@ -4,4 +4,6 @@ export interface Queue<T> {
     first(): T;
     last(): T;
     size(): number;
+    copy(): Queue<T>;
+    [Symbol.iterator](): Iterator<T>;
 }
