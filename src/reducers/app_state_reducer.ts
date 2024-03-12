@@ -1,11 +1,11 @@
 import {AppState} from "../models/domain/app_state";
-import {AppStateAction} from "../models/actions/app_state_action";
+import {AppStateAction} from "../models/actions/app/app_state_action";
 import {Page} from "../models/domain/page";
-import {isUpdateMatchAction} from "../models/actions/update_match_action";
-import {isReturnHomeAction} from "../models/actions/return_home_action";
-import {isIngestMoveAction} from "../models/actions/ingest_move_action";
-import {isUpdateChallengeAction} from "../models/actions/update_challenge_action";
-import {isUpdateAuthAction} from "../models/actions/update_auth_action";
+import {isUpdateMatchAction} from "../models/actions/app/update_match_action";
+import {isReturnHomeAction} from "../models/actions/app/return_home_action";
+import {isIngestMoveAction} from "../models/actions/app/ingest_move_action";
+import {isUpdateChallengeAction} from "../models/actions/app/update_challenge_action";
+import {isUpdateAuthAction} from "../models/actions/app/update_auth_action";
 import {AuthKeyset} from "../models/domain/auth_keyset";
 import {Throwable} from "../types";
 import {MatchResult} from "../models/domain/match_result";
@@ -25,7 +25,7 @@ export const appStateReducer = (curr: AppState, action: AppStateAction): Throwab
         if (newMatch) {
             return new AppState({
                 ...curr,
-                page: Page.BOARD,
+                page: Page.MATCH,
                 match: newMatch,
             });
         } else {

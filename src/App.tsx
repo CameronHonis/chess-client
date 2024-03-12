@@ -1,10 +1,9 @@
 import React from 'react';
 import {Header} from "./components/header";
-import {Board} from "./components/board";
 import "./styles/app.css";
 import {AppState} from "./models/domain/app_state";
 import {appStateReducer} from "./reducers/app_state_reducer";
-import {AppStateAction} from "./models/actions/app_state_action";
+import {AppStateAction} from "./models/actions/app/app_state_action";
 import {Page} from "./models/domain/page";
 import {NotifsOverlay} from "./components/notifs_overlay";
 import {
@@ -16,7 +15,7 @@ import {
 import {ChallengesOverlay} from "./components/challenges/challenges_overlay";
 import {Home} from "./components/home";
 import {DisconnectedOverlay} from "./components/disconnected_overlay";
-import {AuthKeyset} from "./models/domain/auth_keyset";
+import {MatchFC} from './components/match_fc';
 
 export const appStateContext = React.createContext<[AppState, React.Dispatch<AppStateAction>]>([new AppState({}), () => {
 }]);
@@ -43,11 +42,12 @@ function App() {
         <div className="App">
             <appStateContext.Provider value={[state, dispatch]}>
                 <Header/>
-                <DisconnectedOverlay />
+                <DisconnectedOverlay/>
                 <NotifsOverlay/>
                 <ChallengesOverlay/>
                 {state.page === Page.HOME && <Home/>}
-                {state.page === Page.BOARD && <Board/>}
+                {state.page === Page.MATCH &&
+                    <MatchFC match={state.match!} isLocked={false} viewingClientKey={state.auth!.publicKey}/>}
             </appStateContext.Provider>
         </div>
     );

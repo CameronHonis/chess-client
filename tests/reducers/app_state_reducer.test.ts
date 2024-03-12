@@ -1,11 +1,11 @@
 import {Page} from "../../src/models/domain/page";
 import {AppState} from "../../src/models/domain/app_state";
 import {Match} from "../../src/models/domain/match";
-import {BoardState} from "../../src/models/domain/board_state";
-import {Challenge } from "../../src/models/domain/challenge";
+import {Board} from "../../src/models/domain/board";
+import {Challenge} from "../../src/models/domain/challenge";
 import {appStateReducer} from "../../src/reducers/app_state_reducer";
-import {UpdateMatchAction} from "../../src/models/actions/update_match_action";
-import {UpdateChallengeAction} from "../../src/models/actions/update_challenge_action";
+import {UpdateMatchAction} from "../../src/models/actions/app/update_match_action";
+import {UpdateChallengeAction} from "../../src/models/actions/app/update_challenge_action";
 import {AuthKeyset} from "../../src/models/domain/auth_keyset";
 import {MatchResult} from "../../src/models/domain/match_result";
 import {newBlitzTimeControl, newBulletTimeControl} from "../../src/models/domain/time_control";
@@ -28,9 +28,12 @@ describe("app_state_reducer", () => {
     let appState: AppState;
     beforeEach(() => {
         appState = new AppState({
+            auth: null,
             page: Page.HOME,
             match: null,
             lastMove: null,
+            inboundChallenges: [],
+            outboundChallenges: [],
         });
     });
 
@@ -40,7 +43,8 @@ describe("app_state_reducer", () => {
             beforeEach(() => {
                 updateMatchAction = new UpdateMatchAction(new Match({
                     uuid: "some-uuid",
-                    board: BoardState.getInitBoardState(),
+                    board: Board.getInitBoardState(),
+                    lastMove: null,
                     whiteClientKey: "some-client-key",
                     blackClientKey: "some-other-client-key",
                     whiteTimeRemainingSec: 10,
@@ -56,7 +60,7 @@ describe("app_state_reducer", () => {
             });
             it("sets the page to BOARD", () => {
                 const newAppState = appStateReducer(appState, updateMatchAction);
-                expect(newAppState.page).toBe(Page.BOARD);
+                expect(newAppState.page).toBe(Page.MATCH);
             });
         });
         describe("when the match does not exist", () => {
