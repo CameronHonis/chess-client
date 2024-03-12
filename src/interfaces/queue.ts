@@ -6,4 +6,5 @@ export interface Queue<T> {
     size(): number;
     copy(): Queue<T>;
     [Symbol.iterator](): Iterator<T>;
+    equalTo(other: Queue<T>): boolean;
 }
