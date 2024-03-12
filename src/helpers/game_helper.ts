@@ -1,37 +1,37 @@
 import {Move} from "../models/domain/move";
-import {BoardState} from "../models/domain/board_state";
+import {Board} from "../models/domain/board";
 import {Square} from "../models/domain/square";
 import {ChessPiece} from "../models/domain/chess_piece";
 import {ChessPieceHelper} from "./chess_piece_helper";
 import {Material} from "../models/domain/material";
 
 export class GameHelper {
-    static getLegalMovesByBoardAndSquare(boardState: BoardState, square: Square): Move[] {
-        const piece = boardState.getPieceBySquare(square);
+    static getLegalMovesByBoardAndStartSquare(board: Board, square: Square): Move[] {
+        const piece = board.getPieceBySquare(square);
         if (piece === ChessPiece.EMPTY) {
             return [];
         }
-        if (boardState.isWhiteTurn !== ChessPieceHelper.isWhite(piece)) {
+        if (board.isWhiteTurn !== ChessPieceHelper.isWhite(piece)) {
             return [];
         }
 
         if (ChessPieceHelper.isPawn(piece)) {
-            return GameHelper.getLegalMovesForPawn(boardState, square);
+            return GameHelper.getLegalMovesForPawn(board, square);
         } else if (ChessPieceHelper.isKnight(piece)) {
-            return GameHelper.getLegalMovesForKnight(boardState, square);
+            return GameHelper.getLegalMovesForKnight(board, square);
         } else if (ChessPieceHelper.isBishop(piece)) {
-            return GameHelper.getLegalMovesForBishop(boardState, square);
+            return GameHelper.getLegalMovesForBishop(board, square);
         } else if (ChessPieceHelper.isRook(piece)) {
-            return GameHelper.getLegalMovesForRook(boardState, square);
+            return GameHelper.getLegalMovesForRook(board, square);
         } else if (ChessPieceHelper.isQueen(piece)) {
-            return GameHelper.getLegalMovesForQueen(boardState, square);
+            return GameHelper.getLegalMovesForQueen(board, square);
         } else if (ChessPieceHelper.isKing(piece)) {
-            return GameHelper.getLegalMovesForKing(boardState, square);
+            return GameHelper.getLegalMovesForKing(board, square);
         }
         throw new Error(`Unhandled piece type: ${piece}`);
     }
 
-    static getPossibleLandSquaresForSquare(boardState: BoardState, square: Square): Square[] {
+    static getPossibleLandSquaresForSquare(boardState: Board, square: Square): Square[] {
         const piece = boardState.getPieceBySquare(square);
         if (piece === ChessPiece.EMPTY)
             return [];
@@ -63,7 +63,7 @@ export class GameHelper {
         }
     }
 
-    static getLegalMovesForPawn(boardState: BoardState, square: Square): Move[] {
+    static getLegalMovesForPawn(boardState: Board, square: Square): Move[] {
         let moves: Move[] = [];
         const piece = boardState.getPieceBySquare(square);
         const upgradePieces = boardState.isWhiteTurn ?
@@ -75,16 +75,16 @@ export class GameHelper {
         if (pieceInFront === ChessPiece.EMPTY) {
             if (squareInFront.rank === 8 || squareInFront.rank === 1) {
                 for (let upgradePiece of upgradePieces) {
-                    moves.push(new Move(piece, square, squareInFront, [], null, upgradePiece));
+                    moves.push(new Move(piece, square, squareInFront, [], ChessPiece.EMPTY, upgradePiece));
                 }
             } else {
-                moves.push(new Move(piece, square, squareInFront, [], null, null));
+                moves.push(new Move(piece, square, squareInFront, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
             }
             if ((boardState.isWhiteTurn && square.rank === 2) || (!boardState.isWhiteTurn && square.rank === 7)) {
                 const squareTwoInFront = new Square(square.rank + 2 * rankDir, square.file);
                 const pieceTwoInFront = boardState.getPieceBySquare(squareTwoInFront);
                 if (pieceTwoInFront === ChessPiece.EMPTY) {
-                    moves.push(new Move(piece, square, squareTwoInFront, [], null, null));
+                    moves.push(new Move(piece, square, squareTwoInFront, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
                 }
             }
         }
@@ -103,7 +103,7 @@ export class GameHelper {
                         capturePiece = ChessPiece.WHITE_PAWN;
                     }
                 }
-                moves.push(new Move(piece, square, leftCaptureSquare, [], capturePiece, null));
+                moves.push(new Move(piece, square, leftCaptureSquare, [], capturePiece, ChessPiece.EMPTY));
             }
         }
         const rightCaptureSquare = new Square(square.rank + rankDir, square.file + 1);
@@ -121,7 +121,7 @@ export class GameHelper {
                         capturePiece = ChessPiece.WHITE_PAWN;
                     }
                 }
-                moves.push(new Move(piece, square, rightCaptureSquare, [], capturePiece, null));
+                moves.push(new Move(piece, square, rightCaptureSquare, [], capturePiece, ChessPiece.EMPTY));
             }
         }
         moves = GameHelper._filterMovesViolateKingCheck(boardState, moves);
@@ -129,7 +129,7 @@ export class GameHelper {
         return moves;
     }
 
-    static getLegalMovesForKnight(boardState: BoardState, square: Square): Move[] {
+    static getLegalMovesForKnight(boardState: Board, square: Square): Move[] {
         const piece = boardState.getPieceBySquare(square);
         let moves: Move[] = [];
         const landSquares = getPossibleLandSquaresForKnight(square);
@@ -137,9 +137,9 @@ export class GameHelper {
             if (landSquare.isOutsideBoard()) continue;
             const landPiece = boardState.getPieceBySquare(landSquare);
             if (landPiece === ChessPiece.EMPTY) {
-                moves.push(new Move(piece, square, landSquare, [], null, null));
+                moves.push(new Move(piece, square, landSquare, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
             } else if (GameHelper.isCapturableSquare(boardState, landSquare)) {
-                moves.push(new Move(piece, square, landSquare, [], landPiece, null));
+                moves.push(new Move(piece, square, landSquare, [], landPiece, ChessPiece.EMPTY));
             }
         }
         moves = GameHelper._filterMovesViolateKingCheck(boardState, moves);
@@ -147,7 +147,7 @@ export class GameHelper {
         return moves;
     }
 
-    static getLegalMovesForBishop(boardState: BoardState, square: Square): Move[] {
+    static getLegalMovesForBishop(boardState: Board, square: Square): Move[] {
         const piece = boardState.getPieceBySquare(square);
         let moves: Move[] = [];
         for (let [rankDir, fileDir] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
@@ -160,11 +160,11 @@ export class GameHelper {
                 }
                 const landPiece = boardState.getPieceBySquare(landSquare);
                 if (landPiece === ChessPiece.EMPTY) {
-                    moves.push(new Move(piece, square, landSquare, [], null, null));
+                    moves.push(new Move(piece, square, landSquare, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
                     continue;
                 }
                 if (GameHelper.isCapturableSquare(boardState, landSquare)) {
-                    moves.push(new Move(piece, square, landSquare, [], landPiece, null));
+                    moves.push(new Move(piece, square, landSquare, [], landPiece, ChessPiece.EMPTY));
                 }
                 break;
             }
@@ -174,7 +174,7 @@ export class GameHelper {
         return moves;
     }
 
-    static getLegalMovesForRook(boardState: BoardState, square: Square): Move[] {
+    static getLegalMovesForRook(boardState: Board, square: Square): Move[] {
         const piece = boardState.getPieceBySquare(square);
         let moves: Move[] = [];
         for (let [rankDir, fileDir] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
@@ -185,11 +185,11 @@ export class GameHelper {
                 if (landSquare.isOutsideBoard()) break;
                 const landPiece = boardState.getPieceBySquare(landSquare);
                 if (landPiece === ChessPiece.EMPTY) {
-                    moves.push(new Move(piece, square, landSquare, [], null, null));
+                    moves.push(new Move(piece, square, landSquare, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
                     continue;
                 }
                 if (GameHelper.isCapturableSquare(boardState, landSquare)) {
-                    moves.push(new Move(piece, square, landSquare, [], landPiece, null));
+                    moves.push(new Move(piece, square, landSquare, [], landPiece, ChessPiece.EMPTY));
                 }
                 break;
             }
@@ -199,7 +199,7 @@ export class GameHelper {
         return moves;
     }
 
-    static getLegalMovesForQueen(boardState: BoardState, square: Square): Move[] {
+    static getLegalMovesForQueen(boardState: Board, square: Square): Move[] {
         const piece = boardState.getPieceBySquare(square);
         let moves: Move[] = [];
         for (let [rankDir, fileDir] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]) {
@@ -210,11 +210,11 @@ export class GameHelper {
                 if (landSquare.isOutsideBoard()) break;
                 const landPiece = boardState.getPieceBySquare(landSquare);
                 if (landPiece === ChessPiece.EMPTY) {
-                    moves.push(new Move(piece, square, landSquare, [], null, null));
+                    moves.push(new Move(piece, square, landSquare, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
                     continue;
                 }
                 if (GameHelper.isCapturableSquare(boardState, landSquare)) {
-                    moves.push(new Move(piece, square, landSquare, [], landPiece, null));
+                    moves.push(new Move(piece, square, landSquare, [], landPiece, ChessPiece.EMPTY));
                 }
                 break;
             }
@@ -224,7 +224,7 @@ export class GameHelper {
         return moves;
     }
 
-    static getLegalMovesForKing(boardState: BoardState, square: Square): Move[] {
+    static getLegalMovesForKing(boardState: Board, square: Square): Move[] {
         const piece = boardState.getPieceBySquare(square);
         const enemyKingSquare = boardState.isWhiteTurn ? boardState.material.blackKingSquare : boardState.material.whiteKingSquare;
         let moves: Move[] = [];
@@ -242,10 +242,10 @@ export class GameHelper {
             if (landSquare.isOutsideBoard()) continue;
             const landPiece = boardState.getPieceBySquare(landSquare);
             if (landPiece === ChessPiece.EMPTY && landSquare.distanceFrom(enemyKingSquare) > 1) {
-                moves.push(new Move(piece, square, landSquare, [], null, null));
+                moves.push(new Move(piece, square, landSquare, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
             }
             if (GameHelper.isCapturableSquare(boardState, landSquare)) {
-                moves.push(new Move(piece, square, landSquare, [], landPiece, null));
+                moves.push(new Move(piece, square, landSquare, [], landPiece, ChessPiece.EMPTY));
             }
         }
         const hasKingsideCastleRights = (boardState.isWhiteTurn && boardState.canWhiteCastleKingside) ||
@@ -270,7 +270,7 @@ export class GameHelper {
                 boardState.material.blackKingSquare = square;
             }
             if (pieceF === ChessPiece.EMPTY && pieceG === ChessPiece.EMPTY && !checkedBetween) {
-                moves.push(new Move(piece, square, squareG, [], null, null));
+                moves.push(new Move(piece, square, squareG, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
             }
         }
         const hasQueensideCastleRights = (boardState.isWhiteTurn && boardState.canWhiteCastleQueenside) ||
@@ -297,7 +297,7 @@ export class GameHelper {
                 boardState.material.blackKingSquare = square;
             }
             if (pieceB === ChessPiece.EMPTY && pieceC === ChessPiece.EMPTY && pieceD === ChessPiece.EMPTY && !checkedBetween) {
-                moves.push(new Move(piece, square, squareC, [], null, null));
+                moves.push(new Move(piece, square, squareC, [], ChessPiece.EMPTY, ChessPiece.EMPTY));
             }
         }
         moves = GameHelper._filterMovesViolateKingCheck(boardState, moves);
@@ -305,7 +305,7 @@ export class GameHelper {
         return moves;
     }
 
-    static getPieceSquaresCheckingKing(boardState: BoardState, isWhiteKing: boolean | null = null): Square[] {
+    static getPieceSquaresCheckingKing(boardState: Board, isWhiteKing: boolean | null = null): Square[] {
         if (isWhiteKing == null) {
             isWhiteKing = boardState.isWhiteTurn;
         }
@@ -399,7 +399,7 @@ export class GameHelper {
         return pieceSquaresCheckingKing;
     }
 
-    static isCapturableSquare(boardState: BoardState, target: Square, isAttackerPawn = false): boolean {
+    static isCapturableSquare(boardState: Board, target: Square, isAttackerPawn = false): boolean {
         if (target.isOutsideBoard()) return false;
         if (isAttackerPawn && boardState.enPassantSquare
             && boardState.enPassantSquare.equalTo(target)) {
@@ -428,7 +428,7 @@ export class GameHelper {
         return true;
     }
 
-    private static _filterMovesViolateKingCheck(boardState: BoardState, moves: Move[]): Move[] {
+    private static _filterMovesViolateKingCheck(boardState: Board, moves: Move[]): Move[] {
         const outMoves: Move[] = [];
         for (let move of moves) {
             const updatedPiecesBoardState = move.getUpdatedBoardStatePieces(boardState);
@@ -441,7 +441,7 @@ export class GameHelper {
         return outMoves;
     }
 
-    private static _addKingCheckSquaresForMoves(boardState: BoardState, moves: Move[]): Move[] {
+    private static _addKingCheckSquaresForMoves(boardState: Board, moves: Move[]): Move[] {
         for (let move_i = 0; move_i < moves.length; move_i++) {
             const move = moves[move_i];
             const resultingBoardState = move.getUpdatedBoardStatePieces(boardState);

@@ -1,6 +1,6 @@
 import {ChessPiece} from "../../src/models/domain/chess_piece";
 import {Square} from "../../src/models/domain/square";
-import {BoardState} from "../../src/models/domain/board_state";
+import {Board} from "../../src/models/domain/board";
 import {Move} from "../../src/models/domain/move";
 
 
@@ -10,7 +10,7 @@ const assert = (condition: boolean, msg: string | undefined = undefined) => {
     }
 }
 
-const compareBoardStates = (expBoardState: BoardState, actualBoardState: BoardState) => {
+const compareBoardStates = (expBoardState: Board, actualBoardState: Board) => {
     for (let r = 0; r < expBoardState.pieces.length; r++) {
         for (let c = 0; c < expBoardState.pieces[0].length; c++) {
             const pieceA = expBoardState.pieces[r][c];
@@ -42,9 +42,9 @@ describe("Move", () => {
         describe("when the move is a capture", () => {
             describe("and the capture is not an en passant move", () => {
                 it("the capturing piece moves and replaces the captured piece", () => {
-                    const boardState = BoardState.fromFEN("k7/p2n4/8/8/6B1/8/8/7K w - - 0 1");
+                    const boardState = Board.fromFEN("k7/p2n4/8/8/6B1/8/8/7K w - - 0 1");
                     const move = new Move(ChessPiece.WHITE_BISHOP, new Square(4, 7),
-                        new Square(7, 4), [], ChessPiece.BLACK_KNIGHT, null);
+                        new Square(7, 4), [], ChessPiece.BLACK_KNIGHT, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_BISHOP, new Square(7, 4));
@@ -55,8 +55,8 @@ describe("Move", () => {
             });
             describe("and the capture is an en passant move", () => {
                 it("the capturing pawn moves to the en passant square and the captured pawn is removed", () => {
-                    const boardState = BoardState.fromFEN("k7/8/4pP2/8/8/8/8/7K w - e7 0 1");
-                    const move = new Move(ChessPiece.WHITE_PAWN, new Square(6, 6), new Square(7, 5), [], ChessPiece.BLACK_PAWN, null);
+                    const boardState = Board.fromFEN("k7/8/4pP2/8/8/8/8/7K w - e7 0 1");
+                    const move = new Move(ChessPiece.WHITE_PAWN, new Square(6, 6), new Square(7, 5), [], ChessPiece.BLACK_PAWN, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_PAWN, new Square(7, 5));
@@ -72,8 +72,8 @@ describe("Move", () => {
         describe("when the move is not a capture", () => {
             describe("and the move is not a pawn upgrade", () => {
                 it("the moving piece moves", () => {
-                    const boardState = BoardState.fromFEN("k7/4r3/8/8/8/8/5N2/7K w - - 0 1");
-                    const move = new Move(ChessPiece.WHITE_KNIGHT, new Square(2, 6), new Square(3, 4), [], null, null);
+                    const boardState = Board.fromFEN("k7/4r3/8/8/8/8/5N2/7K w - - 0 1");
+                    const move = new Move(ChessPiece.WHITE_KNIGHT, new Square(2, 6), new Square(3, 4), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_KNIGHT, new Square(3, 4));
@@ -85,8 +85,8 @@ describe("Move", () => {
             });
             describe("and the move is a pawn upgrade", () => {
                 it("the pawn converts into a new piece and moves", () => {
-                    const boardState = BoardState.fromFEN("8/5P2/8/8/8/1kb5/8/7K w - - 0 1");
-                    const move = new Move(ChessPiece.WHITE_PAWN, new Square(7, 6), new Square(8, 6), [], null, ChessPiece.WHITE_ROOK);
+                    const boardState = Board.fromFEN("8/5P2/8/8/8/1kb5/8/7K w - - 0 1");
+                    const move = new Move(ChessPiece.WHITE_PAWN, new Square(7, 6), new Square(8, 6), [], ChessPiece.EMPTY, ChessPiece.WHITE_ROOK);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_ROOK, new Square(8, 6));
@@ -97,8 +97,8 @@ describe("Move", () => {
             });
             describe("and the move allows for en passant", () => {
                 it("sets the en passant square", () => {
-                    const boardState = BoardState.fromFEN("8/8/8/8/7K/8/4P3/k7 w - - 0 1");
-                    const move = new Move(ChessPiece.WHITE_PAWN, new Square(2, 5), new Square(4, 5), [], null, null);
+                    const boardState = Board.fromFEN("8/8/8/8/7K/8/4P3/k7 w - - 0 1");
+                    const move = new Move(ChessPiece.WHITE_PAWN, new Square(2, 5), new Square(4, 5), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_PAWN, new Square(4, 5));
@@ -112,8 +112,8 @@ describe("Move", () => {
         describe("when the resulting board state is terminal", () => {
             describe("and white is the winner", () => {
                 it("sets the winner to white, isTerminal to true", () => {
-                    const boardState = BoardState.fromFEN("8/8/8/8/7K/6Q1/7R/k7 w - - 0 1");
-                    const move = new Move(ChessPiece.WHITE_QUEEN, new Square(3, 7), new Square(1, 5), [new Square(1, 5)], null, null);
+                    const boardState = Board.fromFEN("8/8/8/8/7K/6Q1/7R/k7 w - - 0 1");
+                    const move = new Move(ChessPiece.WHITE_QUEEN, new Square(3, 7), new Square(1, 5), [new Square(1, 5)], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expBoardState = boardState.copy();
                     expBoardState.setPieceOnSquare(ChessPiece.WHITE_QUEEN, new Square(1, 5));
@@ -139,8 +139,8 @@ describe("Move", () => {
         });
         describe("when its black's move", () => {
             it("increments the full move counter", () => {
-                const boardState = BoardState.fromFEN("8/8/8/8/7K/2q5/4P3/k7 b - - 0 1");
-                const move = new Move(ChessPiece.BLACK_QUEEN, new Square(3, 3), new Square(1, 5), [new Square(1, 5)], null, null);
+                const boardState = Board.fromFEN("8/8/8/8/7K/2q5/4P3/k7 b - - 0 1");
+                const move = new Move(ChessPiece.BLACK_QUEEN, new Square(3, 3), new Square(1, 5), [new Square(1, 5)], ChessPiece.EMPTY, ChessPiece.EMPTY);
                 const resultingBoardState = move.getResultingBoardState(boardState);
                 const expResultingBoardState = boardState.copy();
                 expResultingBoardState.halfMoveClockCount++;
@@ -154,8 +154,8 @@ describe("Move", () => {
         describe("when a rook moves, revoking a castling right", () => {
             describe("and the rook is white's kingside rook", () => {
                 it("removes white's kingside castling right", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R w KQkq - 0 1");
-                    const move = new Move(ChessPiece.WHITE_ROOK, new Square(1, 8), new Square(1, 7), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R w KQkq - 0 1");
+                    const move = new Move(ChessPiece.WHITE_ROOK, new Square(1, 8), new Square(1, 7), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_ROOK, new Square(1, 7));
@@ -168,8 +168,8 @@ describe("Move", () => {
             });
             describe("and the rook is white's queenside rook", () => {
                 it("removes white's queenside castling right", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R w KQkq - 0 1");
-                    const move = new Move(ChessPiece.WHITE_ROOK, new Square(1, 1), new Square(1, 2), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R w KQkq - 0 1");
+                    const move = new Move(ChessPiece.WHITE_ROOK, new Square(1, 1), new Square(1, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.WHITE_ROOK, new Square(1, 2));
@@ -182,8 +182,8 @@ describe("Move", () => {
             });
             describe("and the rook is black's kingside rook", () => {
                 it("removes black's kingside castling right", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R b KQ - 0 1");
-                    const move = new Move(ChessPiece.BLACK_ROOK, new Square(8, 8), new Square(8, 7), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R b KQ - 0 1");
+                    const move = new Move(ChessPiece.BLACK_ROOK, new Square(8, 8), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.BLACK_ROOK, new Square(8, 7));
@@ -198,8 +198,8 @@ describe("Move", () => {
             });
             describe("and the rook is black's queenside rook", () => {
                 it("removes black's queenside castling right", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R b KQ - 0 1");
-                    const move = new Move(ChessPiece.BLACK_ROOK, new Square(8, 1), new Square(8, 2), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R b KQ - 0 1");
+                    const move = new Move(ChessPiece.BLACK_ROOK, new Square(8, 1), new Square(8, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.BLACK_ROOK, new Square(8, 2));
@@ -214,8 +214,8 @@ describe("Move", () => {
         });
         describe("when a king moves", () => {
             it("updates the king square", () => {
-                const boardState = BoardState.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R b KQ - 0 1");
-                const move = new Move(ChessPiece.BLACK_KING, new Square(8, 5), new Square(8, 6), [], null, null);
+                const boardState = Board.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R b KQ - 0 1");
+                const move = new Move(ChessPiece.BLACK_KING, new Square(8, 5), new Square(8, 6), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                 const resultingBoardState = move.getResultingBoardState(boardState);
                 const expResultingBoardState = boardState.copy();
                 expResultingBoardState.setPieceOnSquare(ChessPiece.BLACK_KING, new Square(8, 6));
@@ -229,8 +229,8 @@ describe("Move", () => {
             });
             describe("and the acting player had both castling rights", () => {
                 it("revokes castling rights for the moving player", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R b KQ - 0 1");
-                    const move = new Move(ChessPiece.BLACK_KING, new Square(8, 5), new Square(8, 6), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/2q5/8/8/8/8/4P3/R3K2R b KQ - 0 1");
+                    const move = new Move(ChessPiece.BLACK_KING, new Square(8, 5), new Square(8, 6), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.setPieceOnSquare(ChessPiece.BLACK_KING, new Square(8, 6));
@@ -247,8 +247,8 @@ describe("Move", () => {
         describe("when the move is castles", () => {
             describe("and white castles kingside", () => {
                 it("re-positions the king and king's rook", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/8/8/8/8/8/4P3/R3K2R w KQ - 0 1");
-                    const move = new Move(ChessPiece.WHITE_KING, new Square(1, 5), new Square(1, 7), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/8/8/8/8/8/4P3/R3K2R w KQ - 0 1");
+                    const move = new Move(ChessPiece.WHITE_KING, new Square(1, 5), new Square(1, 7), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.canWhiteCastleKingside = false;
@@ -264,8 +264,8 @@ describe("Move", () => {
             });
             describe("and white castles queenside", () => {
                 it("re-positions the king and queen's rook", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/8/8/8/8/8/4P3/R3K2R w KQ - 0 1");
-                    const move = new Move(ChessPiece.WHITE_KING, new Square(1, 5), new Square(1, 3), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/8/8/8/8/8/4P3/R3K2R w KQ - 0 1");
+                    const move = new Move(ChessPiece.WHITE_KING, new Square(1, 5), new Square(1, 3), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.canWhiteCastleKingside = false;
@@ -281,8 +281,8 @@ describe("Move", () => {
             });
             describe("and black castles kingside", () => {
                 it("re-positions the king and king's rook", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/8/8/8/8/8/4P3/R3K2R b KQ - 0 1");
-                    const move = new Move(ChessPiece.BLACK_KING, new Square(8, 5), new Square(8, 7), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/8/8/8/8/8/4P3/R3K2R b KQ - 0 1");
+                    const move = new Move(ChessPiece.BLACK_KING, new Square(8, 5), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.canBlackCastleKingside = false;
@@ -299,8 +299,8 @@ describe("Move", () => {
             });
             describe("and black castles queenside", () => {
                 it("re-positions the king and queen's rook", () => {
-                    const boardState = BoardState.fromFEN("r3k2r/8/8/8/8/8/4P3/R3K2R b KQ - 0 1");
-                    const move = new Move(ChessPiece.BLACK_KING, new Square(8, 5), new Square(8, 3), [], null, null);
+                    const boardState = Board.fromFEN("r3k2r/8/8/8/8/8/4P3/R3K2R b KQ - 0 1");
+                    const move = new Move(ChessPiece.BLACK_KING, new Square(8, 5), new Square(8, 3), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.canBlackCastleKingside = false;
@@ -318,8 +318,8 @@ describe("Move", () => {
         });
         describe("when the move results in stalemate", () => {
             it("results in a draw state", () => {
-                const boardState = BoardState.fromFEN("k7/7K/3Q4/8/8/8/8/8 w - - 0 1");
-                const move = new Move(ChessPiece.WHITE_QUEEN, new Square(6, 4), new Square(6, 2), [], null, null);
+                const boardState = Board.fromFEN("k7/7K/3Q4/8/8/8/8/8 w - - 0 1");
+                const move = new Move(ChessPiece.WHITE_QUEEN, new Square(6, 4), new Square(6, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                 const resultingBoardState = move.getResultingBoardState(boardState);
                 const expResultingBoardState = boardState.copy();
                 expResultingBoardState.isTerminal = true;
@@ -334,8 +334,8 @@ describe("Move", () => {
         });
         describe("when the resulting move violates the 50-move rule", () => {
             it("results in a draw state", () => {
-                const boardState = BoardState.fromFEN("kr6/pp6/8/8/8/5N2/8/7K w - - 49 32");
-                const move = new Move(ChessPiece.WHITE_KNIGHT, new Square(3, 6), new Square(4, 4), [], null, null);
+                const boardState = Board.fromFEN("kr6/pp6/8/8/8/5N2/8/7K w - - 49 32");
+                const move = new Move(ChessPiece.WHITE_KNIGHT, new Square(3, 6), new Square(4, 4), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                 const resultingBoardState = move.getResultingBoardState(boardState);
                 const expResultingBoardState = boardState.copy();
                 expResultingBoardState.isTerminal = true;
@@ -351,8 +351,8 @@ describe("Move", () => {
         describe("when remaining material forces a draw", () => {
             describe("when only the kings are on the board", () => {
                 it("results in a draw", () => {
-                    const boardState = BoardState.fromFEN("8/k7/8/8/8/4pK2/8/8 w - - 0 1");
-                    const move = new Move(ChessPiece.WHITE_KING, new Square(3, 6), new Square(3, 5), [], ChessPiece.BLACK_PAWN, null);
+                    const boardState = Board.fromFEN("8/k7/8/8/8/4pK2/8/8 w - - 0 1");
+                    const move = new Move(ChessPiece.WHITE_KING, new Square(3, 6), new Square(3, 5), [], ChessPiece.BLACK_PAWN, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.isWhiteTurn = false;
@@ -403,8 +403,8 @@ describe("Move", () => {
             });
             describe("when only one pawn exists", () => {
                 it("does not result in a draw", () => {
-                    const boardState = BoardState.fromFEN("8/8/8/8/6PK/8/8/k7 w - - 0 1");
-                    const move = new Move(ChessPiece.WHITE_PAWN, new Square(4, 7), new Square(5, 7), [], null, null);
+                    const boardState = Board.fromFEN("8/8/8/8/6PK/8/8/k7 w - - 0 1");
+                    const move = new Move(ChessPiece.WHITE_PAWN, new Square(4, 7), new Square(5, 7), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     const resultingBoardState = move.getResultingBoardState(boardState);
                     const expResultingBoardState = boardState.copy();
                     expResultingBoardState.isWhiteTurn = false;
@@ -430,9 +430,9 @@ describe("Move", () => {
             });
         });
         describe("when the last move was a double pawn move", () => {
-            it("nullifies the en passant square", () => {
-                const boardState = BoardState.fromFEN("rnbqkbnr/ppppp2p/5p2/6p1/3PP3/8/PPP2PPP/RNBQKBNR w KQkq g6 1 3");
-                const move = new Move(ChessPiece.WHITE_QUEEN, new Square(1, 4), new Square(5, 8), [new Square(5, 8)], null, null);
+            it("ChessPiece.EMPTYifies the en passant square", () => {
+                const boardState = Board.fromFEN("rnbqkbnr/ppppp2p/5p2/6p1/3PP3/8/PPP2PPP/RNBQKBNR w KQkq g6 1 3");
+                const move = new Move(ChessPiece.WHITE_QUEEN, new Square(1, 4), new Square(5, 8), [new Square(5, 8)], ChessPiece.EMPTY, ChessPiece.EMPTY);
                 const resultingBoardState = move.getResultingBoardState(boardState);
                 const expResultingBoardState = boardState.copy();
                 expResultingBoardState.halfMoveClockCount++;
@@ -488,8 +488,8 @@ describe("Move", () => {
         });
         describe("when the two instances have congruent data, but not identical", () => {
             it("returns true", () => {
-                const moveA = new Move(0, new Square(1, 1), new Square(2, 2), [new Square(3, 3), new Square(4, 4)], null, null);
-                const moveB = new Move(0, new Square(1, 1), new Square(2, 2), [new Square(4, 4), new Square(3, 3)], null, null);
+                const moveA = new Move(0, new Square(1, 1), new Square(2, 2), [new Square(3, 3), new Square(4, 4)], ChessPiece.EMPTY, ChessPiece.EMPTY);
+                const moveB = new Move(0, new Square(1, 1), new Square(2, 2), [new Square(4, 4), new Square(3, 3)], ChessPiece.EMPTY, ChessPiece.EMPTY);
                 expect(moveA.equalTo(moveB)).toBeTruthy();
             });
         });

@@ -1,6 +1,6 @@
 import {ChessPiece} from "./chess_piece";
 import {Square} from "./square";
-import {BoardState} from "./board_state";
+import {Board} from "./board";
 import {ChessPieceHelper} from "../../helpers/chess_piece_helper";
 import {GameHelper} from "../../helpers/game_helper";
 import {ApiMove} from "../api/move";
@@ -10,11 +10,11 @@ export class Move {
     startSquare: Square
     endSquare: Square
     kingCheckingSquares: Square[]
-    capturedPiece: ChessPiece | null;
-    pawnUpgradedTo: ChessPiece | null;
+    capturedPiece: ChessPiece;
+    pawnUpgradedTo: ChessPiece;
 
     constructor(piece: ChessPiece, startSquare: Square, endSquare: Square, pieceSquaresCheckingKing: Square[],
-                pieceTaken: ChessPiece | null, pawnUpgradedTo: ChessPiece | null) {
+                pieceTaken: ChessPiece, pawnUpgradedTo: ChessPiece) {
         this.piece = piece;
         this.startSquare = startSquare;
         this.endSquare = endSquare;
@@ -33,7 +33,7 @@ export class Move {
         this.kingCheckingSquares.sort((a, b) => 10 * b.rank + b.file - 10 * a.rank - a.file);
     }
 
-    getUpdatedBoardStatePieces(boardState: BoardState): BoardState {
+    getUpdatedBoardStatePieces(boardState: Board): Board {
         // NOTE: this generates invalid board states: if a valid board state is needed, use getResultingBoardState
         const rtnBoardState = boardState.copy();
         rtnBoardState.setPieceOnSquare(this.pawnUpgradedTo || this.piece, this.endSquare);
@@ -64,7 +64,7 @@ export class Move {
     }
 
     // TODO: move into GameHelper
-    getResultingBoardState(boardState: BoardState): BoardState {
+    getResultingBoardState(boardState: Board): Board {
         const rtnBoardState = this.getUpdatedBoardStatePieces(boardState);
         if (this.capturedPiece || ChessPieceHelper.isPawn(this.piece)) {
             rtnBoardState.halfMoveClockCount = 0;
