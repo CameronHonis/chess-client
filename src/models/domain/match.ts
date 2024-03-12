@@ -1,4 +1,4 @@
-import {BoardState} from "./board_state";
+import {Board} from "./board";
 import {TimeControl} from "./time_control";
 import {ApiMatch} from "../api/match";
 import {BotType, isBotType} from "./bot_type";
@@ -8,7 +8,7 @@ import {Move} from "./move";
 
 export class Match {
     uuid: string;
-    board: BoardState;
+    board: Board;
     lastMove: Move | null;
     whiteTimeRemainingSec: number;
     whiteClientKey: string;
@@ -34,7 +34,7 @@ export class Match {
     static fromApi(apiMatch: ApiMatch): Throwable<Match> {
         const match = new Match({
             uuid: apiMatch.uuid,
-            board: BoardState.fromApi(apiMatch.board),
+            board: Board.fromApi(apiMatch.board),
             lastMove: apiMatch.lastMove === null ? null : Move.fromApi(apiMatch.lastMove),
             whiteTimeRemainingSec: apiMatch.whiteTimeRemainingSec,
             whiteClientKey: apiMatch.whiteClientKey,
