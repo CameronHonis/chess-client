@@ -29,16 +29,17 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
         }
     } else if (isLeftClickSquareAction(action)) {
         const square = action.payload.square;
-        const landPiece = newState.board.getPieceBySquare(square);
+        const [board] = state.boardAndPremoveSquareHashesAfterPremoves();
+        const landPiece = board.getPieceBySquare(square);
         if (state.selectedSquare) {
-            const selectedPiece = newState.board.getPieceBySquare(state.selectedSquare);
+            const selectedPiece = board.getPieceBySquare(state.selectedSquare);
             if (state.selectedSquare.equalTo(square)) {
                 newState.selectedSquare = null;
             } else if (landPiece !== ChessPiece.EMPTY && ChessPieceHelper.isWhite(landPiece) === state.isWhitePerspective) {
                 newState.selectedSquare = square;
             } else {
                 if (state.isTurn()) {
-                    const legalMoves = GameHelper.getLegalMovesByBoardAndStartSquare(state.board, state.selectedSquare);
+                    const legalMoves = GameHelper.getLegalMovesByBoardAndStartSquare(board, state.selectedSquare);
                     const matchingLegalMoves = legalMoves.filter(move => move.endSquare.equalTo(square));
                     if (matchingLegalMoves.length > 0) {
                         newState.selectedMoves = matchingLegalMoves;
@@ -46,7 +47,7 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
                         newState.selectedSquare = null;
                     }
                 } else {
-                    const landSquares = GameHelper.getPossibleLandSquaresForSquare(state.board, state.selectedSquare);
+                    const landSquares = GameHelper.getPossibleLandSquaresForSquare(board, state.selectedSquare);
                     const isValidLandSquare = landSquares.some(landSquare => landSquare.equalTo(square));
                     if (isValidLandSquare) {
                         const isPromotion = ChessPieceHelper.isPawn(selectedPiece) && (square.rank === 8 || square.rank === 1);
@@ -81,6 +82,7 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
             newState.selectedMoves = [];
             newState.premoves.push(move);
         }
+        newState.selectedSquare = null;
     } else if (isCancelPromoteAction(action)) {
 
     } else {

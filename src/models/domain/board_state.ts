@@ -8,7 +8,6 @@ import {TileVisualProps} from "../../components/tile";
 import {ChessPiece} from "./chess_piece";
 import {GameHelper} from "../../helpers/game_helper";
 import {ChessPieceHelper} from "../../helpers/chess_piece_helper";
-import {Throwable} from "../../types";
 
 interface BoardStateArgs {
     isLocked: boolean;

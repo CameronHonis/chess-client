@@ -6,13 +6,8 @@ import {boardStateReducer} from "../../src/reducers/board_state_reducer";
 import {SquareColor} from "../../src/models/domain/square_color";
 import {Move} from "../../src/models/domain/move";
 import {ChessPiece} from "../../src/models/domain/chess_piece";
-import {MarkSquareAction} from "../../src/models/actions/board/mark_square";
-import {UnmarkSquareAction} from "../../src/models/actions/board/unmark_square";
-import {PushPremoveAction} from "../../src/models/actions/board/push_premove";
 import {EasyQueue} from "../../src/helpers/easy_queue";
-import {PopPremoveAction} from "../../src/models/actions/board/pop_premove";
 import {LeftClickSquareAction} from "../../src/models/actions/board/left_click_square";
-import {ClearPremovesAction} from "../../src/models/actions/board/clear_premoves";
 import {PickPromoteAction} from "../../src/models/actions/board/pick_move";
 
 describe("boardStateReducer", () => {
@@ -109,6 +104,32 @@ describe("boardStateReducer", () => {
                 it("selects the square", () => {
                     const newState = boardStateReducer(state, action);
                     expect(newState.selectedSquare).not.toBeNull();
+                });
+            });
+            describe("a promotion premove is queued", () => {
+                beforeEach(() => {
+                    state = BoardState.fromBoard(Board.fromFEN("r7/6P1/1k6/8/8/8/8/6RK b - - 1 63"));
+                    state.premoves = new EasyQueue(
+                        new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.WHITE_QUEEN),
+                    );
+                });
+                describe("the square the promotion happened is clicked", () => {
+                    beforeEach(() => {
+                        action = new LeftClickSquareAction(new Square(8, 7));
+                    });
+                    it("sets the selected square to this square", () => {
+                        const newState = boardStateReducer(state, action);
+                        expect(newState.selectedSquare!.equalTo(new Square(8, 7))).toBeTruthy();
+                    });
+                });
+                describe("the square the pawn was last on is clicked", () => {
+                    beforeEach(() => {
+                        action = new LeftClickSquareAction(new Square(7, 7));
+                    });
+                    it("does nothing", () => {
+                        const newState = boardStateReducer(state, action);
+                        expect(newState.selectedSquare).toBeNull();
+                    });
                 });
             });
         });
@@ -258,6 +279,7 @@ describe("boardStateReducer", () => {
         describe("it's not the player's turn", () => {
             beforeEach(() => {
                 state = BoardState.fromBoard(Board.fromFEN("8/2k3P1/8/8/8/8/4K3/8 b - - 0 1"));
+                state.selectedSquare = new Square(7, 7);
                 state.selectedMoves = [
                     new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.WHITE_KNIGHT),
                     new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.WHITE_BISHOP),
@@ -278,6 +300,10 @@ describe("boardStateReducer", () => {
                 expect(newState.premoves.first().pawnUpgradedTo).toEqual(ChessPiece.WHITE_KNIGHT);
                 expect(newState.premoves.first().startSquare.equalTo(new Square(7, 7))).toBeTruthy();
                 expect(newState.premoves.first().endSquare.equalTo(new Square(8, 7))).toBeTruthy();
+            });
+            it("deselects the selected square", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.selectedSquare).toBeNull();
             });
         });
     });
