@@ -212,6 +212,21 @@ describe("boardStateReducer", () => {
                         state.selectedSquare = new Square(7, 4);
                     });
                     describe("a 'land-able' square is clicked", () => {
+                        describe("the land square is a friendly piece", () => {
+                            beforeEach(() => {
+                                state = BoardState.fromBoard(Board.fromFEN("r7/6P1/1k6/8/8/8/8/6RK b - - 1 63"));
+                                state.selectedSquare = new Square(1, 7);
+                                action = new LeftClickSquareAction(new Square(7, 7));
+                            });
+                            it("pushes a premove that captures the friendly piece", () => {
+                                const newState = boardStateReducer(state, action);
+                                expect(newState.premoves.size()).toEqual(1);
+                                expect(newState.premoves.first().piece).toEqual(ChessPiece.WHITE_ROOK);
+                                expect(newState.premoves.first().startSquare.equalTo(new Square(1, 7))).toBeTruthy();
+                                expect(newState.premoves.first().endSquare.equalTo(new Square(7, 7))).toBeTruthy();
+                                expect(newState.premoves.first().pawnUpgradedTo).toEqual(ChessPiece.EMPTY);
+                            });
+                        });
                         describe("the move is not a promotion", () => {
                             beforeEach(() => {
                                 action = new LeftClickSquareAction(new Square(5, 4));
@@ -249,9 +264,47 @@ describe("boardStateReducer", () => {
                             });
                         });
                     });
+                    describe("a 'non-land-able' square is clicked", () => {
+                        beforeEach(() => {
+                            state = BoardState.fromBoard(Board.fromFEN("r7/6P1/1k6/8/8/8/8/6RK b - - 1 63"));
+                            state.selectedSquare = new Square(7, 7);
+                        });
+                        describe("a friendly piece is clicked", () => {
+                            beforeEach(() => {
+                                action = new LeftClickSquareAction(new Square(1, 7));
+                            });
+                            it("sets the selected square to the clicked square", () => {
+                                const newState = boardStateReducer(state, action);
+                                expect(newState.selectedSquare!.equalTo(action.payload.square)).toBeTruthy();
+                            });
+                        });
+                        describe("an empty square is clicked", () => {
+                            beforeEach(() => {
+                                state.selectedMoves = [
+                                    new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.WHITE_BISHOP),
+                                    new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.WHITE_ROOK),
+                                    new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.WHITE_KNIGHT),
+                                    new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.WHITE_QUEEN),
+                                ];
+                                action = new LeftClickSquareAction(new Square(5, 5));
+                            });
+                            it("deselects the selected square", () => {
+                                const newState = boardStateReducer(state, action);
+                                expect(newState.selectedSquare).toBeNull();
+                            });
+                            it("deselects all selected moves", () => {
+                                const newState = boardStateReducer(state, action);
+                                expect(newState.selectedMoves).toHaveLength(0);
+                            });
+                        });
+                    });
                 });
             });
         });
+    });
+
+    describe("on RIGHT_CLICK_SQUARE", () => {
+
     });
 
     describe("on PICK_PROMOTE", () => {
@@ -306,5 +359,9 @@ describe("boardStateReducer", () => {
                 expect(newState.selectedSquare).toBeNull();
             });
         });
+    });
+
+    describe("on CANCEL_PROMOTE", () => {
+
     });
 });
