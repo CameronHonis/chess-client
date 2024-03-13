@@ -48,6 +48,11 @@ export class EasyQueue<T> implements Queue<T> {
         return new EasyQueue(...this.eles.slice(this.firstIdx));
     }
 
+    flush(): void {
+        this.eles = [];
+        this.firstIdx = 0;
+    }
+
     [Symbol.iterator](): Iterator<T> {
         let index = this.firstIdx;
         return {
