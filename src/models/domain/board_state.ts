@@ -58,9 +58,9 @@ export class BoardState {
     tileProps(): TileVisualProps[] {
         const [board, premoveSquaresSet] = this.boardAndPremoveSquareHashesAfterPremoves();
         const isTurn = this.isTurn();
-        const landSquares = this.landSquares(isTurn);
+        const landSquares = this.landSquares(board, isTurn);
         const landSquaresSet = new Set(landSquares.map(s => s.hash()));
-        const friendlySquares = this.friendlyPieceSquares();
+        const friendlySquares = this.friendlyPieceSquares(board);
         const interactableSquares = !this.isLocked ? [...landSquares, ...friendlySquares] : [];
         const interactableSquaresSet = new Set(interactableSquares.map(s => s.hash()));
 
@@ -101,7 +101,7 @@ export class BoardState {
         const board = this.board.copy();
         const premoveSquareHashes = new Set<SquareHash>();
         for (const move of this.premoves) {
-            const piece = board.getPieceBySquare(move.startSquare);
+            const piece = move.pawnUpgradedTo || move.piece;
             board.setPieceOnSquare(ChessPiece.EMPTY, move.startSquare);
             board.setPieceOnSquare(piece, move.endSquare);
             premoveSquareHashes.add(move.startSquare.hash());
@@ -110,25 +110,25 @@ export class BoardState {
         return [board, premoveSquareHashes];
     }
 
-    landSquares(isTurn: boolean): Square[] {
+    landSquares(board: Board, isTurn: boolean): Square[] {
         if (this.isLocked || !this.selectedSquare) {
             return [];
         }
 
         if (isTurn) {
-            const legalMoves = GameHelper.getLegalMovesByBoardAndStartSquare(this.board, this.selectedSquare);
+            const legalMoves = GameHelper.getLegalMovesByBoardAndStartSquare(board, this.selectedSquare);
             return legalMoves.map(m => m.endSquare);
         } else {
-            return GameHelper.getPossibleLandSquaresForSquare(this.board, this.selectedSquare);
+            return GameHelper.getPossibleLandSquaresForSquare(board, this.selectedSquare);
         }
     }
 
-    private friendlyPieceSquares(): Square[] {
+    private friendlyPieceSquares(board: Board): Square[] {
         const squares: Square[] = [];
         for (let r = 1; r < 9; r++) {
             for (let c = 1; c < 9; c++) {
                 const square = new Square(r, c);
-                const piece = this.board.getPieceBySquare(square);
+                const piece = board.getPieceBySquare(square);
                 if (piece === ChessPiece.EMPTY)
                     continue;
                 if (ChessPieceHelper.isWhite(piece) === this.isWhitePerspective) {
@@ -142,23 +142,6 @@ export class BoardState {
 
     private isChecked(square: Square): boolean {
         return false;
-    }
-
-    getMovesFromPremove(): Throwable<Move[]> {
-        if (!this.isTurn())
-            throw new Error("cannot play move, not player's turn");
-        if (this.isLocked)
-            throw new Error("cannot play move, board is locked");
-        if (this.premoves.size() === 0)
-            throw new Error("no premoves to play");
-        const premove = this.premoves.first();
-        const legalMoves = GameHelper.getLegalMovesByBoardAndStartSquare(this.board, premove.startSquare);
-        const matchingLegalMoves = legalMoves.filter(move => move.endSquare.equalTo(premove.endSquare));
-        if (matchingLegalMoves.length > 0) {
-            return matchingLegalMoves;
-        } else {
-            throw new Error("premove is not legal");
-        }
     }
 
     copy(): BoardState {

@@ -96,7 +96,7 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         return state.tileProps().map((tileProps, idx) => {
-            return <Tile {...tileProps} onClick={onTileClick}/>
+            return <Tile {...tileProps} onClick={onTileClick} key={idx}/>
         });
     }, [onTileClick, state]);
 

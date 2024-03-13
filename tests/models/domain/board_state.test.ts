@@ -166,22 +166,37 @@ describe("BoardState", () => {
             });
         });
         describe("with premoves", () => {
-            beforeEach(() => {
-                boardState.premoves = new EasyQueue(
-                    new Move(ChessPiece.WHITE_PAWN, new Square(2, 2), new Square(4, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
-                    new Move(ChessPiece.WHITE_PAWN, new Square(4, 2), new Square(5, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
-                    new Move(ChessPiece.WHITE_PAWN, new Square(5, 2), new Square(6, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
-                );
-            });
             describe("when a premove is a promotion", () => {
                 beforeEach(() => {
-
+                    boardState = BoardState.fromBoard(Board.fromFEN("r7/6P1/1k6/8/8/8/8/6RK b - - 1 63"));
+                    boardState.premoves = new EasyQueue(
+                        new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 7), [], ChessPiece.EMPTY, ChessPiece.WHITE_BISHOP),
+                    );
                 });
                 it("sets the promoting pawn to the promotion piece", () => {
-
+                    const [board] = boardState.boardAndPremoveSquareHashesAfterPremoves();
+                    expect(board.getPieceBySquare(new Square(8, 7))).toEqual(ChessPiece.WHITE_BISHOP);
+                });
+                it("returns all premove squares", () => {
+                    const [_, premoveSquareHashes] = boardState.boardAndPremoveSquareHashesAfterPremoves();
+                    const expPremoveSquareHashes = new Set([
+                        new Square(7, 7).hash(),
+                        new Square(8, 7).hash(),
+                    ]);
+                    expect(premoveSquareHashes.size).toEqual(expPremoveSquareHashes.size);
+                    for (const premoveSquareHash of premoveSquareHashes) {
+                        expect(expPremoveSquareHashes).toContain(premoveSquareHash);
+                    }
                 });
             });
             describe("when no premoves are promotions", () => {
+                beforeEach(() => {
+                    boardState.premoves = new EasyQueue(
+                        new Move(ChessPiece.WHITE_PAWN, new Square(2, 2), new Square(4, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
+                        new Move(ChessPiece.WHITE_PAWN, new Square(4, 2), new Square(5, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
+                        new Move(ChessPiece.WHITE_PAWN, new Square(5, 2), new Square(6, 2), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
+                    );
+                });
                 it("returns the board after premoves", () => {
                     const [board] = boardState.boardAndPremoveSquareHashesAfterPremoves();
                     const expectedBoardFEN = "rnbqkbnr/pppppppp/1P6/8/8/8/P1PPPPPP/RNBQKBNR w KQkq - 0 1";
