@@ -8,6 +8,8 @@ import {GameHelper} from "../helpers/game_helper";
 import {Move} from "../models/domain/move";
 import {isPickPromoteAction} from "../models/actions/board/pick_move";
 import {isCancelPromoteAction} from "../models/actions/board/cancel_promote";
+import {isRightClickSquareAction} from "../models/actions/board/right_click_square";
+import {EasyQueue} from "../helpers/easy_queue";
 
 export function boardStateReducer(state: BoardState, action: BoardAction): BoardState {
     const newState = state.copy();
@@ -76,6 +78,8 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
                 newState.selectedSquare = square;
             }
         }
+    } else if (isRightClickSquareAction(action)) {
+        newState.premoves.flush();
     } else if (isPickPromoteAction(action)) {
         const move = newState.selectedMoves.find(selectedMove => {
             return selectedMove.pawnUpgradedTo === action.payload.piece;

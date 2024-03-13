@@ -4,7 +4,7 @@ import {Tile} from "./tile";
 import {Square} from "../models/domain/square";
 import {ChessPiece} from "../models/domain/chess_piece";
 import {Move} from "../models/domain/move";
-import {ReactComp} from "../types";
+import {MouseButton, ReactComp} from "../types";
 import {AnimTile} from "./anim_tile";
 import {PromoteOverlay} from "./promote_overlay";
 import {boardStateReducer} from "../reducers/board_state_reducer";
@@ -15,6 +15,7 @@ import {LeftClickSquareAction} from "../models/actions/board/left_click_square";
 import {PickPromoteAction} from "../models/actions/board/pick_move";
 import {CancelPromoteAction} from "../models/actions/board/cancel_promote";
 import {UpdateBoardAction} from "../models/actions/board/update_board";
+import {RightClickSquareAction} from "../models/actions/board/right_click_square";
 
 export interface BoardProps {
     isLocked: boolean;
@@ -57,31 +58,6 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         window.services.boardAnimator.holdPiece(draggingSquare);
     }, [draggingSquare]);
 
-    // React.useEffect(() => {
-    //     if (isTurn) {
-    //         try {
-    //             const moves = state.getMovesFromPremove();
-    //             if (moves.length > 1) {
-    //                 dispatch(new SelectMovesAction(moves));
-    //             } else {
-    //                 const move = moves[0];
-    //                 sendMove(move);
-    //                 dispatch(new PopPremoveAction());
-    //             }
-    //         } catch {
-    //             dispatch(new ClearPremovesAction());
-    //         }
-    //     }
-    // }, [state, isTurn]);
-    //
-    // const playMove = React.useCallback((move: Move) => {
-    //     if (isTurn) {
-    //         sendMove(move);
-    //     } else {
-    //         dispatch(new PushPremoveAction(move));
-    //     }
-    // }, [isTurn]);
-
     const onPromote = React.useCallback((piece: ChessPiece) => {
         dispatch(new PickPromoteAction(piece));
     }, []);
@@ -90,8 +66,13 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         dispatch(new CancelPromoteAction());
     }, []);
 
-    const onTileClick = React.useCallback((square: Square) => {
-        dispatch(new LeftClickSquareAction(square));
+    const onTileClick = React.useCallback((ev: React.MouseEvent, square: Square) => {
+        if (ev.button === MouseButton.LEFT) {
+            dispatch(new LeftClickSquareAction(square));
+        } else if (ev.button === MouseButton.RIGHT) {
+            dispatch(new RightClickSquareAction(square));
+            ev.preventDefault();
+        }
     }, []);
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {

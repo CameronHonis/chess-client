@@ -9,6 +9,7 @@ import {ChessPiece} from "../../src/models/domain/chess_piece";
 import {EasyQueue} from "../../src/helpers/easy_queue";
 import {LeftClickSquareAction} from "../../src/models/actions/board/left_click_square";
 import {PickPromoteAction} from "../../src/models/actions/board/pick_move";
+import {RightClickSquareAction} from "../../src/models/actions/board/right_click_square";
 
 describe("boardStateReducer", () => {
     let state: BoardState;
@@ -304,7 +305,20 @@ describe("boardStateReducer", () => {
     });
 
     describe("on RIGHT_CLICK_SQUARE", () => {
-
+        let action: RightClickSquareAction;
+        describe("when premoves are queued", () => {
+            beforeEach(() => {
+                state.isWhitePerspective = false;
+                state.premoves = new EasyQueue(
+                    new Move(ChessPiece.BLACK_PAWN, new Square(7, 4), new Square(5, 4), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
+                );
+                action = new RightClickSquareAction(new Square(4, 4));
+            });
+            it("clears premoves", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.premoves.size()).toEqual(0);
+            });
+        });
     });
 
     describe("on PICK_PROMOTE", () => {

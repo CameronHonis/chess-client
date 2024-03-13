@@ -23,7 +23,7 @@ export interface TileVisualProps {
 }
 
 export interface TileFunctionalProps {
-    onClick: (square: Square) => void;
+    onClick: (ev: React.MouseEvent, square: Square) => void;
 }
 
 export type TileProps = TileVisualProps & TileFunctionalProps;
@@ -53,49 +53,32 @@ export const Tile: React.FC<TileProps> = (props) => {
         tileIcon = <King isWhite={isWhite}/>;
     }
 
-    // const highlight = React.useMemo(() => {
-    //     if (props.isLastMoveStart) {
-    //         return <div className={"Highlight LastMoveStart"}/>;
-    //     } else if (props.isLastMoveEnd) {
-    //         return <div className={"Highlight LastMoveEnd"}/>;
-    //     } else if (props.isSelected) {
-    //         return <div className={"Highlight Selected"}/>;
-    //     }
-    //     return null;
-    // }, [props.isSelected, props.isLastMoveStart, props.isLastMoveEnd]);
-
     const classNames = React.useMemo(() => {
         const classNames = [];
         classNames.push("Tile");
         classNames.push(square.isDarkSquare() ? "DarkSquare" : "LightSquare");
-        if (isSelected) {
+        if (isSelected)
             classNames.push("Selected");
-        }
-        if (isDotVisible) {
+        if (isDotVisible)
             classNames.push("Dotted");
-        }
-        if (props.isInteractable) {
+        if (props.isInteractable)
             classNames.push("Interactable");
-        }
-        if (props.isChecked) {
+        if (props.isChecked)
             classNames.push("Checked");
-        }
-        if (props.isLastMoveStart) {
+        if (props.isLastMoveStart)
             classNames.push("LastMoveStart");
-        }
-        if (props.isLastMoveEnd) {
+        if (props.isLastMoveEnd)
             classNames.push("LastMoveEnd");
-        }
-        if (props.isPremove) {
+        if (props.isPremove)
             classNames.push("Premove");
-        }
         return classNames;
     }, [square, isSelected, isDotVisible, props.isInteractable, props.isChecked, props.isLastMoveStart, props.isLastMoveEnd, props.isPremove]);
 
     return <div
         className={classNames.join(" ")}
         id={`Tile${square.hash()}`}
-        onClick={() => onClick(square)}
+        onContextMenu={ev => onClick(ev, square)}
+        onClick={(ev) => onClick(ev, square)}
     >
         {tileIcon}
         <div className={"Highlight"}/>
