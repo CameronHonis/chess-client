@@ -7,7 +7,7 @@ import {Timer} from "./services/timer";
 import {BoardAnimator} from "./services/board_animator";
 import {NotifAnimator} from "./services/notif_animator";
 import {registerOnChallengeFailedMsgHandler} from "./helpers/arbitrator_handlers";
-import {BoardState} from './models/domain/board_state';
+import {Board} from './models/domain/board';
 import {Match} from "./models/domain/match";
 import {Move} from "./models/domain/move";
 import {Challenge} from "./models/domain/challenge";
@@ -24,7 +24,7 @@ window.services = {
 
 // @ts-ignore
 window.models = {
-    BoardState,
+    BoardState: Board,
     Match,
     Move,
     Challenge,

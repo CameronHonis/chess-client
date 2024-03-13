@@ -1,5 +1,5 @@
 import {AppStateAction, AppStateActionType} from "./app_state_action";
-import {Match} from "../domain/match";
+import {Match} from "../../domain/match";
 
 export interface UpdateMatchPayload {
     newMatch: Match | null;

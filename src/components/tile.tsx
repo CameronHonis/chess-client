@@ -10,29 +10,31 @@ import {ChessPiece} from "../models/domain/chess_piece";
 import {ChessPieceHelper} from "../helpers/chess_piece_helper";
 import {Square} from "../models/domain/square";
 
-interface Props {
+export interface TileVisualProps {
     square: Square;
     pieceType: ChessPiece;
     isSelected: boolean;
     isDotVisible: boolean;
-    handleSquareMouseDown: (square: Square) => void;
-    handleSquareMouseUp: (square: Square) => void;
-    rank: number;
-    file: number;
     isInteractable: boolean;
     isChecked: boolean;
     isLastMoveStart: boolean;
     isLastMoveEnd: boolean;
+    isPremove: boolean;
 }
 
-export const Tile: React.FC<Props> = (props) => {
+export interface TileFunctionalProps {
+    onClick: (square: Square) => void;
+}
+
+export type TileProps = TileVisualProps & TileFunctionalProps;
+
+export const Tile: React.FC<TileProps> = (props) => {
     const {
         square,
         pieceType,
         isSelected,
         isDotVisible,
-        handleSquareMouseDown,
-        handleSquareMouseUp,
+        onClick,
     } = props;
 
     const isWhite = ChessPieceHelper.isWhite(pieceType)
@@ -51,16 +53,16 @@ export const Tile: React.FC<Props> = (props) => {
         tileIcon = <King isWhite={isWhite}/>;
     }
 
-    const highlight = React.useMemo(() => {
-        if (props.isLastMoveStart) {
-            return <div className={"Highlight LastMoveStart"}/>;
-        } else if (props.isLastMoveEnd) {
-            return <div className={"Highlight LastMoveEnd"}/>;
-        } else if (props.isSelected) {
-            return <div className={"Highlight Selected"}/>;
-        }
-        return null;
-    }, [props.isSelected, props.isLastMoveStart, props.isLastMoveEnd]);
+    // const highlight = React.useMemo(() => {
+    //     if (props.isLastMoveStart) {
+    //         return <div className={"Highlight LastMoveStart"}/>;
+    //     } else if (props.isLastMoveEnd) {
+    //         return <div className={"Highlight LastMoveEnd"}/>;
+    //     } else if (props.isSelected) {
+    //         return <div className={"Highlight Selected"}/>;
+    //     }
+    //     return null;
+    // }, [props.isSelected, props.isLastMoveStart, props.isLastMoveEnd]);
 
     const classNames = React.useMemo(() => {
         const classNames = [];
@@ -84,17 +86,19 @@ export const Tile: React.FC<Props> = (props) => {
         if (props.isLastMoveEnd) {
             classNames.push("LastMoveEnd");
         }
+        if (props.isPremove) {
+            classNames.push("Premove");
+        }
         return classNames;
-    }, [square, isSelected, isDotVisible, props.isInteractable, props.isChecked, props.isLastMoveStart, props.isLastMoveEnd]);
+    }, [square, isSelected, isDotVisible, props.isInteractable, props.isChecked, props.isLastMoveStart, props.isLastMoveEnd, props.isPremove]);
 
     return <div
         className={classNames.join(" ")}
-        id={`Tile${square.getHash()}`}
-        onMouseDown={() => handleSquareMouseDown(square)}
-        onMouseUp={() => handleSquareMouseUp(square)}
+        id={`Tile${square.hash()}`}
+        onClick={() => onClick(square)}
     >
         {tileIcon}
-        {highlight}
+        <div className={"Highlight"}/>
         {isDotVisible && <div className="TileDot"/>}
     </div>
 }

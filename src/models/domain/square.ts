@@ -1,5 +1,7 @@
 import {ApiSquare} from "../api/square";
 
+export type SquareHash = string;
+
 export class Square {
     rank: number
     file: number
@@ -26,7 +28,7 @@ export class Square {
         return Math.max(Math.abs(this.rank - other.rank), Math.abs(this.file - other.file));
     }
 
-    getHash(): string {
+    hash(): SquareHash {
         return `${this.rank.toString()}-${this.file.toString()}`;
     }
 

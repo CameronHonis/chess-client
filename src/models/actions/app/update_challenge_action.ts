@@ -1,5 +1,5 @@
 import {AppStateAction, AppStateActionType} from "./app_state_action";
-import {Challenge} from "../domain/challenge";
+import {Challenge} from "../../domain/challenge";
 
 export interface UpdateChallangePayload {
     newChallenge: Challenge;

@@ -68,13 +68,13 @@ export class PieceMoveAnimation {
         this.originSquare = startSquare;
         this.destSquare = destSquare;
 
-        const originTileId = `Tile${startSquare.getHash()}`;
+        const originTileId = `Tile${startSquare.hash()}`;
         this.originTile = document.getElementById(originTileId) as HTMLDivElement;
         const {x: startX, y: startY} = this.originTile.getBoundingClientRect();
         this.startX = startX;
         this.startY = startY;
 
-        const destTileId = `Tile${destSquare.getHash()}`;
+        const destTileId = `Tile${destSquare.hash()}`;
         this.destTile = document.getElementById(destTileId) as HTMLDivElement;
         const {x: endX, y: endY} = this.destTile.getBoundingClientRect();
         this.endX = endX;
@@ -110,7 +110,7 @@ export class PieceMoveAnimation {
     }
 
     private setTilePieceVisible(square: Square, isVisible: boolean) {
-        const tileId = `Tile${square.getHash()}`;
+        const tileId = `Tile${square.hash()}`;
         const tilePiece = document.querySelector(`#${tileId} .TilePiece`) as SVGElement | null;
         if (tilePiece) {
             tilePiece.style.visibility = isVisible ? "visible" : "hidden";
@@ -125,7 +125,7 @@ export class HoldPieceAnimation {
     mouseY: number = -10000;
     constructor(draggingSquare: Square) {
         this.draggingSquare = draggingSquare;
-        const draggingTileId = `Tile${draggingSquare.getHash()}`;
+        const draggingTileId = `Tile${draggingSquare.hash()}`;
         this.draggingTile = document.getElementById(draggingTileId) as HTMLDivElement;
         document.addEventListener("mousemove", e => this.setMousePos(e.clientX, e.clientY));
     }

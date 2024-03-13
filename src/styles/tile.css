@@ -70,13 +70,23 @@
     background-color: orange;
 }
 
-.Tile .Highlight.Selected {
+.Tile.Selected .Highlight {
     opacity: 30%;
     background: radial-gradient(circle, rgba(255,255,255,1) 20%, rgba(255,255,255,.25) 80%)
 }
 
-.Tile.LightSquare .Highlight.Selected {
+.Tile.Selected.LightSquare .Highlight {
     opacity: 70%;
+}
+
+.Tile.Premove .Highlight {
+    opacity: 70%;
+    background: red;
+}
+
+.Tile.Premove.LightSquare .Highlight {
+    opacity: 70%;
+    background: red;
 }
 
 #AnimatedTile, #DraggingTile{

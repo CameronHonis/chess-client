@@ -11,7 +11,7 @@ import "../styles/promote_overlay.css";
 export interface PromoteOverlayProps {
     isWhite: boolean;
     move: Move;
-    onPromote: (move: Move) => void;
+    onPromote: (piece: ChessPiece) => void;
     onCancel: () => void;
 }
 
@@ -20,8 +20,7 @@ export const PromoteOverlay = (props: PromoteOverlayProps) => {
 
     const promote = (ev: React.MouseEvent, piece: ChessPiece) => {
         ev.stopPropagation();
-        move.pawnUpgradedTo = piece;
-        onPromote(move);
+        onPromote(piece);
     };
 
     const containerStyles = React.useMemo(() => {

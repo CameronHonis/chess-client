@@ -1,394 +1,220 @@
-import {ChessPiece, ChessPieceFromApi} from "./chess_piece";
-import {Square} from "./square";
+import {Board} from "./board";
+import {Square, SquareHash} from "./square";
 import {Move} from "./move";
+import {SquareColor} from "./square_color";
+import {Queue} from "../../interfaces/queue";
+import {EasyQueue} from "../../helpers/easy_queue";
+import {TileVisualProps} from "../../components/tile";
+import {ChessPiece} from "./chess_piece";
 import {GameHelper} from "../../helpers/game_helper";
-import {Material} from "./material";
-import {ApiBoard} from "../api/board";
+import {ChessPieceHelper} from "../../helpers/chess_piece_helper";
+import {Throwable} from "../../types";
 
-interface BoardStateConstructorArgs {
-
-    pieces: ChessPiece[][]
-    enPassantSquare?: Square | null;
-    isWhiteTurn?: boolean
-    canWhiteCastleQueenside?: boolean
-    canWhiteCastleKingside?: boolean
-    canBlackCastleQueenside?: boolean
-    canBlackCastleKingside?: boolean
-    halfMoveClockCount?: number
-    fullMoveCount?: number
-    isTerminal?: boolean
-    isWhiteWinner?: boolean
-    isBlackWinner?: boolean
-    repetitionsByMiniFEN?: Map<string, number > | null
+interface BoardStateArgs {
+    isLocked: boolean;
+    isWhitePerspective: boolean;
+    lastMove: Move | null;
+    board: Board;
+    selectedSquare: Square | null;
+    squareColorBySquareHash: Map<SquareHash, SquareColor>;
+    selectedMoves: Move[];
+    premoves: Queue<Move>;
 }
 
 export class BoardState {
-    pieces: ChessPiece[][]
-    material: Material;
-    enPassantSquare: Square | null;
-    isWhiteTurn: boolean
-    canWhiteCastleQueenside: boolean
-    canWhiteCastleKingside: boolean
-    canBlackCastleQueenside: boolean
-    canBlackCastleKingside: boolean
-    halfMoveClockCount: number
-    fullMoveCount: number
-    isTerminal: boolean
-    isWhiteWinner: boolean
-    isBlackWinner: boolean
-    repetitionsByMiniFEN: Map<string, number>
+    isLocked: boolean;
+    isWhitePerspective: boolean;
+    lastMove: Move | null;
+    board: Board;
+    selectedSquare: Square | null;
+    squareColorBySquareHash: Map<SquareHash, SquareColor>;
+    selectedMoves: Move[];
+    premoves: Queue<Move>;
 
-    constructor({
-                    pieces,
-                    enPassantSquare = null,
-                    isWhiteTurn = true,
-                    canWhiteCastleQueenside = true,
-                    canWhiteCastleKingside = true,
-                    canBlackCastleQueenside = true,
-                    canBlackCastleKingside = true,
-                    halfMoveClockCount = 0,
-                    fullMoveCount = 1,
-                    isTerminal = false,
-                    isWhiteWinner = false,
-                    isBlackWinner = false,
-                    repetitionsByMiniFEN = null,
-                }: BoardStateConstructorArgs) {
-        this._validate_pieces_shape(pieces);
 
-        this.pieces = pieces;
-        this.material = new Material(pieces);
-        this.enPassantSquare = enPassantSquare;
-        this.isWhiteTurn = isWhiteTurn;
-        this.canWhiteCastleQueenside = canWhiteCastleQueenside;
-        this.canWhiteCastleKingside = canWhiteCastleKingside;
-        this.canBlackCastleQueenside = canBlackCastleQueenside;
-        this.canBlackCastleKingside = canBlackCastleKingside;
-        this.halfMoveClockCount = halfMoveClockCount;
-        this.fullMoveCount = fullMoveCount;
-        this.isTerminal = isTerminal;
-        this.isWhiteWinner = isWhiteWinner;
-        this.isBlackWinner = isBlackWinner;
-        this.repetitionsByMiniFEN = repetitionsByMiniFEN || new Map();
+    constructor(args: BoardStateArgs) {
+        this.isLocked = args.isLocked;
+        this.isWhitePerspective = args.isWhitePerspective;
+        this.lastMove = args.lastMove;
+        this.board = args.board;
+        this.selectedSquare = args.selectedSquare;
+        this.squareColorBySquareHash = args.squareColorBySquareHash;
+        this.selectedMoves = args.selectedMoves;
+        this.premoves = args.premoves;
     }
 
+    getSquareColor(square: Square): SquareColor | undefined {
+        return this.squareColorBySquareHash.get(square.hash());
+    }
 
-    // TODO: possibly add full board state validation?
-    _validate_pieces_shape(pieces: ChessPiece[][]) {
-        if (pieces.length !== 8) {
-            throw new Error(`pieces does not have the expected amount of rows: exp (8) 
-                vs. actual (${pieces.length})`);
+    setSquareColor(square: Square, color: SquareColor | undefined) {
+        if (color === undefined) {
+            this.squareColorBySquareHash.delete(square.hash());
+            return;
         }
-        for (let r = 0; r < pieces.length; r++) {
-            if (pieces[r].length !== 8) {
-                throw new Error(`pieces does not have the expected amount of columns at row ${r}. exp (8) 
-                    vs actual (${pieces[r].length})`);
-            }
-        }
+        this.squareColorBySquareHash.set(square.hash(), color);
     }
 
-    getPieceBySquare(square: Square): ChessPiece {
-        return this.pieces[square.rank - 1][square.file - 1];
-    }
+    tileProps(): TileVisualProps[] {
+        const [board, premoveSquaresSet] = this.boardAndPremoveSquareHashesAfterPremoves();
+        const isTurn = this.isTurn();
+        const landSquares = this.landSquares(isTurn);
+        const landSquaresSet = new Set(landSquares.map(s => s.hash()));
+        const friendlySquares = this.friendlyPieceSquares();
+        const interactableSquares = !this.isLocked ? [...landSquares, ...friendlySquares] : [];
+        const interactableSquaresSet = new Set(interactableSquares.map(s => s.hash()));
 
-    setPieceOnSquare(piece: ChessPiece, square: Square) {
-        const pieceToRemove = this.getPieceBySquare(square);
-        this.material.removePiece(pieceToRemove, square);
-        this.pieces[square.rank - 1][square.file - 1] = piece;
-        this.material.addPiece(piece, square);
-    }
-
-    getLegalMovesGroupedBySquareHash(): { [squareHash: string]: Move[] } {
-        const movesBySquareHash: { [squareHash: string]: Move[] } = {};
-        for (let rank = 1; rank < 9; rank++) {
-            for (let file = 1; file < 9; file++) {
+        const tileProps: TileVisualProps[] = [];
+        for (let r = 1; r < 9; r++) {
+            for (let c = 1; c < 9; c++) {
+                let rank: number, file: number;
+                if (this.isWhitePerspective) {
+                    rank = 9 - r;
+                    file = c;
+                } else {
+                    rank = r;
+                    file = 9 - c;
+                }
                 const square = new Square(rank, file);
-                const pieceMoves = GameHelper.getLegalMovesByBoardAndSquare(this, square);
-                if (pieceMoves.length > 0) {
-                    movesBySquareHash[square.getHash()] = pieceMoves;
-                }
+                const squareHash = square.hash();
+                tileProps.push({
+                    square,
+                    pieceType: board.getPieceBySquare(square),
+                    isSelected: !!this.selectedSquare?.equalTo(square),
+                    isDotVisible: landSquaresSet.has(squareHash),
+                    isInteractable: interactableSquaresSet.has(squareHash),
+                    isChecked: this.isChecked(square),
+                    isLastMoveStart: !!this.lastMove?.startSquare.equalTo(square),
+                    isLastMoveEnd: !!this.lastMove?.endSquare.equalTo(square),
+                    isPremove: premoveSquaresSet.has(squareHash),
+                });
             }
         }
-        return movesBySquareHash;
+        return tileProps;
     }
 
-    getHasLegalMoves(): boolean {
-        const legalMovesBySquareHash = this.getLegalMovesGroupedBySquareHash();
-        for (let legalMoves of Object.values(legalMovesBySquareHash)) {
-            if (legalMoves.length > 0) {
-                return true;
-            }
-        }
-        return false;
+    isTurn(): boolean {
+        return this.board.isWhiteTurn === this.isWhitePerspective;
     }
 
-    isDrawByRepetition(): boolean {
-        for (let repetitions of Object.values(this.repetitionsByMiniFEN)) {
-            if (repetitions >= 3) {
-                return true;
-            }
+    boardAndPremoveSquareHashesAfterPremoves(): [Board, Set<SquareHash>] {
+        const board = this.board.copy();
+        const premoveSquareHashes = new Set<SquareHash>();
+        for (const move of this.premoves) {
+            const piece = board.getPieceBySquare(move.startSquare);
+            board.setPieceOnSquare(ChessPiece.EMPTY, move.startSquare);
+            board.setPieceOnSquare(piece, move.endSquare);
+            premoveSquareHashes.add(move.startSquare.hash());
+            premoveSquareHashes.add(move.endSquare.hash());
         }
-        return false;
+        return [board, premoveSquareHashes];
     }
 
-    static getInitBoardState(): BoardState {
-        const whitePawnRow = [ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN, ChessPiece.WHITE_PAWN]
-        const blackPawnRow = [ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN, ChessPiece.BLACK_PAWN,]
-        const emptyRow = [ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY]
-        return new BoardState({
-            pieces: [
-                [ChessPiece.WHITE_ROOK, ChessPiece.WHITE_KNIGHT, ChessPiece.WHITE_BISHOP, ChessPiece.WHITE_QUEEN, ChessPiece.WHITE_KING, ChessPiece.WHITE_BISHOP, ChessPiece.WHITE_KNIGHT, ChessPiece.WHITE_ROOK],
-                [...whitePawnRow],
-                [...emptyRow],
-                [...emptyRow],
-                [...emptyRow],
-                [...emptyRow],
-                [...blackPawnRow],
-                [ChessPiece.BLACK_ROOK, ChessPiece.BLACK_KNIGHT, ChessPiece.BLACK_BISHOP, ChessPiece.BLACK_QUEEN, ChessPiece.BLACK_KING, ChessPiece.BLACK_BISHOP, ChessPiece.BLACK_KNIGHT, ChessPiece.BLACK_ROOK],
-            ],
-        });
-    }
+    landSquares(isTurn: boolean): Square[] {
+        if (this.isLocked || !this.selectedSquare) {
+            return [];
+        }
 
-    static fromFEN(fen: string): BoardState {
-        const chessPiecesByFEN: { [fenChar: string]: ChessPiece[] } = {
-            "p": [ChessPiece.BLACK_PAWN],
-            "n": [ChessPiece.BLACK_KNIGHT],
-            "b": [ChessPiece.BLACK_BISHOP],
-            "r": [ChessPiece.BLACK_ROOK],
-            "q": [ChessPiece.BLACK_QUEEN],
-            "k": [ChessPiece.BLACK_KING],
-            "P": [ChessPiece.WHITE_PAWN],
-            "N": [ChessPiece.WHITE_KNIGHT],
-            "B": [ChessPiece.WHITE_BISHOP],
-            "R": [ChessPiece.WHITE_ROOK],
-            "Q": [ChessPiece.WHITE_QUEEN],
-            "K": [ChessPiece.WHITE_KING],
-            "1": [ChessPiece.EMPTY],
-            "2": [ChessPiece.EMPTY, ChessPiece.EMPTY],
-            "3": [ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY],
-            "4": [ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY],
-            "5": [ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY],
-            "6": [ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY,
-                ChessPiece.EMPTY],
-            "7": [ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY,
-                ChessPiece.EMPTY, ChessPiece.EMPTY],
-            "8": [ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY,
-                ChessPiece.EMPTY, ChessPiece.EMPTY, ChessPiece.EMPTY],
-
-        }
-        const boardStateArgs: BoardStateConstructorArgs = {
-            pieces: [[], [], [], [], [], [], [], []],
-        };
-        const fenSegs = fen.split(" ");
-        if (fenSegs.length !== 6) {
-            throw new Error(`Unexpected amount of segments in FEN. Exp (6) vs. Actual (${fenSegs.length})`);
-        }
-        for (let fenSegIdx = 0; fenSegIdx < fenSegs.length; fenSegIdx++) {
-            const fenSeg = fenSegs[fenSegIdx];
-            if (fenSegIdx === 0) {
-                // pieces fen segment
-                let rank = 8;
-                for (let piece of fenSeg) {
-                    if (piece === "/") {
-                        rank--;
-                        continue
-                    }
-                    if (!(piece in chessPiecesByFEN)) {
-                        const algCoords = new Square(rank, boardStateArgs.pieces[rank].length + 1).toAlgebraicCoords();
-                        throw new Error(`Invalid piece character in FEN, ${piece} at position ${algCoords}`);
-                    }
-                    boardStateArgs.pieces[rank - 1].push(...chessPiecesByFEN[piece]);
-                }
-            } else if (fenSegIdx === 1) {
-                if (fenSeg.length !== 1) {
-                    throw new Error(`Invalid turn indicator length in FEN, ${fenSeg}`);
-                }
-                if (fenSeg === "w") {
-                    boardStateArgs.isWhiteTurn = true;
-                } else if (fenSeg === "b") {
-                    boardStateArgs.isWhiteTurn = false;
-                } else {
-                    throw new Error(`Invalid turn indicator in FEN, ${fenSeg}`)
-                }
-            } else if (fenSegIdx === 2) {
-                boardStateArgs.canWhiteCastleKingside = false;
-                boardStateArgs.canWhiteCastleQueenside = false;
-                boardStateArgs.canBlackCastleKingside = false;
-                boardStateArgs.canBlackCastleQueenside = false;
-                if (fenSeg === "-" || fenSeg === "_") continue;
-                for (let castleChar of fenSeg) {
-                    if (castleChar === "K") {
-                        boardStateArgs.canWhiteCastleKingside = true;
-                    } else if (castleChar === "Q") {
-                        boardStateArgs.canWhiteCastleQueenside = true;
-                    } else if (castleChar === "k") {
-                        boardStateArgs.canBlackCastleKingside = true;
-                    } else if (castleChar === "q") {
-                        boardStateArgs.canBlackCastleQueenside = true;
-                    } else {
-                        throw new Error(`Invalid castle specifier in FEN, ${castleChar}`);
-                    }
-                }
-            } else if (fenSegIdx === 3) {
-                if (fenSeg === "-" || fenSeg === "_") continue;
-                boardStateArgs.enPassantSquare = Square.fromAlgebraicCoords(fenSeg);
-            } else if (fenSegIdx === 4) {
-                const halfMoveClockCountInt = Number.parseInt(fenSeg);
-                if (!Number.isInteger(halfMoveClockCountInt)) {
-                    throw new Error(`Non-number provided for halfmove clock in FEN, ${fenSeg}`);
-                }
-                boardStateArgs.halfMoveClockCount = halfMoveClockCountInt;
-            } else if (fenSegIdx === 5) {
-                const fullMoveCount = Number.parseInt(fenSeg);
-                if (!Number.isInteger(fullMoveCount)) {
-                    throw new Error(`Non-number provided for whole move count in FEN, ${fenSeg}`);
-                }
-                boardStateArgs.fullMoveCount = fullMoveCount;
-            }
-        }
-        return new BoardState(boardStateArgs);
-    }
-
-    toFEN(): string {
-        const fenCharByPiece = ["", "P", "N", "B", "R", "Q", "K", "p", "n", "b", "r", "q", "k"];
-        const fenSegs: string[] = [];
-        const fenPiecesSeg: string[] = [];
-        let consecutiveEmptyCount = 0;
-        for (let rank = 8; rank >= 1; rank--) {
-            for (let file = 1; file < 9; file++) {
-                const piece = this.getPieceBySquare(new Square(rank, file));
-                if (piece === ChessPiece.EMPTY) {
-                    consecutiveEmptyCount++;
-                } else {
-                    if (consecutiveEmptyCount) {
-                        fenPiecesSeg.push(consecutiveEmptyCount.toString());
-                        consecutiveEmptyCount = 0;
-                    }
-                    fenPiecesSeg.push(fenCharByPiece[piece])
-                }
-            }
-            if (consecutiveEmptyCount > 0) {
-                fenPiecesSeg.push(consecutiveEmptyCount.toString());
-                consecutiveEmptyCount = 0;
-            }
-            fenPiecesSeg.push("/");
-        }
-        fenPiecesSeg.pop();
-        fenSegs.push(fenPiecesSeg.join(""));
-
-        fenSegs.push(this.isWhiteTurn ? "w" : "b");
-
-        const fenCastleSeg: string[] = [];
-        if (this.canWhiteCastleKingside) {
-            fenCastleSeg.push("K");
-        }
-        if (this.canWhiteCastleQueenside) {
-            fenCastleSeg.push("Q");
-        }
-        if (this.canBlackCastleKingside) {
-            fenCastleSeg.push("k");
-        }
-        if (this.canBlackCastleQueenside) {
-            fenCastleSeg.push("q");
-        }
-        fenSegs.push(fenCastleSeg.join("") || "-");
-
-        if (this.enPassantSquare != null) {
-            fenSegs.push(this.enPassantSquare.toAlgebraicCoords());
+        if (isTurn) {
+            const legalMoves = GameHelper.getLegalMovesByBoardAndStartSquare(this.board, this.selectedSquare);
+            return legalMoves.map(m => m.endSquare);
         } else {
-            fenSegs.push("-");
+            return GameHelper.getPossibleLandSquaresForSquare(this.board, this.selectedSquare);
         }
-
-        fenSegs.push(this.halfMoveClockCount.toString());
-
-        fenSegs.push(this.fullMoveCount.toString());
-
-        return fenSegs.join(" ");
     }
 
-    equalTo(otherBoardState: BoardState): boolean {
-        for (let rank = 0; rank < this.pieces.length; rank++) {
-            for (let file = 0; file < this.pieces[0].length; file++) {
-                if (this.pieces[rank][file] !== otherBoardState.pieces[rank][file]) return false;
+    private friendlyPieceSquares(): Square[] {
+        const squares: Square[] = [];
+        for (let r = 1; r < 9; r++) {
+            for (let c = 1; c < 9; c++) {
+                const square = new Square(r, c);
+                const piece = this.board.getPieceBySquare(square);
+                if (piece === ChessPiece.EMPTY)
+                    continue;
+                if (ChessPieceHelper.isWhite(piece) === this.isWhitePerspective) {
+                    squares.push(square);
+                }
             }
         }
-
-        if (this.enPassantSquare == null && otherBoardState.enPassantSquare != null) return false;
-        if (otherBoardState.enPassantSquare == null && this.enPassantSquare != null) return false;
-        if (this.enPassantSquare && !(this.enPassantSquare.equalTo(otherBoardState.enPassantSquare!))) return false;
-
-        return this.isWhiteTurn === otherBoardState.isWhiteTurn &&
-            this.canWhiteCastleKingside === otherBoardState.canWhiteCastleKingside &&
-            this.canWhiteCastleQueenside === otherBoardState.canWhiteCastleQueenside &&
-            this.canBlackCastleKingside === otherBoardState.canBlackCastleKingside &&
-            this.canBlackCastleQueenside === otherBoardState.canBlackCastleQueenside &&
-            this.halfMoveClockCount === otherBoardState.halfMoveClockCount &&
-            this.fullMoveCount === otherBoardState.fullMoveCount;
+        return squares;
     }
 
-    copyWith({
-                 pieces,
-                 enPassantSquare,
-                 isWhiteTurn,
-                 canWhiteCastleKingside,
-                 canWhiteCastleQueenside,
-                 canBlackCastleKingside,
-                 canBlackCastleQueenside,
-                 halfMoveClockCount,
-                 fullMoveCount
-             }: Partial<BoardState>): BoardState {
-        const piecesCopy = pieces || [
-            [...this.pieces[0]],
-            [...this.pieces[1]],
-            [...this.pieces[2]],
-            [...this.pieces[3]],
-            [...this.pieces[4]],
-            [...this.pieces[5]],
-            [...this.pieces[6]],
-            [...this.pieces[7]]
-        ];
-        const enPassantSquareCopy = enPassantSquare || (this.enPassantSquare && this.enPassantSquare.copyWith({}));
-        const isWhiteTurnCopy = isWhiteTurn || this.isWhiteTurn;
-        const canWhiteCastleKingsideCopy = canWhiteCastleKingside || this.canWhiteCastleKingside;
-        const canWhiteCastleQueensideCopy = canWhiteCastleQueenside || this.canWhiteCastleQueenside;
-        const canBlackCastleKingsideCopy = canBlackCastleKingside || this.canBlackCastleKingside;
-        const canBlackCastleQueensideCopy = canBlackCastleQueenside || this.canBlackCastleQueenside;
-        const halfMoveClockCountCopy = halfMoveClockCount || this.halfMoveClockCount;
-        const fullMoveCountCopy = fullMoveCount || this.fullMoveCount;
-        return new BoardState({
-            pieces: piecesCopy,
-            enPassantSquare: enPassantSquareCopy,
-            isWhiteTurn: isWhiteTurnCopy,
-            canWhiteCastleKingside: canWhiteCastleKingsideCopy,
-            canWhiteCastleQueenside: canWhiteCastleQueensideCopy,
-            canBlackCastleKingside: canBlackCastleKingsideCopy,
-            canBlackCastleQueenside: canBlackCastleQueensideCopy,
-            halfMoveClockCount: halfMoveClockCountCopy,
-            fullMoveCount: fullMoveCountCopy
-        });
+
+    private isChecked(square: Square): boolean {
+        return false;
+    }
+
+    getMovesFromPremove(): Throwable<Move[]> {
+        if (!this.isTurn())
+            throw new Error("cannot play move, not player's turn");
+        if (this.isLocked)
+            throw new Error("cannot play move, board is locked");
+        if (this.premoves.size() === 0)
+            throw new Error("no premoves to play");
+        const premove = this.premoves.first();
+        const legalMoves = GameHelper.getLegalMovesByBoardAndStartSquare(this.board, premove.startSquare);
+        const matchingLegalMoves = legalMoves.filter(move => move.endSquare.equalTo(premove.endSquare));
+        if (matchingLegalMoves.length > 0) {
+            return matchingLegalMoves;
+        } else {
+            throw new Error("premove is not legal");
+        }
     }
 
     copy(): BoardState {
-        return this.copyWith({});
+        return new BoardState({
+            isLocked: this.isLocked,
+            isWhitePerspective: this.isWhitePerspective,
+            lastMove: this.lastMove?.copy() || null,
+            board: this.board,
+            selectedSquare: this.selectedSquare?.copy() || null,
+            squareColorBySquareHash: new Map(this.squareColorBySquareHash),
+            selectedMoves: [...this.selectedMoves],
+            premoves: this.premoves.copy(),
+        });
     }
 
-    static fromApi(apiBoard: ApiBoard): BoardState {
-        const isTerminal = apiBoard.result !== "in_progress";
-        const isWhiteWinner = apiBoard.result.startsWith("white_wins");
-        const isBlackWinner = apiBoard.result.startsWith("black_wins");
+    equalTo(other: BoardState): boolean {
+        if (!!this.lastMove !== !!other.lastMove)
+            return false;
+        if (this.lastMove && !this.lastMove.equalTo(other.lastMove!))
+            return false;
+
+        if (!!this.selectedSquare !== !!other.lastMove)
+            return false;
+        if (this.selectedSquare && !this.selectedSquare.equalTo(other.selectedSquare!))
+            return false;
+
+        if (this.squareColorBySquareHash.size !== other.squareColorBySquareHash.size)
+            return false;
+        for (let [squareHash, squareColor] of this.squareColorBySquareHash.entries()) {
+            if (squareColor !== other.squareColorBySquareHash.get(squareHash))
+                return false;
+        }
+
+        if (this.selectedMoves.length !== other.selectedMoves.length)
+            return false;
+        for (let i = 0; i < this.selectedMoves.length; i++) {
+            if (this.selectedMoves[i] !== other.selectedMoves[i])
+                return false;
+        }
+
+        return this.isLocked === other.isLocked &&
+            this.isWhitePerspective === other.isWhitePerspective &&
+            this.board.equalTo(other.board) &&
+            this.premoves.equalTo(other.premoves);
+    }
+
+    static fromBoard(board: Board) {
         return new BoardState({
-            pieces: apiBoard.pieces.map(row => row.map(ChessPieceFromApi)),
-            enPassantSquare: apiBoard.enPassantSquare ? Square.fromApi(apiBoard.enPassantSquare) : null,
-            isWhiteTurn: apiBoard.isWhiteTurn,
-            canWhiteCastleKingside: apiBoard.canWhiteCastleKingside,
-            canWhiteCastleQueenside: apiBoard.canWhiteCastleQueenside,
-            canBlackCastleKingside: apiBoard.canBlackCastleKingside,
-            canBlackCastleQueenside: apiBoard.canBlackCastleQueenside,
-            halfMoveClockCount: apiBoard.halfMoveClockCount,
-            fullMoveCount: apiBoard.fullMoveCount,
-            isTerminal,
-            isWhiteWinner,
-            isBlackWinner,
-            repetitionsByMiniFEN: new Map(Object.entries(apiBoard.repetitionsByMiniFEN)),
+            isLocked: false,
+            isWhitePerspective: true,
+            lastMove: null,
+            board,
+            selectedSquare: null,
+            squareColorBySquareHash: new Map(),
+            selectedMoves: [],
+            premoves: new EasyQueue<Move>(),
         });
     }
 }

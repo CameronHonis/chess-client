@@ -1,5 +1,5 @@
 import {AppStateAction, AppStateActionType} from "./app_state_action";
-import {Move} from "../domain/move";
+import {Move} from "../../domain/move";
 
 export type IngestMovePayload = {
     move: Move;

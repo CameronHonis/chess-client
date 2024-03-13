@@ -1,6 +1,6 @@
 import React from "react"
 import "../styles/summary.css";
-import {ReturnHomeAction} from "../models/actions/return_home_action";
+import {ReturnHomeAction} from "../models/actions/app/return_home_action";
 import {appStateContext} from "../App";
 import {MatchResult} from "../models/domain/match_result";
 

@@ -25,6 +25,7 @@ describe("parseMessageFromJson", () => {
                         "repetitionsByMiniFEN": {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -": 1},
                         "result": "in_progress",
                     },
+                    "lastMove": null,
                     "whiteClientKey": "b0d7dfd5f91ce83b7baae3c17e05aa05729b143d30768abc89c74c8762b59ce4",
                     "whiteTimeRemainingSec": 300,
                     "blackClientKey": "948669118cf13b879a9f63da87c8392d77ba22383f7e61feb8e94ee0ee5c2ef2",

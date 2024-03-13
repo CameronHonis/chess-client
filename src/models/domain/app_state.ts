@@ -54,28 +54,3 @@ export class AppState {
     }
 }
 
-export const initAppState = new AppState({
-    auth: new AuthKeyset({
-        publicKey: "white-client-key",
-        privateKey: "some-private-key",
-    }),
-    page: Page.MATCH,
-    match: new Match({
-        uuid: "some-uuid",
-        board: Board.fromFEN("r7/6P1/1k6/8/8/8/8/6RK b - - 1 63"),
-        lastMove: new Move(ChessPiece.BLACK_ROOK, new Square(7, 1), new Square(8, 1), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
-        whiteTimeRemainingSec: 44.7,
-        whiteClientKey: "white-client-key",
-        blackTimeRemainingSec: 93.6,
-        blackClientKey: "black-client-key",
-        timeControl: newRapidTimeControl(),
-        botName: "",
-        result: MatchResult.IN_PROGRESS,
-    }),
-    // auth: null,
-    // page: Page.HOME,
-    // match: null,
-    lastMove: null,
-    inboundChallenges: [],
-    outboundChallenges: [],
-});

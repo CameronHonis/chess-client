@@ -2,7 +2,7 @@ import {ArbitratorClient} from "./services/arbitrator_client";
 import {MessageContentType} from "./models/messages/message_content_type";
 import {Timer} from "./services/timer";
 import {AppState} from "./models/domain/app_state";
-import {AppStateAction} from "./models/actions/app_state_action";
+import {AppStateAction} from "./models/actions/app/app_state_action";
 import React from "react";
 import {BoardAnimator} from "./services/board_animator";
 import {ArbitratorMessageEvent} from "./models/events/message_event";

@@ -1,7 +1,7 @@
 import React from "react";
-import {UpdateMatchAction} from "../models/actions/update_match_action";
-import {AppStateAction} from "../models/actions/app_state_action";
-import {IngestMoveAction} from "../models/actions/ingest_move_action";
+import {UpdateMatchAction} from "../models/actions/app/update_match_action";
+import {AppStateAction} from "../models/actions/app/app_state_action";
+import {IngestMoveAction} from "../models/actions/app/ingest_move_action";
 import {parseEventName} from "../models/events/message_event_name";
 import {AuthKeyset} from "../models/domain/auth_keyset";
 import {dispatchErr} from "../models/events/notif_event";
@@ -9,8 +9,8 @@ import {Square} from "../models/domain/square";
 import {Move} from "../models/domain/move";
 import {Match} from "../models/domain/match";
 import {MessageContentType} from "../models/api/messages/message_content_type";
-import {UpdateAuthAction} from "../models/actions/update_auth_action";
-import {UpdateChallengeAction} from "../models/actions/update_challenge_action";
+import {UpdateAuthAction} from "../models/actions/app/update_auth_action";
+import {UpdateChallengeAction} from "../models/actions/app/update_challenge_action";
 import {Challenge} from "../models/domain/challenge";
 
 export function registerOnAuthMsgHandler(dispatch: React.Dispatch<AppStateAction>) {
