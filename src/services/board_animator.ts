@@ -136,7 +136,7 @@ export class HoldPieceAnimation {
     }
 
     onTick() {
-        const animTile = document.getElementById("DraggingTile");
+        const animTile = document.getElementById("DragAnimTile");
         if (!animTile) { return }
 
         const { width } = this.draggingTile.getBoundingClientRect();

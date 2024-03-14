@@ -2,7 +2,10 @@ import React from "react";
 
 interface Props {
     isWhite: boolean;
+    onDragStart?: (ev: React.DragEvent<HTMLImageElement>) => void;
+    onDragEnd?: (ev: React.DragEvent<HTMLImageElement>) => void;
 }
+
 
 export const Pawn: React.FC<Props> = (props) => {
     const {isWhite} = props;
@@ -34,7 +37,8 @@ export const Pawn: React.FC<Props> = (props) => {
     //     </g>
     // </svg>
     return <img
-        draggable={false}
+        onDragStart={props.onDragStart}
+        onDragEnd={props.onDragEnd}
         className={classNames.join(" ")}
         src={isWhite ? "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg" : "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg"}
         alt={isWhite ? "white pawn" : "black pawn"}

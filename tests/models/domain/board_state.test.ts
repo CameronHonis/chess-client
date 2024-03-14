@@ -21,6 +21,7 @@ describe("BoardState", () => {
                 squareColorBySquareHash: new Map(),
                 selectedMoves: [],
                 premoves: new EasyQueue(),
+                draggingPiece: null,
             });
         });
         describe("board actions are locked", () => {

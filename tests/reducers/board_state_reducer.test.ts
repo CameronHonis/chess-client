@@ -10,6 +10,8 @@ import {EasyQueue} from "../../src/helpers/easy_queue";
 import {LeftClickSquareAction} from "../../src/models/actions/board/left_click_square";
 import {PickPromoteAction} from "../../src/models/actions/board/pick_move";
 import {RightClickSquareAction} from "../../src/models/actions/board/right_click_square";
+import {LeftDraggingStartAction} from "../../src/models/actions/board/left_dragging_start_action";
+import {LeftDraggingStopAction} from "../../src/models/actions/board/left_dragging_stop_action";
 
 describe("boardStateReducer", () => {
     let state: BoardState;
@@ -304,9 +306,175 @@ describe("boardStateReducer", () => {
         });
     });
 
+    describe("on LEFT_DRAGGING_START", () => {
+        let action: LeftDraggingStartAction;
+        describe("a square is selected", () => {
+            describe("the dragging square is a friendly piece", () => {
+                beforeEach(() => {
+                    state.selectedSquare = new Square(2, 4);
+                });
+                describe("the dragging square is the selected square", () => {
+                    beforeEach(() => {
+                        action = new LeftDraggingStartAction(new Square(2, 4));
+                    });
+                    it("does not deselect the square", () => {
+                        const newState = boardStateReducer(state, action);
+                        expect(newState.selectedSquare).not.toBeNull();
+                    });
+                    it("sets the dragging anim piece", () => {
+                        const newState = boardStateReducer(state, action);
+                        expect(newState.draggingPiece).toEqual(ChessPiece.WHITE_PAWN);
+                    });
+                });
+                describe("the dragging square is not the selected square", () => {
+                    beforeEach(() => {
+                        action = new LeftDraggingStartAction(new Square(2, 5));
+                    });
+                    it("selects the dragging square as the selected square", () => {
+                        const newState = boardStateReducer(state, action);
+                        expect(newState.selectedSquare!.equalTo(action.payload.square)).toBeTruthy();
+                    });
+                    it("removes all selected moves", () => {
+                        const newState = boardStateReducer(state, action);
+                        expect(newState.selectedMoves).toHaveLength(0);
+                    });
+                    it("sets the dragging anim piece", () => {
+                        const newState = boardStateReducer(state, action);
+                        expect(newState.draggingPiece).toEqual(ChessPiece.WHITE_PAWN);
+                    });
+                });
+            });
+            describe("the dragging square is not a friendly piece", () => {
+                beforeEach(() => {
+                    action = new LeftDraggingStartAction(new Square(7, 7));
+                });
+                it("deselects the selected square", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.selectedSquare).toBeNull();
+                });
+                it("does not set the dragging anim piece", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.draggingPiece).toBeNull();
+                });
+            });
+        });
+        describe("a square is not selected", () => {
+            beforeEach(() => {
+                state.selectedSquare = null;
+            });
+            describe("the dragging square is a friendly square", () => {
+                beforeEach(() => {
+                    action = new LeftDraggingStartAction(new Square(2, 4));
+                });
+                it("sets the selected square to the dragging square", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.selectedSquare!.equalTo(action.payload.square)).toBeTruthy();
+                });
+                it("sets the dragging anim piece", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.draggingPiece).toEqual(ChessPiece.WHITE_PAWN);
+                });
+            });
+            describe("the dragging square is not a friendly square", () => {
+                beforeEach(() => {
+                   action = new LeftDraggingStartAction(new Square(5, 5));
+                });
+                it("does not select the dragging square", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.selectedSquare).toBeNull();
+                });
+                it("does not set the dragging anim piece", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.draggingPiece).toBeNull();
+                });
+            });
+        });
+    });
+
+    describe("on LEFT_DRAGGING_STOP", () => {
+        let action: LeftDraggingStopAction;
+        beforeEach(() => {
+            state.selectedSquare = new Square(2, 4);
+        });
+        describe("the drop square is null", () => {
+            beforeEach(() => {
+                action = new LeftDraggingStopAction(null);
+            });
+            it("deselects the selected square", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.selectedSquare).toBeNull();
+            });
+            it("does not set a selected move", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.selectedMoves).toHaveLength(0);
+            });
+            it("sets the dragging piece to null", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.draggingPiece).toBeNull();
+            });
+        });
+        describe("the drop square is the selected square", () => {
+            beforeEach(() => {
+                action = new LeftDraggingStopAction(new Square(2, 4));
+            });
+            it("deselects the selected square", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.selectedSquare).toBeNull();
+            });
+            it("does not set a selected move", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.selectedMoves).toHaveLength(0);
+            });
+            it("sets the dragging piece to null", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.draggingPiece).toBeNull();
+            });
+        });
+        describe("the drop square is on a land-able square", () => {
+            beforeEach(() => {
+                action = new LeftDraggingStopAction(new Square(4, 4));
+            });
+            it("deselects the selected square", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.selectedSquare).toBeNull();
+            });
+            it("sets the selected move", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.selectedMoves).toHaveLength(1);
+                expect(newState.selectedMoves[0].piece).toEqual(ChessPiece.WHITE_PAWN);
+                expect(newState.selectedMoves[0].startSquare.equalTo(new Square(2, 4))).toBeTruthy();
+                expect(newState.selectedMoves[0].endSquare.equalTo(new Square(4, 4))).toBeTruthy();
+                expect(newState.selectedMoves[0].pawnUpgradedTo).toEqual(ChessPiece.EMPTY);
+            });
+            it("sets the dragging piece to null", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.draggingPiece).toBeNull();
+            });
+        });
+        describe("the drop square is not on a land-able square", () => {
+            describe("the drop square is not a friendly piece square", () => {
+                beforeEach(() => {
+                    action = new LeftDraggingStopAction(new Square(8, 8));
+                });
+                it("deselects the selected square", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.selectedSquare).toBeNull();
+                });
+                it("does not set a selected move", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.selectedMoves).toHaveLength(0);
+                });
+                it("sets the dragging piece to null", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.draggingPiece).toBeNull();
+                });
+            });
+        });
+    });
+
     describe("on RIGHT_CLICK_SQUARE", () => {
         let action: RightClickSquareAction;
-        describe("when premoves are queued", () => {
+        describe("premoves are queued", () => {
             beforeEach(() => {
                 state.isWhitePerspective = false;
                 state.premoves = new EasyQueue(
@@ -317,6 +485,16 @@ describe("boardStateReducer", () => {
             it("clears premoves", () => {
                 const newState = boardStateReducer(state, action);
                 expect(newState.premoves.size()).toEqual(0);
+            });
+        });
+        describe("a square is selected", () => {
+            beforeEach(() => {
+                state.selectedSquare = new Square(1, 1);
+                action = new RightClickSquareAction(new Square(4, 4));
+            });
+            fit("deselects the selected square", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.selectedSquare).toBeNull();
             });
         });
     });

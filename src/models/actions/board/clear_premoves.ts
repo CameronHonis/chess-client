@@ -1,11 +1,11 @@
 import {BoardActionType} from "./board_action";
 import {Action} from "../action";
 
-export class ClearPremovesAction {
-    type = BoardActionType.CLEAR_PREMOVES;
+export class ClearSelectionsAction {
+    type = BoardActionType.CLEAR_SELECTIONS;
     payload = undefined;
 }
 
-export function isClearPremovesAction(action: Action): action is ClearPremovesAction {
-    return action.type === BoardActionType.CLEAR_PREMOVES;
+export function isClearSelectionsAction(action: Action): action is ClearSelectionsAction {
+    return action.type === BoardActionType.CLEAR_SELECTIONS;
 }

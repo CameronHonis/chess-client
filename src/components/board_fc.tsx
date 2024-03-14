@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import "../styles/board.css";
 import {Tile} from "./tile";
 import {Square} from "../models/domain/square";
@@ -16,6 +16,9 @@ import {PickPromoteAction} from "../models/actions/board/pick_move";
 import {CancelPromoteAction} from "../models/actions/board/cancel_promote";
 import {UpdateBoardAction} from "../models/actions/board/update_board";
 import {RightClickSquareAction} from "../models/actions/board/right_click_square";
+import {LeftDraggingStartAction} from "../models/actions/board/left_dragging_start_action";
+import {LeftDraggingStopAction} from "../models/actions/board/left_dragging_stop_action";
+import {ClearSelectionsAction} from "../models/actions/board/clear_premoves";
 
 export interface BoardProps {
     isLocked: boolean;
@@ -35,7 +38,19 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         squareColorBySquareHash: new Map(),
         selectedMoves: [],
         premoves: new EasyQueue(),
+        draggingPiece: null,
     }));
+
+    React.useEffect(() => {
+        const onKeyPress = (ev: KeyboardEvent) => {
+            if (ev.key === "Escape") {
+                dispatch(new ClearSelectionsAction());
+            }
+        }
+        document.addEventListener("keyup", onKeyPress);
+
+        return () => window.removeEventListener("keypress", onKeyPress);
+    }, []);
 
     React.useEffect(() => {
         dispatch(new UpdateBoardAction(board));
@@ -48,15 +63,13 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         }
     }, [sendMove, state.selectedMoves]);
 
-    const [draggingSquare, setDraggingSquare] = useState<Square | null>(null);
-
     React.useEffect(() => {
-        if (!draggingSquare) {
+        if (state.selectedSquare && state.draggingPiece) {
+            window.services.boardAnimator.holdPiece(state.selectedSquare);
+        } else {
             window.services.boardAnimator.dropPiece();
-            return;
         }
-        window.services.boardAnimator.holdPiece(draggingSquare);
-    }, [draggingSquare]);
+    }, [state.selectedSquare, state.draggingPiece]);
 
     const onPromote = React.useCallback((piece: ChessPiece) => {
         dispatch(new PickPromoteAction(piece));
@@ -75,23 +88,34 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         }
     }, []);
 
+    const onTileDragStart = React.useCallback((button: MouseButton, square: Square) => {
+        if (button === MouseButton.LEFT) {
+            console.log("start", square);
+            // window.services.boardAnimator.holdPiece(square);
+            dispatch(new LeftDraggingStartAction(square));
+        }
+    }, []);
+
+    const onTileDrop = React.useCallback((button: MouseButton, dropSquare: Square) => {
+        if (button === MouseButton.LEFT) {
+            if (!state.selectedSquare)
+                return;
+            console.log("drop", state.selectedSquare.hash(), dropSquare.hash());
+            // window.services.boardAnimator.dropPiece();
+            dispatch(new LeftDraggingStopAction(dropSquare));
+        }
+    }, [state.selectedSquare]);
+
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         return state.tileProps().map((tileProps, idx) => {
-            return <Tile {...tileProps} onClick={onTileClick} key={idx}/>
+            return <Tile {...tileProps}
+                         onClick={onTileClick}
+                         onDragStart={onTileDragStart}
+                         onDrop={onTileDrop}
+                         key={idx}
+            />
         });
-    }, [onTileClick, state]);
-
-    const animTile = React.useMemo((): ReactComp<typeof AnimTile> | null => {
-        if (!lastMove)
-            return null;
-        return <AnimTile piece={lastMove.piece} isDragging={false}/>;
-    }, [lastMove]);
-
-    const draggingTile = React.useMemo((): ReactComp<typeof Tile> | null => {
-        if (draggingSquare === null)
-            return null;
-        return <AnimTile piece={board.getPieceBySquare(draggingSquare)} isDragging/>;
-    }, [board, draggingSquare]);
+    }, [state, onTileClick, onTileDragStart, onTileDrop]);
 
     const promoteOverlay = React.useMemo(() => {
         if (state.selectedMoves.length < 2)
@@ -103,8 +127,6 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
     return <div className={"BoardFrame"}>
         <div className={"Board"}>
             {tiles}
-            {animTile}
-            {draggingTile}
             {promoteOverlay}
         </div>
     </div>

@@ -6,6 +6,8 @@ import React from "react";
 
 interface Props {
     isWhite: boolean
+    onDragStart?: (ev: React.DragEvent<HTMLImageElement>) => void;
+    onDragEnd?: (ev: React.DragEvent<HTMLImageElement>) => void;
 }
 
 export const Bishop: React.FC<Props> = (props) => {
@@ -32,7 +34,8 @@ export const Bishop: React.FC<Props> = (props) => {
     //     </g>
     // </svg>
     return <img
-        draggable={false}
+        onDragStart={props.onDragStart}
+        onDragEnd={props.onDragEnd}
         className={classNames.join(" ")}
         src={isWhite ? "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg" : "https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg"}
         alt={isWhite ? "white bishop" : "black bishop"}

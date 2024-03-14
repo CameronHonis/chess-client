@@ -2,6 +2,8 @@ import React from "react";
 
 interface Props {
     isWhite: boolean
+    onDragStart?: (ev: React.DragEvent<HTMLImageElement>) => void;
+    onDragEnd?: (ev: React.DragEvent<HTMLImageElement>) => void;
 }
 
 export const King: React.FC<Props> = (props) => {
@@ -19,7 +21,8 @@ export const King: React.FC<Props> = (props) => {
     //     </g>
     // </svg>
     return <img
-        draggable={false}
+        onDragStart={props.onDragStart}
+        onDragEnd={props.onDragEnd}
         className={classNames.join(" ")}
         src={isWhite ? "https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg" : "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg"}
         alt={isWhite ? "white king" : "black king"}
