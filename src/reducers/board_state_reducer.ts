@@ -28,6 +28,18 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
                 newState.selectedSquare = null;
             }
         }
+        if (newState.isTurn() && state.premoves.size()) {
+            const premove = newState.premoves.pop();
+            const legalMoves = GameHelper.getLegalMovesByBoardAndStartSquare(newBoard, premove.startSquare);
+            const legalMoveMatch = legalMoves.find(move => {
+                return move.endSquare.equalTo(premove.endSquare) && move.pawnUpgradedTo === premove.pawnUpgradedTo;
+            });
+            if (legalMoveMatch) {
+                newState.selectedMoves = [legalMoveMatch];
+            } else {
+                newState.premoves.flush();
+            }
+        }
     } else if (isLeftClickSquareAction(action)) {
         const square = action.payload.square;
         if (state.selectedSquare && state.selectedSquare.equalTo(square)) {
@@ -133,7 +145,7 @@ function leftInteractSquare(oldState: BoardState, newState: BoardState, square: 
             }
         }
     } else {
-        const isFriendlyPiece = landPiece !== ChessPiece.EMPTY && ChessPieceHelper.isWhite(landPiece);
+        const isFriendlyPiece = landPiece !== ChessPiece.EMPTY && ChessPieceHelper.isWhite(landPiece) === oldState.isWhitePerspective;
         if (isFriendlyPiece) {
             newState.selectedSquare = square;
         }

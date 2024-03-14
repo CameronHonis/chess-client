@@ -77,6 +77,56 @@ describe("boardStateReducer", () => {
                 expect(newState.selectedMoves).toHaveLength(0);
             });
         });
+        describe("premoves are queued", () => {
+            beforeEach(() => {
+                state = BoardState.fromBoard(Board.fromFEN("1kr5/6P1/8/8/8/8/8/6RK b - - 1 63"));
+                state.premoves = new EasyQueue(
+                    new Move(ChessPiece.WHITE_PAWN, new Square(7, 7), new Square(8, 6), [], ChessPiece.EMPTY, ChessPiece.WHITE_ROOK),
+                    new Move(ChessPiece.WHITE_ROOK, new Square(1, 7), new Square(1, 1), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
+                );
+            });
+            describe("the next premove is legal", () => {
+                beforeEach(() => {
+                    action = new UpdateBoardAction(Board.fromFEN("1k3r2/6P1/8/8/8/8/8/6RK w - - 1 63"));
+                });
+                it("sets the premove as the selected move", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.selectedMoves).toHaveLength(1);
+                });
+                it("sets the king checks on the selected move", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.selectedMoves[0].kingCheckingSquares).toHaveLength(1);
+                    expect(newState.selectedMoves[0].kingCheckingSquares[0].equalTo(new Square(8, 6))).toBeTruthy();
+                });
+                it("sets the piece captured on the selected move", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.selectedMoves[0].capturedPiece).toEqual(ChessPiece.BLACK_ROOK);
+                });
+                it("preserves the data on the premove", () => {
+                    const newState = boardStateReducer(state, action);
+                    const move = newState.selectedMoves[0];
+                    expect(move).not.toBeNull();
+                    expect(move.piece).toEqual(ChessPiece.WHITE_PAWN);
+                    expect(move.startSquare.equalTo(new Square(7 ,7))).toBeTruthy();
+                    expect(move.endSquare.equalTo(new Square(8, 6))).toBeTruthy();
+                    expect(move.pawnUpgradedTo).toEqual(ChessPiece.WHITE_ROOK);
+                });
+                it("pops the first premove out of the premoves queue", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.premoves.size()).toEqual(1);
+                    expect(newState.premoves.first().piece).toEqual(ChessPiece.WHITE_ROOK);
+                });
+            });
+            describe("the next premove is illegal", () => {
+                beforeEach(() => {
+                    action = new UpdateBoardAction(Board.fromFEN("1k4r1/6P1/8/8/8/8/8/6RK w - - 1 63"));
+                });
+                it("flushes the premoves queue", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.premoves.size()).toEqual(0);
+                });
+            });
+        });
     });
 
     describe("on LEFT_CLICK_SQUARE", () => {
@@ -492,7 +542,7 @@ describe("boardStateReducer", () => {
                 state.selectedSquare = new Square(1, 1);
                 action = new RightClickSquareAction(new Square(4, 4));
             });
-            fit("deselects the selected square", () => {
+            it("deselects the selected square", () => {
                 const newState = boardStateReducer(state, action);
                 expect(newState.selectedSquare).toBeNull();
             });

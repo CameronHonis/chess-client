@@ -16,42 +16,34 @@ import {ChallengesOverlay} from "./components/challenges/challenges_overlay";
 import {Home} from "./components/home";
 import {DisconnectedOverlay} from "./components/disconnected_overlay";
 import {MatchFC} from './components/match_fc';
-import {AuthKeyset} from "./models/domain/auth_keyset";
-import {Match} from "./models/domain/match";
-import {Board} from "./models/domain/board";
-import {Move} from "./models/domain/move";
-import {ChessPiece} from "./models/domain/chess_piece";
-import {Square} from "./models/domain/square";
-import {newRapidTimeControl} from "./models/domain/time_control";
-import {MatchResult} from "./models/domain/match_result";
 
 
-const initAppState = new AppState({
-    auth: new AuthKeyset({
-        publicKey: "white-client-key",
-        privateKey: "some-private-key",
-    }),
-    page: Page.MATCH,
-    match: new Match({
-        uuid: "some-uuid",
-        board: Board.fromFEN("r7/6P1/1k6/8/8/8/8/6RK b - - 1 63"),
-        lastMove: new Move(ChessPiece.BLACK_ROOK, new Square(7, 1), new Square(8, 1), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
-        whiteTimeRemainingSec: 44.7,
-        whiteClientKey: "white-client-key",
-        blackTimeRemainingSec: 93.6,
-        blackClientKey: "black-client-key",
-        timeControl: newRapidTimeControl(),
-        botName: "",
-        result: MatchResult.IN_PROGRESS,
-    }),
-    // auth: null,
-    // page: Page.HOME,
-    // match: null,
-    lastMove: null,
-    inboundChallenges: [],
-    outboundChallenges: [],
-});
-// const appState = AppState.fromLocalStorage("appState");
+// const initAppState = new AppState({
+//     auth: new AuthKeyset({
+//         publicKey: "white-client-key",
+//         privateKey: "some-private-key",
+//     }),
+//     page: Page.MATCH,
+//     match: new Match({
+//         uuid: "some-uuid",
+//         board: Board.fromFEN("r7/6P1/1k6/8/8/8/8/6RK b - - 1 63"),
+//         lastMove: new Move(ChessPiece.BLACK_ROOK, new Square(7, 1), new Square(8, 1), [], ChessPiece.EMPTY, ChessPiece.EMPTY),
+//         whiteTimeRemainingSec: 44.7,
+//         whiteClientKey: "white-client-key",
+//         blackTimeRemainingSec: 93.6,
+//         blackClientKey: "black-client-key",
+//         timeControl: newRapidTimeControl(),
+//         botName: "",
+//         result: MatchResult.IN_PROGRESS,
+//     }),
+//     // auth: null,
+//     // page: Page.HOME,
+//     // match: null,
+//     lastMove: null,
+//     inboundChallenges: [],
+//     outboundChallenges: [],
+// });
+const initAppState = AppState.fromLocalStorage("appState");
 
 export const appStateContext = React.createContext<[AppState, React.Dispatch<AppStateAction>]>([initAppState, () => {
 }]);

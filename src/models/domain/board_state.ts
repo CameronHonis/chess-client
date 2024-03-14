@@ -85,7 +85,7 @@ export class BoardState {
                     isSelected: !!this.selectedSquare?.equalTo(square),
                     isDotVisible: landSquaresSet.has(squareHash),
                     isInteractable: interactableSquaresSet.has(squareHash),
-                    isChecked: this.isChecked(square),
+                    isChecked: this.isChecked(board, square),
                     isLastMoveStart: !!this.lastMove?.startSquare.equalTo(square),
                     isLastMoveEnd: !!this.lastMove?.endSquare.equalTo(square),
                     isPremove: premoveSquaresSet.has(squareHash),
@@ -142,8 +142,11 @@ export class BoardState {
     }
 
 
-    private isChecked(square: Square): boolean {
-        return false;
+    private isChecked(board: Board, square: Square): boolean {
+        const piece = board.getPieceBySquare(square);
+        if (!ChessPieceHelper.isKing(piece))
+            return false;
+        return GameHelper.getPieceSquaresCheckingKing(board, ChessPieceHelper.isWhite(piece)).length > 0
     }
 
     copy(): BoardState {
