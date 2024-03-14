@@ -12,7 +12,6 @@ import {ChessPieceHelper} from "../../helpers/chess_piece_helper";
 interface BoardStateArgs {
     isLocked: boolean;
     isWhitePerspective: boolean;
-    lastMove: Move | null;
     board: Board;
     selectedSquare: Square | null;
     squareColorBySquareHash: Map<SquareHash, SquareColor>;
@@ -24,7 +23,6 @@ interface BoardStateArgs {
 export class BoardState {
     isLocked: boolean;
     isWhitePerspective: boolean;
-    lastMove: Move | null;
     board: Board;
     selectedSquare: Square | null;
     squareColorBySquareHash: Map<SquareHash, SquareColor>;
@@ -36,7 +34,6 @@ export class BoardState {
     constructor(args: BoardStateArgs) {
         this.isLocked = args.isLocked;
         this.isWhitePerspective = args.isWhitePerspective;
-        this.lastMove = args.lastMove;
         this.board = args.board;
         this.selectedSquare = args.selectedSquare;
         this.squareColorBySquareHash = args.squareColorBySquareHash;
@@ -57,7 +54,7 @@ export class BoardState {
         this.squareColorBySquareHash.set(square.hash(), color);
     }
 
-    tileProps(): TileVisualProps[] {
+    tileProps(lastMove: Move | null): TileVisualProps[] {
         const [board, premoveSquaresSet] = this.boardAndPremoveSquareHashesAfterPremoves();
         const isTurn = this.isTurn();
         const landSquares = this.landSquares(board, isTurn);
@@ -66,7 +63,7 @@ export class BoardState {
         const interactableSquares = !this.isLocked ? [...landSquares, ...friendlySquares] : [];
         const interactableSquaresSet = new Set(interactableSquares.map(s => s.hash()));
 
-        const tileProps: TileVisualProps[] = [];
+        const tilePropss: TileVisualProps[] = [];
         for (let r = 1; r < 9; r++) {
             for (let c = 1; c < 9; c++) {
                 let rank: number, file: number;
@@ -79,20 +76,20 @@ export class BoardState {
                 }
                 const square = new Square(rank, file);
                 const squareHash = square.hash();
-                tileProps.push({
+                tilePropss.push({
                     square,
                     pieceType: board.getPieceBySquare(square),
                     isSelected: !!this.selectedSquare?.equalTo(square),
                     isDotVisible: landSquaresSet.has(squareHash),
                     isInteractable: interactableSquaresSet.has(squareHash),
                     isChecked: this.isChecked(board, square),
-                    isLastMoveStart: !!this.lastMove?.startSquare.equalTo(square),
-                    isLastMoveEnd: !!this.lastMove?.endSquare.equalTo(square),
+                    isLastMoveStart: !!lastMove?.startSquare.equalTo(square),
+                    isLastMoveEnd: !!lastMove?.endSquare.equalTo(square),
                     isPremove: premoveSquaresSet.has(squareHash),
                 });
             }
         }
-        return tileProps;
+        return tilePropss;
     }
 
     isTurn(): boolean {
@@ -153,7 +150,6 @@ export class BoardState {
         return new BoardState({
             isLocked: this.isLocked,
             isWhitePerspective: this.isWhitePerspective,
-            lastMove: this.lastMove?.copy() || null,
             board: this.board,
             selectedSquare: this.selectedSquare?.copy() || null,
             squareColorBySquareHash: new Map(this.squareColorBySquareHash),
@@ -164,12 +160,7 @@ export class BoardState {
     }
 
     equalTo(other: BoardState): boolean {
-        if (!!this.lastMove !== !!other.lastMove)
-            return false;
-        if (this.lastMove && !this.lastMove.equalTo(other.lastMove!))
-            return false;
-
-        if (!!this.selectedSquare !== !!other.lastMove)
+        if (!!this.selectedSquare !== !!other.selectedSquare)
             return false;
         if (this.selectedSquare && !this.selectedSquare.equalTo(other.selectedSquare!))
             return false;
@@ -199,7 +190,6 @@ export class BoardState {
         return new BoardState({
             isLocked: false,
             isWhitePerspective: true,
-            lastMove: null,
             board,
             selectedSquare: null,
             squareColorBySquareHash: new Map(),

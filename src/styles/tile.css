@@ -60,12 +60,12 @@
     height: 100%;
 }
 
-.Tile .Highlight.LastMoveStart {
+.Tile.LastMoveStart .Highlight {
     opacity: 30%;
     background-color: orange;
 }
 
-.Tile .Highlight.LastMoveEnd {
+.Tile.LastMoveEnd .Highlight{
     opacity: 50%;
     background-color: orange;
 }

@@ -33,7 +33,6 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         isLocked,
         isWhitePerspective,
         board,
-        lastMove,
         selectedSquare: null,
         squareColorBySquareHash: new Map(),
         selectedMoves: [],
@@ -90,7 +89,6 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
 
     const onTileDragStart = React.useCallback((button: MouseButton, square: Square) => {
         if (button === MouseButton.LEFT) {
-            console.log("start", square);
             // window.services.boardAnimator.holdPiece(square);
             dispatch(new LeftDraggingStartAction(square));
         }
@@ -100,14 +98,13 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         if (button === MouseButton.LEFT) {
             if (!state.selectedSquare)
                 return;
-            console.log("drop", state.selectedSquare.hash(), dropSquare.hash());
             // window.services.boardAnimator.dropPiece();
             dispatch(new LeftDraggingStopAction(dropSquare));
         }
     }, [state.selectedSquare]);
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
-        return state.tileProps().map((tileProps, idx) => {
+        return state.tileProps(lastMove).map((tileProps, idx) => {
             return <Tile {...tileProps}
                          onClick={onTileClick}
                          onDragStart={onTileDragStart}
@@ -115,7 +112,7 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
                          key={idx}
             />
         });
-    }, [state, onTileClick, onTileDragStart, onTileDrop]);
+    }, [state, lastMove, onTileClick, onTileDragStart, onTileDrop]);
 
     const promoteOverlay = React.useMemo(() => {
         if (state.selectedMoves.length < 2)
