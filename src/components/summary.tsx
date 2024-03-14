@@ -39,11 +39,11 @@ export const Summary: React.FC<SummaryProps> = (props) => {
         }
     }, [match.result]);
 
-    const handleHomeClick = () => {
+    const handleHomeClick = React.useCallback(() => {
         appDispatch(new ReturnHomeAction());
-    }
+    }, [appDispatch]);
 
-    const handleRematchClick = () => {
+    const handleRematchClick = React.useCallback(() => {
         if (!appState.match)
             throw new Error("Match is not defined in appState");
         if (!appState.auth)
@@ -55,15 +55,15 @@ export const Summary: React.FC<SummaryProps> = (props) => {
             const oppKey = wasWhite ? appState.match.blackClientKey : appState.match.whiteClientKey;
             window.services.arbitratorClient.challengePlayer(oppKey, !wasWhite, wasWhite, appState.match.timeControl, appState.auth);
         }
-    }
+    }, [appState.auth, appState.match]);
 
-    const handleBackgroundClick = () => {
+    const handleBackgroundClick = React.useCallback(() => {
         setIsVisible(false);
-    }
+    }, []);
 
     return <>
         {isVisible && <div className={"SummaryFrame"} onClick={handleBackgroundClick}>
-            <div className={"Summary"}>
+            <div className={"Summary"} onClick={ev => ev.stopPropagation()}>
                 <div className={"Summary-Banner"}>
                     <p>{outcomeDesc}</p>
                 </div>
