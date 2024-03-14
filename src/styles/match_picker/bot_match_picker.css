@@ -6,7 +6,7 @@
     height: 100%;
     width: 25rem;
     padding: 4vw;
-    background: #78593c;
+    background: linear-gradient(#78593c, #a25f20);
     border-radius: 20px;
 }
 
