@@ -7,14 +7,13 @@ import {MatchResult} from "../models/domain/match_result";
 
 export interface BoardLeftGutterProps {
     isWhitePerspective: boolean;
+    matchUuid: string;
+    matchResult: MatchResult;
 }
 
 export function BoardLeftGutter(props: BoardLeftGutterProps) {
-    const [appState] = React.useContext(appStateContext);
     const [isLocked, setIsLocked] = React.useState(true);
-    const {isWhitePerspective} = props;
-    const match = appState.match!;
-    const auth = appState.auth!;
+    const {isWhitePerspective, matchUuid, matchResult} = props;
 
     const onResignClick = React.useCallback(() => {
         if (isLocked) {
@@ -23,9 +22,9 @@ export function BoardLeftGutter(props: BoardLeftGutterProps) {
                 setIsLocked(true);
             }, 2000);
         } else {
-            window.services.arbitratorClient.resignMatch(match.uuid, auth);
+            window.services.arbitratorClient.resignMatch(matchUuid);
         }
-    }, [isLocked, setIsLocked, match.uuid, auth]);
+    }, [isLocked, setIsLocked, matchUuid]);
 
     const [resignButtonClassName, resignButtonContent] = React.useMemo(() => {
         const content = isLocked ? "Resign" : "Confirm";
@@ -40,7 +39,7 @@ export function BoardLeftGutter(props: BoardLeftGutterProps) {
         <Clock isWhite={!isWhitePerspective}/>
         <div className={"LeftGutter-Bottom"}>
             {
-                match.result === MatchResult.IN_PROGRESS &&
+                matchResult === MatchResult.IN_PROGRESS &&
                 <Button className={resignButtonClassName} onClick={onResignClick} content={resignButtonContent}
                         isDebounced/>
             }

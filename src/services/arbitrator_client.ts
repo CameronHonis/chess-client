@@ -17,6 +17,7 @@ import {getSecret, Secret} from "../helpers/secrets";
 export class ArbitratorClient {
     readonly wsUrl: string;
     websocket: WebSocket;
+    auth: AuthKeyset | null = null;
 
     constructor() {
         const protocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -31,6 +32,101 @@ export class ArbitratorClient {
         this.wsUrl = `${protocol}://${location}`;
         this.websocket = new WebSocket(this.wsUrl);
         this._attachWsHandlers();
+    }
+
+    setAuth(auth: AuthKeyset) {
+        this.auth = auth;
+    }
+
+    refreshAuth(existingAuth?: AuthKeyset): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.REFRESH_AUTH, {
+            existingAuth: existingAuth,
+        });
+        this.sendMsg(msg);
+    }
+
+    challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl): Throwable<void> {
+        if (!this.auth)
+            throw new Error("cannot send challenge, auth not set");
+        const msg = ArbitratorMessage.withContent(MessageContentType.CHALLENGE_REQUEST, {
+            challenge: {
+                uuid: "",
+                challengerKey: this.auth.publicKey,
+                challengedKey: playerKey,
+                isChallengerWhite: isWhite,
+                isChallengerBlack: isBlack,
+                timeControl: timeControl,
+                botName: "",
+                timeCreated: new Date(),
+                isActive: true,
+            },
+        });
+        this.signAndSendMsg(msg);
+    }
+
+    challengeBot(botType: BotType, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl): Throwable<void> {
+        if (!this.auth)
+            throw new Error("cannot send challenge, auth not set");
+        const msg = ArbitratorMessage.withContent(MessageContentType.CHALLENGE_REQUEST, {
+            challenge: {
+                uuid: "",
+                challengerKey: this.auth.publicKey,
+                challengedKey: "",
+                isChallengerWhite: isWhite,
+                isChallengerBlack: isBlack,
+                timeControl: timeControl,
+                botName: botType,
+                timeCreated: new Date(),
+                isActive: true,
+            },
+        });
+        this.signAndSendMsg(msg);
+    }
+
+    declineChallenge(challengerKey: string): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.DECLINE_CHALLENGE, {
+            challengerClientKey: challengerKey,
+        });
+        this.signAndSendMsg(msg);
+    }
+
+    acceptChallenge(challengerKey: string): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.ACCEPT_CHALLENGE, {
+            challengerClientKey: challengerKey,
+        });
+        this.signAndSendMsg(msg);
+    }
+
+    revokeChallenge(challengedKey: string): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.REVOKE_CHALLENGE, {
+            challengedClientKey: challengedKey,
+        });
+        this.signAndSendMsg(msg);
+    }
+
+    joinMatchmaking(timeControl: TimeControl): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.JOIN_MATCHMAKING, {timeControl});
+        this.signAndSendMsg(msg);
+    }
+
+    leaveMatchmaking(): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.LEAVE_MATCHMAKING, {});
+        this.signAndSendMsg(msg);
+    }
+
+    sendMove(matchId: string, move: Move): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.MOVE, {
+            matchId,
+            move: JSON.parse(JSON.stringify(move)),
+        });
+        this.signAndSendMsg(msg);
+    }
+
+    resignMatch(matchId: string): Throwable<void> {
+        const msg = ArbitratorMessage.withContent(MessageContentType.RESIGN_MATCH, {
+            matchId,
+        });
+        this.signAndSendMsg(msg);
     }
 
     private _attachWsHandlers() {
@@ -86,105 +182,20 @@ export class ArbitratorClient {
         this._attachWsHandlers();
     }
 
-    signAndSendMsg(msg: ArbitratorMessage<any>, auth: AuthKeyset): Throwable<void> {
+    private signAndSendMsg(msg: ArbitratorMessage<any>): Throwable<void> {
+        if (!this.auth)
+            throw new Error("cannot sign message, auth not set");
+        const signedMsg = this.auth.sign(msg);
+
         if (this.websocket.readyState !== 1) {
             throw new Error(`cannot send message, websocket not open. got readyState = ${this.websocket.readyState}`);
         }
-        const signedMsg = auth.sign(msg);
         return this.sendMsg(signedMsg);
     }
 
-    sendMsg(msg: ArbitratorMessage<any>): Throwable<void> {
+    private sendMsg(msg: ArbitratorMessage<any>): Throwable<void> {
         const stringifiedMsg = JSON.stringify(msg);
         console.log(`[${this.websocket.url}] << ${stringifiedMsg}`);
         this.websocket.send(stringifiedMsg);
-    }
-
-    refreshAuth(existingAuth?: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.REFRESH_AUTH, {
-            existingAuth: existingAuth,
-        });
-        this.sendMsg(msg);
-    }
-
-    challengePlayer(playerKey: string, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl, auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.CHALLENGE_REQUEST, {
-            challenge: {
-                uuid: "",
-                challengerKey: auth.publicKey,
-                challengedKey: playerKey,
-                isChallengerWhite: isWhite,
-                isChallengerBlack: isBlack,
-                timeControl: timeControl,
-                botName: "",
-                timeCreated: new Date(),
-                isActive: true,
-            },
-        });
-        this.signAndSendMsg(msg, auth);
-    }
-
-    challengeBot(botType: BotType, isWhite: boolean, isBlack: boolean, timeControl: ApiTimeControl, auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.CHALLENGE_REQUEST, {
-            challenge: {
-                uuid: "",
-                challengerKey: auth.publicKey,
-                challengedKey: "",
-                isChallengerWhite: isWhite,
-                isChallengerBlack: isBlack,
-                timeControl: timeControl,
-                botName: botType,
-                timeCreated: new Date(),
-                isActive: true,
-            },
-        });
-        this.signAndSendMsg(msg, auth);
-    }
-
-    declineChallenge(challengeId: string, challengerKey: string, auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.DECLINE_CHALLENGE, {
-            challengerClientKey: challengerKey,
-        });
-        this.signAndSendMsg(msg, auth);
-    }
-
-    acceptChallenge(challengeId: string, challengerKey: string, auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.ACCEPT_CHALLENGE, {
-            challengerClientKey: challengerKey,
-        });
-        this.signAndSendMsg(msg, auth);
-    }
-
-    revokeChallenge(challenge: Challenge, auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.REVOKE_CHALLENGE, {
-            challengedClientKey: challenge.challengedKey,
-        });
-        this.signAndSendMsg(msg, auth);
-    }
-
-    joinMatchmaking(timeControl: TimeControl, auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.JOIN_MATCHMAKING, {timeControl});
-        this.signAndSendMsg(msg, auth);
-    }
-
-    leaveMatchmaking(auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.LEAVE_MATCHMAKING, {}
-        );
-        this.signAndSendMsg(msg, auth);
-    }
-
-    sendMove(matchId: string, move: Move, auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.MOVE, {
-            matchId,
-            move: JSON.parse(JSON.stringify(move)),
-        });
-        this.signAndSendMsg(msg, auth);
-    }
-
-    resignMatch(matchId: string, auth: AuthKeyset): Throwable<void> {
-        const msg = ArbitratorMessage.withContent(MessageContentType.RESIGN_MATCH, {
-            matchId,
-        });
-        this.signAndSendMsg(msg, auth);
     }
 }

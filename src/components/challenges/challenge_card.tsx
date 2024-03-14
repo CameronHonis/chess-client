@@ -8,43 +8,40 @@ export interface ChallengeCardProps {
 }
 
 export function ChallengeCard(props: ChallengeCardProps) {
+    const {
+        challenge,
+    } = props;
     const [appState] = React.useContext(appStateContext);
-    const auth = appState.auth!;
 
     const onAcceptClick = React.useCallback(() => {
-        window.services.arbitratorClient.acceptChallenge(
-            props.challenge.uuid, props.challenge.challengerKey, auth);
-    }, [props.challenge, auth]);
+        window.services.arbitratorClient.acceptChallenge(challenge.challengerKey);
+    }, [challenge]);
 
     const onDeclineClick = React.useCallback(() => {
-        window.services.arbitratorClient.declineChallenge(
-            props.challenge.uuid, props.challenge.challengerKey, auth);
-    }, [props.challenge, auth]);
+        window.services.arbitratorClient.declineChallenge(challenge.challengerKey);
+    }, [challenge]);
 
-    const onRevokeClick = React.useCallback(()=> {
-        window.services.arbitratorClient.revokeChallenge(
-            props.challenge, auth);
-    }, [props.challenge, auth]);
+    const onRevokeClick = React.useCallback(() => {
+        window.services.arbitratorClient.revokeChallenge(challenge.challengedKey);
+    }, [challenge]);
 
     const [isOutgoing, opponentName, selfColor] = React.useMemo(() => {
-        if (!appState.auth)
-            return [false, "", ""];
-        const publicKey = appState.auth.publicKey;
-        const isColorsRandom = !props.challenge.isChallengerWhite && !props.challenge.isChallengerBlack;
-        if (props.challenge.challengerKey === publicKey) {
+        const isColorsRandom = !challenge.isChallengerWhite && !challenge.isChallengerBlack;
+        const publicKey = window.services.arbitratorClient.auth?.publicKey;
+        if (challenge.challengerKey === publicKey) {
             const color = isColorsRandom ?
-                "Random" : props.challenge.isChallengerWhite ? "White" : "Black";
-            return [true, props.challenge.challengedKey, color];
+                "Random" : challenge.isChallengerWhite ? "White" : "Black";
+            return [true, challenge.challengedKey, color];
         } else {
             const color = isColorsRandom ?
-                "Random" : props.challenge.isChallengerWhite ? "Black" : "White";
-            return [false, props.challenge.challengerKey, color];
+                "Random" : challenge.isChallengerWhite ? "Black" : "White";
+            return [false, challenge.challengerKey, color];
         }
-    }, [appState.auth, props.challenge]);
+    }, [challenge]);
 
     const timeControlRepr = React.useMemo(() => {
-        return props.challenge.timeControl.repr();
-    }, [props.challenge.timeControl]);
+        return challenge.timeControl.repr();
+    }, [challenge.timeControl]);
 
     const colorLabel = React.useMemo(() => {
         const textColor = selfColor === "White" ? "white" : "black";
@@ -78,5 +75,5 @@ export function ChallengeCard(props: ChallengeCardProps) {
                     </div>
                 }
             </div>
-    )
+    );
 }

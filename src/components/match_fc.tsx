@@ -15,8 +15,6 @@ interface Props {
 }
 
 export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) => {
-    const [appState] = React.useContext(appStateContext);
-    const auth = appState.auth;
     const [isWhitePerspective, setIsWhitePerspective] = React.useState(initIsWhitePerspective(match, viewingClientKey));
 
     React.useEffect(() => {
@@ -39,13 +37,11 @@ export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) =>
     }, [match.whiteClientKey, match.blackClientKey, isWhitePerspective]);
 
     const sendMove = React.useCallback((move: Move) => {
-        if (!auth)
-            return;
-        window.services.arbitratorClient.sendMove(match.uuid, move, auth);
-    }, [auth, match.uuid]);
+        window.services.arbitratorClient.sendMove(match.uuid, move);
+    }, [match.uuid]);
 
     return <div className={"BoardFrame"}>
-        <BoardLeftGutter isWhitePerspective={isWhitePerspective}/>
+        <BoardLeftGutter isWhitePerspective={isWhitePerspective} matchResult={match.result} matchUuid={match.uuid}/>
         <div className={"BoardWrapped"}>
             <p className={"NameTag OppNameTag"}>{match.botName === "" ? formatKey(oppClientKey) : `${match.botName} bot`}</p>
             <BoardFC board={match.board} lastMove={match.lastMove} isWhitePerspective={isWhitePerspective}

@@ -3,12 +3,6 @@ import {Move} from "./move";
 import {Match} from "./match";
 import {AuthKeyset} from "./auth_keyset";
 import {Challenge} from "./challenge";
-import {Board} from "./board";
-import {ChessPiece} from "./chess_piece";
-import {Square} from "./square";
-import {newRapidTimeControl} from "./time_control";
-import {MatchResult} from "./match_result";
-
 
 interface AppStateArgs {
     auth: AuthKeyset | null;

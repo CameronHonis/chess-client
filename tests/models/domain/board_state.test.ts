@@ -15,7 +15,6 @@ describe("BoardState", () => {
             boardState = new BoardState({
                 isLocked: false,
                 isWhitePerspective: true,
-                lastMove: null,
                 board: Board.getInitBoardState(),
                 selectedSquare: new Square(1, 1),
                 squareColorBySquareHash: new Map(),
@@ -29,7 +28,7 @@ describe("BoardState", () => {
                 boardState.isLocked = true;
             });
             it("returns no interactable tiles", () => {
-                const tileProps = boardState.tileProps();
+                const tileProps = boardState.tileProps(null);
                 const containsInteractableTile = !!tileProps.find(tile => tile.isInteractable);
                 expect(containsInteractableTile).toBeFalsy();
             });
@@ -40,7 +39,7 @@ describe("BoardState", () => {
             });
             describe("last move is null", () => {
                 it("returns no tile props with 'last move start/end' flag", () => {
-                    const tileProps = boardState.tileProps();
+                    const tileProps = boardState.tileProps(null);
                     const containsLastMoveStart = !!tileProps.find(tile => tile.isLastMoveStart);
                     const containsLastMoveEnd = !!tileProps.find(tile => tile.isLastMoveEnd);
                     expect(containsLastMoveStart).toBeFalsy();
@@ -52,15 +51,14 @@ describe("BoardState", () => {
                 beforeEach(() => {
                     move = new Move(ChessPiece.WHITE_PAWN, new Square(2, 4), new Square(4, 4), [], ChessPiece.EMPTY, ChessPiece.EMPTY);
                     boardState.board = Board.fromFEN("rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1");
-                    boardState.lastMove = move;
                 });
                 it("returns a tile with the 'last move start' flag", () => {
-                    const tileProps = boardState.tileProps();
+                    const tileProps = boardState.tileProps(move);
                     const containsLastMoveStart = !!tileProps.find(tile => tile.isLastMoveStart);
                     expect(containsLastMoveStart).toBeTruthy();
                 });
                 it("returns a tile with the 'last move end' flag", () => {
-                    const tileProps = boardState.tileProps();
+                    const tileProps = boardState.tileProps(move);
                     const containsLastMoveEnd = !!tileProps.find(tile => tile.isLastMoveEnd);
                     expect(containsLastMoveEnd).toBeTruthy();
                 });
@@ -70,7 +68,7 @@ describe("BoardState", () => {
                     boardState.selectedSquare = null;
                 });
                 it("returns no tiles with a 'selected' flag", () => {
-                    const tileProps = boardState.tileProps();
+                    const tileProps = boardState.tileProps(null);
                     const containsSelectedTile = !!tileProps.find(tile => tile.isSelected);
                     expect(containsSelectedTile).toBeFalsy();
                 });
@@ -80,13 +78,13 @@ describe("BoardState", () => {
                     boardState.selectedSquare = new Square(2, 4);
                 });
                 it("returns a tile with the 'selected' flag", () => {
-                    const tileProps = boardState.tileProps();
+                    const tileProps = boardState.tileProps(null);
                     const containsSelectedTile = !!tileProps.find(tile => tile.isSelected);
                     expect(containsSelectedTile).toBeTruthy();
                 });
                 describe("its the player's turn", () => {
                     it("returns interactable tiles that reflect only legal moves", () => {
-                        const tileProps = boardState.tileProps();
+                        const tileProps = boardState.tileProps(null);
                         const containsIllegalCapture = tileProps.find(tile => {
                             return tile.square.equalTo(new Square(3, 3)) && tile.isInteractable;
                         });
@@ -103,7 +101,7 @@ describe("BoardState", () => {
                         boardState.selectedSquare = new Square(7, 4);
                     });
                     it("returns interactable tiles that include all premoves", () => {
-                        const tileProps = boardState.tileProps();
+                        const tileProps = boardState.tileProps(null);
                         const containsPremove = tileProps.find(tile => {
                             return tile.square.equalTo(new Square(6, 3)) && tile.isInteractable;
                         });

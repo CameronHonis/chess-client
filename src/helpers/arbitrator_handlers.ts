@@ -20,6 +20,7 @@ export function registerOnAuthMsgHandler(dispatch: React.Dispatch<AppStateAction
             publicKey: content.publicKey,
             privateKey: content.privateKey,
         });
+        window.services.arbitratorClient.setAuth(keyset);
         dispatch(new UpdateAuthAction(keyset.publicKey, keyset.privateKey));
     });
 }

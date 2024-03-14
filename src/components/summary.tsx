@@ -46,14 +46,15 @@ export const Summary: React.FC<SummaryProps> = (props) => {
     const handleRematchClick = React.useCallback(() => {
         if (!appState.match)
             throw new Error("Match is not defined in appState");
+        // TODO: remove dependence on auth here
         if (!appState.auth)
             throw new Error("Auth is not defined in appState");
         const wasWhite = appState.auth.publicKey === appState.match.whiteClientKey;
         if (appState.match.botName) {
-            window.services.arbitratorClient.challengeBot(appState.match.botName, !wasWhite, wasWhite, appState.match.timeControl, appState.auth);
+            window.services.arbitratorClient.challengeBot(appState.match.botName, !wasWhite, wasWhite, appState.match.timeControl);
         } else {
             const oppKey = wasWhite ? appState.match.blackClientKey : appState.match.whiteClientKey;
-            window.services.arbitratorClient.challengePlayer(oppKey, !wasWhite, wasWhite, appState.match.timeControl, appState.auth);
+            window.services.arbitratorClient.challengePlayer(oppKey, !wasWhite, wasWhite, appState.match.timeControl);
         }
     }, [appState.auth, appState.match]);
 
