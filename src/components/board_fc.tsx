@@ -5,7 +5,6 @@ import {Square} from "../models/domain/square";
 import {ChessPiece} from "../models/domain/chess_piece";
 import {Move} from "../models/domain/move";
 import {MouseButton, ReactComp} from "../types";
-import {AnimTile} from "./anim_tile";
 import {PromoteOverlay} from "./promote_overlay";
 import {boardStateReducer} from "../reducers/board_state_reducer";
 import {Board} from "../models/domain/board";
@@ -19,6 +18,8 @@ import {RightClickSquareAction} from "../models/actions/board/right_click_square
 import {LeftDraggingStartAction} from "../models/actions/board/left_dragging_start_action";
 import {LeftDraggingStopAction} from "../models/actions/board/left_dragging_stop_action";
 import {ClearSelectionsAction} from "../models/actions/board/clear_premoves";
+import {UpdatePerspectiveAction} from "../models/actions/board/update_perspective_action";
+import {UpdateLockedAction} from "../models/actions/board/update_locked_action";
 
 export interface BoardProps {
     isLocked: boolean;
@@ -54,6 +55,14 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
     React.useEffect(() => {
         dispatch(new UpdateBoardAction(board));
     }, [board]);
+
+    React.useEffect(() => {
+        dispatch(new UpdatePerspectiveAction(isWhitePerspective));
+    }, [isWhitePerspective]);
+
+    React.useEffect(() => {
+        dispatch(new UpdateLockedAction(isLocked));
+    }, [isLocked]);
 
     React.useEffect(() => {
         if (state.selectedMoves.length === 1) {

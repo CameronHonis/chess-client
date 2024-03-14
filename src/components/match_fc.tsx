@@ -16,12 +16,20 @@ interface Props {
 
 export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) => {
     const [appState] = React.useContext(appStateContext);
-    const auth = appState.auth!;
+    const auth = appState.auth;
     const [isWhitePerspective, setIsWhitePerspective] = React.useState(initIsWhitePerspective(match, viewingClientKey));
 
     React.useEffect(() => {
         window.services.timer.setFromMatch(match);
     }, [match]);
+
+    React.useEffect(() => {
+        if (viewingClientKey === match.whiteClientKey) {
+            setIsWhitePerspective(true);
+        } else if (viewingClientKey === match.blackClientKey) {
+            setIsWhitePerspective(false);
+        }
+    }, [viewingClientKey, match.whiteClientKey, match.blackClientKey]);
 
     const [selfClientKey, oppClientKey] = React.useMemo(() => {
         if (isWhitePerspective) {
@@ -31,8 +39,10 @@ export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) =>
     }, [match.whiteClientKey, match.blackClientKey, isWhitePerspective]);
 
     const sendMove = React.useCallback((move: Move) => {
+        if (!auth)
+            return;
         window.services.arbitratorClient.sendMove(match.uuid, move, auth);
-    }, [match.uuid, auth]);
+    }, [auth, match.uuid]);
 
     return <div className={"BoardFrame"}>
         <BoardLeftGutter isWhitePerspective={isWhitePerspective}/>

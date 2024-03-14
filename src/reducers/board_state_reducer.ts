@@ -13,6 +13,8 @@ import {Square} from "../models/domain/square";
 import {isLeftDraggingStartAction} from "../models/actions/board/left_dragging_start_action";
 import {isLeftDraggingStopAction} from "../models/actions/board/left_dragging_stop_action";
 import {isClearSelectionsAction} from "../models/actions/board/clear_premoves";
+import {isUpdatePerspectiveAction} from "../models/actions/board/update_perspective_action";
+import {isUpdateLockedAction} from "../models/actions/board/update_locked_action";
 
 export function boardStateReducer(state: BoardState, action: BoardAction): BoardState {
     const newState = state.copy();
@@ -40,6 +42,10 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
                 newState.premoves.flush();
             }
         }
+    } else if (isUpdatePerspectiveAction(action)) {
+        newState.isWhitePerspective = action.payload.isWhitePerspective;
+    } else if (isUpdateLockedAction(action)) {
+        newState.isLocked = action.payload.isLocked;
     } else if (isLeftClickSquareAction(action)) {
         const square = action.payload.square;
         if (state.selectedSquare && state.selectedSquare.equalTo(square)) {
