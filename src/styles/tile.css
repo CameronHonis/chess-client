@@ -90,6 +90,10 @@
     background: red;
 }
 
+.Tile.Dragging img {
+    visibility: hidden;
+}
+
 #AnimatedTile, #DraggingTile {
     position: absolute;
     z-index: 20;

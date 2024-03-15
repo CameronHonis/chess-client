@@ -18,6 +18,7 @@ import {isUpdateLockedAction} from "../models/actions/board/update_locked_action
 
 export function boardStateReducer(state: BoardState, action: BoardAction): BoardState {
     const newState = state.copy();
+    console.log(action);
     if (isUpdateBoardAction(action)) {
         const newBoard = action.payload.newBoard;
         newState.board = newBoard;
@@ -60,12 +61,11 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
             leftInteractSquare(state, newState, square);
         }
         if (newState.selectedSquare) {
-            const [board] = newState.boardAndPremoveSquareHashesAfterPremoves();
-            newState.draggingPiece = board.getPieceBySquare(newState.selectedSquare);
+            newState.draggingSquare = newState.selectedSquare;
         }
     } else if (isLeftDropAction(action)) {
         const dropSquare = action.payload.dropSquare;
-        newState.draggingPiece = null;
+        newState.draggingSquare = null;
         if (!dropSquare) {
             newState.selectedSquare = null;
             newState.selectedMoves = [];

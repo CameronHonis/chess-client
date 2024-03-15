@@ -21,10 +21,11 @@ export interface TileVisualProps {
     isLastMoveStart: boolean;
     isLastMoveEnd: boolean;
     isPremove: boolean;
+    isBeingDragged: boolean;
 }
 
 export interface TileFunctionalProps {
-    onClick: (ev: React.MouseEvent, square: Square) => void;
+    onClick: (button: MouseButton, square: Square) => void;
     onDragStart: (button: MouseButton, square: Square) => void;
 }
 
@@ -36,14 +37,31 @@ export const Tile: React.FC<TileProps> = (props) => {
         pieceType,
         isSelected,
         isDotVisible,
-        onClick,
+        isInteractable,
+        isChecked,
+        isLastMoveStart,
+        isLastMoveEnd,
+        isPremove,
+        isBeingDragged,
+        onClick: _onClick,
         onDragStart: _onDragStart,
     } = props;
 
+    const [didClickDrag, setDidClickDrag] = React.useState(false);
+
     const onDragStart = React.useCallback((ev: React.DragEvent<HTMLImageElement>) => {
         ev.preventDefault();
+        setDidClickDrag(true);
         _onDragStart(ev.button, square);
     }, [_onDragStart, square]);
+
+    const onClick = React.useCallback((ev: React.MouseEvent) => {
+        if (ev.button === MouseButton.RIGHT)
+            ev.preventDefault();
+        if (!didClickDrag) {
+            _onClick(ev.button, square);
+        }
+    }, [didClickDrag, _onClick, square]);
 
     const isWhite = ChessPieceHelper.isWhite(pieceType)
     let tileIcon: React.JSX.Element | null = null;
@@ -75,24 +93,27 @@ export const Tile: React.FC<TileProps> = (props) => {
             classNames.push("Selected");
         if (isDotVisible)
             classNames.push("Dotted");
-        if (props.isInteractable)
+        if (isInteractable)
             classNames.push("Interactable");
-        if (props.isChecked)
+        if (isChecked)
             classNames.push("Checked");
-        if (props.isLastMoveStart)
+        if (isLastMoveStart)
             classNames.push("LastMoveStart");
-        if (props.isLastMoveEnd)
+        if (isLastMoveEnd)
             classNames.push("LastMoveEnd");
-        if (props.isPremove)
+        if (isPremove)
             classNames.push("Premove");
+        if (isBeingDragged)
+            classNames.push("Dragging")
         return classNames;
-    }, [square, isSelected, isDotVisible, props.isInteractable, props.isChecked, props.isLastMoveStart, props.isLastMoveEnd, props.isPremove]);
+    }, [square, isSelected, isDotVisible, isInteractable, isChecked, isLastMoveStart, isLastMoveEnd, isPremove, isBeingDragged]);
 
     return <div
         className={classNames.join(" ")}
         id={`Tile${square.hash()}`}
-        onContextMenu={ev => onClick(ev, square)}
-        onClick={(ev) => onClick(ev, square)}
+        onMouseDown={() => setDidClickDrag(false)}
+        onContextMenu={ev => onClick(ev)}
+        onClick={(ev) => onClick(ev)}
     >
         {tileIcon}
         <div className={"Highlight"}/>

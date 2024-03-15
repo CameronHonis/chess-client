@@ -373,7 +373,7 @@ describe("boardStateReducer", () => {
                     });
                     it("sets the dragging anim piece", () => {
                         const newState = boardStateReducer(state, action);
-                        expect(newState.draggingPiece).toEqual(ChessPiece.WHITE_PAWN);
+                        expect(newState.draggingSquare!.equalTo(state.selectedSquare!)).toBeTruthy();
                     });
                 });
                 describe("the dragging square is not the selected square", () => {
@@ -390,7 +390,7 @@ describe("boardStateReducer", () => {
                     });
                     it("sets the dragging anim piece", () => {
                         const newState = boardStateReducer(state, action);
-                        expect(newState.draggingPiece).toEqual(ChessPiece.WHITE_PAWN);
+                        expect(newState.draggingSquare!.equalTo(action.payload.square)).toBeTruthy();
                     });
                 });
             });
@@ -404,7 +404,7 @@ describe("boardStateReducer", () => {
                 });
                 it("does not set the dragging anim piece", () => {
                     const newState = boardStateReducer(state, action);
-                    expect(newState.draggingPiece).toBeNull();
+                    expect(newState.draggingSquare).toBeNull();
                 });
             });
         });
@@ -422,7 +422,7 @@ describe("boardStateReducer", () => {
                 });
                 it("sets the dragging anim piece", () => {
                     const newState = boardStateReducer(state, action);
-                    expect(newState.draggingPiece).toEqual(ChessPiece.WHITE_PAWN);
+                    expect(newState.draggingSquare!.equalTo(action.payload.square)).toBeTruthy();
                 });
             });
             describe("the dragging square is not a friendly square", () => {
@@ -435,7 +435,7 @@ describe("boardStateReducer", () => {
                 });
                 it("does not set the dragging anim piece", () => {
                     const newState = boardStateReducer(state, action);
-                    expect(newState.draggingPiece).toBeNull();
+                    expect(newState.draggingSquare).toBeNull();
                 });
             });
         });
@@ -460,7 +460,7 @@ describe("boardStateReducer", () => {
             });
             it("sets the dragging piece to null", () => {
                 const newState = boardStateReducer(state, action);
-                expect(newState.draggingPiece).toBeNull();
+                expect(newState.draggingSquare).toBeNull();
             });
         });
         describe("the drop square is the selected square", () => {
@@ -477,7 +477,7 @@ describe("boardStateReducer", () => {
             });
             it("sets the dragging piece to null", () => {
                 const newState = boardStateReducer(state, action);
-                expect(newState.draggingPiece).toBeNull();
+                expect(newState.draggingSquare).toBeNull();
             });
         });
         describe("the drop square is on a land-able square", () => {
@@ -498,7 +498,7 @@ describe("boardStateReducer", () => {
             });
             it("sets the dragging piece to null", () => {
                 const newState = boardStateReducer(state, action);
-                expect(newState.draggingPiece).toBeNull();
+                expect(newState.draggingSquare).toBeNull();
             });
         });
         describe("the drop square is not on a land-able square", () => {
@@ -516,7 +516,7 @@ describe("boardStateReducer", () => {
                 });
                 it("sets the dragging piece to null", () => {
                     const newState = boardStateReducer(state, action);
-                    expect(newState.draggingPiece).toBeNull();
+                    expect(newState.draggingSquare).toBeNull();
                 });
             });
         });

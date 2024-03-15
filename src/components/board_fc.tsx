@@ -39,7 +39,7 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         squareColorBySquareHash: new Map(),
         selectedMoves: [],
         premoves: new EasyQueue(),
-        draggingPiece: null,
+        draggingSquare: null,
     }));
 
     React.useEffect(() => {
@@ -73,12 +73,12 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
     }, [sendMove, state.selectedMoves]);
 
     React.useEffect(() => {
-        if (state.selectedSquare && state.draggingPiece) {
+        if (state.selectedSquare && state.draggingSquare) {
             window.services.boardAnimator.holdPiece(state.selectedSquare);
         } else {
             window.services.boardAnimator.dropPiece();
         }
-    }, [state.selectedSquare, state.draggingPiece]);
+    }, [state.selectedSquare, state.draggingSquare]);
 
     const onPromote = React.useCallback((piece: ChessPiece) => {
         dispatch(new PickPromoteAction(piece));
@@ -88,12 +88,11 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         dispatch(new CancelPromoteAction());
     }, []);
 
-    const onTileClick = React.useCallback((ev: React.MouseEvent, square: Square) => {
-        if (ev.button === MouseButton.LEFT) {
+    const onTileClick = React.useCallback((button: MouseButton, square: Square) => {
+        if (button === MouseButton.LEFT) {
             dispatch(new LeftClickSquareAction(square));
-        } else if (ev.button === MouseButton.RIGHT) {
+        } else if (button === MouseButton.RIGHT) {
             dispatch(new RightClickSquareAction(square));
-            ev.preventDefault();
         }
     }, []);
 
@@ -105,11 +104,9 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
 
     const onTileDrop = React.useCallback((button: MouseButton, dropSquare: Square | null) => {
         if (button === MouseButton.LEFT) {
-            if (!state.selectedSquare)
-                return;
             dispatch(new LeftDropAction(dropSquare));
         }
-    }, [state.selectedSquare]);
+    }, []);
 
     React.useEffect(() => {
         const onMouseUp = (ev: MouseEvent) => {
@@ -132,12 +129,16 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
             }
             onTileDrop(ev.button, null);
         };
-        document.addEventListener("mouseup", onMouseUp);
+        if (state.draggingSquare) {
+            document.addEventListener("mouseup", onMouseUp);
+        } else {
+            document.removeEventListener("mouseup", onMouseUp);
+        }
 
         return () => {
             document.removeEventListener("mouseup", onMouseUp);
         }
-    }, [onTileDrop]);
+    }, [onTileDrop, state.draggingSquare]);
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         return state.tileProps(lastMove).map((tileProps, idx) => {
@@ -157,10 +158,12 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
     }, [onPromote, onCancelPromote, state.selectedMoves, isWhitePerspective]);
 
     const draggingPieceAnimTile = React.useMemo(() => {
-        if (!state.draggingPiece)
+        if (!state.draggingSquare)
             return null;
-        return <AnimTile piece={state.draggingPiece} id={"DraggingTile"}/>;
-    }, [state.draggingPiece]);
+        const [boardAfterPremoves] = state.boardAndPremoveSquareHashesAfterPremoves();
+        const draggingPiece = boardAfterPremoves.getPieceBySquare(state.draggingSquare);
+        return <AnimTile piece={draggingPiece} id={"DraggingTile"}/>;
+    }, [state.draggingSquare]);
 
     return <div className={"BoardFrame"}>
         <div className={"Board"}>

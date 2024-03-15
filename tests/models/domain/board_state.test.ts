@@ -20,7 +20,7 @@ describe("BoardState", () => {
                 squareColorBySquareHash: new Map(),
                 selectedMoves: [],
                 premoves: new EasyQueue(),
-                draggingPiece: null,
+                draggingSquare: null,
             });
         });
         describe("board actions are locked", () => {
@@ -107,6 +107,30 @@ describe("BoardState", () => {
                         });
                         expect(containsPremove).toBeTruthy();
                     });
+                });
+            });
+            describe("dragging square is null", () => {
+                beforeEach(() => {
+                    boardState.draggingSquare = null;
+                });
+                it("does not return a square with the 'Dragging' flag", () => {
+                    const tilePropss = boardState.tileProps(null);
+                    const hasDraggingFlagSquare = tilePropss.some(tileProps => {
+                        return tileProps.isBeingDragged;
+                    });
+                    expect(hasDraggingFlagSquare).toBeFalsy();
+                });
+            });
+            describe("dragging square is not null", () => {
+                beforeEach(() => {
+                    boardState.draggingSquare = new Square(1, 1);
+                });
+                it("returns a square with the 'Dragging' flag", () => {
+                    const tilePropss = boardState.tileProps(null);
+                    const hasDraggingFlagSquare = tilePropss.some(tileProps => {
+                        return tileProps.isBeingDragged;
+                    });
+                    expect(hasDraggingFlagSquare).toBeTruthy();
                 });
             });
         });

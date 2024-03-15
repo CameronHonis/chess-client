@@ -17,7 +17,7 @@ interface BoardStateArgs {
     squareColorBySquareHash: Map<SquareHash, SquareColor>;
     selectedMoves: Move[];
     premoves: Queue<Move>;
-    draggingPiece: ChessPiece | null;
+    draggingSquare: Square | null;
 }
 
 export class BoardState {
@@ -28,7 +28,7 @@ export class BoardState {
     squareColorBySquareHash: Map<SquareHash, SquareColor>;
     selectedMoves: Move[];
     premoves: Queue<Move>;
-    draggingPiece: ChessPiece | null;
+    draggingSquare: Square | null;
 
 
     constructor(args: BoardStateArgs) {
@@ -39,7 +39,7 @@ export class BoardState {
         this.squareColorBySquareHash = args.squareColorBySquareHash;
         this.selectedMoves = args.selectedMoves;
         this.premoves = args.premoves;
-        this.draggingPiece = args.draggingPiece;
+        this.draggingSquare = args.draggingSquare;
     }
 
     getSquareColor(square: Square): SquareColor | undefined {
@@ -86,6 +86,7 @@ export class BoardState {
                     isLastMoveStart: !!lastMove?.startSquare.equalTo(square),
                     isLastMoveEnd: !!lastMove?.endSquare.equalTo(square),
                     isPremove: premoveSquaresSet.has(squareHash),
+                    isBeingDragged: !!this.draggingSquare?.equalTo(square),
                 });
             }
         }
@@ -155,7 +156,7 @@ export class BoardState {
             squareColorBySquareHash: new Map(this.squareColorBySquareHash),
             selectedMoves: [...this.selectedMoves],
             premoves: this.premoves.copy(),
-            draggingPiece: this.draggingPiece,
+            draggingSquare: this.draggingSquare,
         });
     }
 
@@ -183,7 +184,7 @@ export class BoardState {
             this.isWhitePerspective === other.isWhitePerspective &&
             this.board.equalTo(other.board) &&
             this.premoves.equalTo(other.premoves) &&
-            this.draggingPiece === other.draggingPiece
+            this.draggingSquare === other.draggingSquare
     }
 
     static fromBoard(board: Board) {
@@ -195,7 +196,7 @@ export class BoardState {
             squareColorBySquareHash: new Map(),
             selectedMoves: [],
             premoves: new EasyQueue<Move>(),
-            draggingPiece: null,
+            draggingSquare: null,
         });
     }
 }
