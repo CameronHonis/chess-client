@@ -85,10 +85,9 @@ export class PieceMoveAnimation {
     }
 
     onTick(progress: number) {
-        const animTile = document.getElementById("AnimatedTile");
-        if (!animTile) {
+        const animTile = document.getElementById("MoveTile");
+        if (!animTile)
             return
-        }
 
         this.setTilePieceVisible(this.originSquare, false);
         this.setTilePieceVisible(this.destSquare, false);
@@ -107,7 +106,7 @@ export class PieceMoveAnimation {
     cleanUp() {
         this.setTilePieceVisible(this.originSquare, true);
         this.setTilePieceVisible(this.destSquare, true);
-        const animTile = document.getElementById("AnimatedTile");
+        const animTile = document.getElementById("MoveTile");
         if (!animTile) {
             return
         }

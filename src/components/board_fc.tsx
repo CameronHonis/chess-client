@@ -163,13 +163,21 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         const [boardAfterPremoves] = state.boardAndPremoveSquareHashesAfterPremoves();
         const draggingPiece = boardAfterPremoves.getPieceBySquare(state.draggingSquare);
         return <AnimTile piece={draggingPiece} id={"DraggingTile"}/>;
-    }, [state.draggingSquare]);
+    }, [state]);
+
+    const moveAnimTile = React.useMemo(() => {
+        if (!lastMove)
+            return null;
+        window.services.boardAnimator.movePiece(lastMove.startSquare, lastMove.endSquare);
+        return <AnimTile piece={lastMove.piece} id={"MoveTile"}/>;
+    }, [lastMove]);
 
     return <div className={"BoardFrame"}>
         <div className={"Board"}>
             {tiles}
             {promoteOverlay}
             {draggingPieceAnimTile}
+            {moveAnimTile}
         </div>
     </div>
 }

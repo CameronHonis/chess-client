@@ -31,7 +31,7 @@ export const AnimTile: React.FC<AnimTileProps> = (props) => {
     } else {
         throw new Error("invalid piece type");
     }
-    return <div className="Tile" id={props.id}>
+    return <div className="AnimTile" id={props.id}>
         {tileIcon}
     </div>
 }
