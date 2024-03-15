@@ -1,4 +1,5 @@
 import {Square} from "../models/domain/square";
+import {MouseButton} from "../types";
 
 export class BoardAnimator {
     private pieceMoveAnimation: PieceMoveAnimation | null = null;
@@ -54,14 +55,14 @@ export class BoardAnimator {
 }
 
 export class PieceMoveAnimation {
-    private originSquare: Square;
-    private destSquare: Square;
+    private readonly originSquare: Square;
+    private readonly destSquare: Square;
     private originTile: HTMLDivElement;
     private destTile: HTMLDivElement;
-    private startX: number;
-    private startY: number;
-    private endX: number;
-    private endY: number;
+    private readonly startX: number;
+    private readonly startY: number;
+    private readonly endX: number;
+    private readonly endY: number;
     readonly startTimeMs: number;
 
     constructor(startSquare: Square, destSquare: Square) {
@@ -85,12 +86,14 @@ export class PieceMoveAnimation {
 
     onTick(progress: number) {
         const animTile = document.getElementById("AnimatedTile");
-        if (!animTile) { return }
+        if (!animTile) {
+            return
+        }
 
         this.setTilePieceVisible(this.originSquare, false);
         this.setTilePieceVisible(this.destSquare, false);
 
-        const { width, height } = this.originTile.getBoundingClientRect();
+        const {width, height} = this.originTile.getBoundingClientRect();
         const deltaX = this.endX - this.startX;
         const deltaY = this.endY - this.startY;
 
@@ -105,7 +108,9 @@ export class PieceMoveAnimation {
         this.setTilePieceVisible(this.originSquare, true);
         this.setTilePieceVisible(this.destSquare, true);
         const animTile = document.getElementById("AnimatedTile");
-        if (!animTile) { return }
+        if (!animTile) {
+            return
+        }
         animTile.style.visibility = "hidden";
     }
 
@@ -121,29 +126,35 @@ export class PieceMoveAnimation {
 export class HoldPieceAnimation {
     draggingSquare: Square;
     draggingTile: HTMLDivElement;
+    isDragging: boolean;
     mouseX: number = -10000;
     mouseY: number = -10000;
+
     constructor(draggingSquare: Square) {
+        this.isDragging = false;
         this.draggingSquare = draggingSquare;
         const draggingTileId = `Tile${draggingSquare.hash()}`;
         this.draggingTile = document.getElementById(draggingTileId) as HTMLDivElement;
-        document.addEventListener("mousemove", e => this.setMousePos(e.clientX, e.clientY));
+        window.addEventListener("mousemove", ev => this.onMouseMove(ev));
     }
 
-    private setMousePos(x: number, y: number) {
-        this.mouseX = x;
-        this.mouseY = y;
+    private onMouseMove(ev: MouseEvent) {
+        this.mouseX = ev.clientX;
+        this.mouseY = ev.clientY;
+        this.isDragging = ev.button === MouseButton.LEFT;
     }
 
     onTick() {
-        const animTile = document.getElementById("DragAnimTile");
-        if (!animTile) { return }
+        const animTile = document.getElementById("DraggingTile");
+        if (!animTile) {
+            return
+        }
 
-        const { width } = this.draggingTile.getBoundingClientRect();
+        const {width} = this.draggingTile.getBoundingClientRect();
         animTile.style.width = `${width}px`;
-        animTile.style.top = `${width}px`;
-        animTile.style.left = `${this.mouseX - width/2}px`;
-        animTile.style.top = `${this.mouseY - width/2}px`;
+        animTile.style.height = `${width}px`;
+        animTile.style.left = `${this.mouseX - width / 2}px`;
+        animTile.style.top = `${this.mouseY - width / 2}px`;
     }
 
     cleanUp() {

@@ -2,13 +2,13 @@ import {Square} from "../../domain/square";
 import {BoardActionType} from "./board_action";
 import {Action} from "../action";
 
-interface LeftDraggingStopPayload {
+interface LeftDropPayload {
     dropSquare: Square | null;
 }
 
-export class LeftDraggingStopAction {
-    type = BoardActionType.LEFT_DRAGGING_STOP;
-    payload: LeftDraggingStopPayload;
+export class LeftDropAction {
+    type = BoardActionType.LEFT_DROP;
+    payload: LeftDropPayload;
 
     constructor(square: Square | null) {
         this.payload = {
@@ -17,6 +17,6 @@ export class LeftDraggingStopAction {
     }
 }
 
-export function isLeftDraggingStopAction(action: Action): action is LeftDraggingStopAction {
-    return action.type === BoardActionType.LEFT_DRAGGING_STOP;
+export function isLeftDropAction(action: Action): action is LeftDropAction {
+    return action.type === BoardActionType.LEFT_DROP;
 }

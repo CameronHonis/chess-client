@@ -11,7 +11,7 @@ import {LeftClickSquareAction} from "../../src/models/actions/board/left_click_s
 import {PickPromoteAction} from "../../src/models/actions/board/pick_move";
 import {RightClickSquareAction} from "../../src/models/actions/board/right_click_square";
 import {LeftDraggingStartAction} from "../../src/models/actions/board/left_dragging_start_action";
-import {LeftDraggingStopAction} from "../../src/models/actions/board/left_dragging_stop_action";
+import {LeftDropAction} from "../../src/models/actions/board/left_dragging_stop_action";
 
 describe("boardStateReducer", () => {
     let state: BoardState;
@@ -442,13 +442,13 @@ describe("boardStateReducer", () => {
     });
 
     describe("on LEFT_DRAGGING_STOP", () => {
-        let action: LeftDraggingStopAction;
+        let action: LeftDropAction;
         beforeEach(() => {
             state.selectedSquare = new Square(2, 4);
         });
         describe("the drop square is null", () => {
             beforeEach(() => {
-                action = new LeftDraggingStopAction(null);
+                action = new LeftDropAction(null);
             });
             it("deselects the selected square", () => {
                 const newState = boardStateReducer(state, action);
@@ -465,7 +465,7 @@ describe("boardStateReducer", () => {
         });
         describe("the drop square is the selected square", () => {
             beforeEach(() => {
-                action = new LeftDraggingStopAction(new Square(2, 4));
+                action = new LeftDropAction(new Square(2, 4));
             });
             it("deselects the selected square", () => {
                 const newState = boardStateReducer(state, action);
@@ -482,7 +482,7 @@ describe("boardStateReducer", () => {
         });
         describe("the drop square is on a land-able square", () => {
             beforeEach(() => {
-                action = new LeftDraggingStopAction(new Square(4, 4));
+                action = new LeftDropAction(new Square(4, 4));
             });
             it("deselects the selected square", () => {
                 const newState = boardStateReducer(state, action);
@@ -504,7 +504,7 @@ describe("boardStateReducer", () => {
         describe("the drop square is not on a land-able square", () => {
             describe("the drop square is not a friendly piece square", () => {
                 beforeEach(() => {
-                    action = new LeftDraggingStopAction(new Square(8, 8));
+                    action = new LeftDropAction(new Square(8, 8));
                 });
                 it("deselects the selected square", () => {
                     const newState = boardStateReducer(state, action);

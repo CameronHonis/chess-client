@@ -58,4 +58,15 @@ export class Square {
     static fromApi(apiSquare: ApiSquare): Square {
         return new Square(apiSquare.rank, apiSquare.file);
     }
+
+    static fromHash(hash: SquareHash): Square {
+        if (hash.length !== 3)
+            throw new Error(`cannot extract square from hash: ${hash}`);
+        const rank = parseInt(hash.charAt(0));
+        const file = parseInt(hash.charAt(2));
+        if (Number.isNaN(rank) || Number.isNaN(file)) {
+            throw new Error(`cannot extract square from hash: ${hash}`);
+        }
+        return new Square(rank, file);
+    }
 }

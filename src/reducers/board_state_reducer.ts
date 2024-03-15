@@ -11,7 +11,7 @@ import {isCancelPromoteAction} from "../models/actions/board/cancel_promote";
 import {isRightClickSquareAction} from "../models/actions/board/right_click_square";
 import {Square} from "../models/domain/square";
 import {isLeftDraggingStartAction} from "../models/actions/board/left_dragging_start_action";
-import {isLeftDraggingStopAction} from "../models/actions/board/left_dragging_stop_action";
+import {isLeftDropAction} from "../models/actions/board/left_dragging_stop_action";
 import {isClearSelectionsAction} from "../models/actions/board/clear_premoves";
 import {isUpdatePerspectiveAction} from "../models/actions/board/update_perspective_action";
 import {isUpdateLockedAction} from "../models/actions/board/update_locked_action";
@@ -63,7 +63,7 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
             const [board] = newState.boardAndPremoveSquareHashesAfterPremoves();
             newState.draggingPiece = board.getPieceBySquare(newState.selectedSquare);
         }
-    } else if (isLeftDraggingStopAction(action)) {
+    } else if (isLeftDropAction(action)) {
         const dropSquare = action.payload.dropSquare;
         newState.draggingPiece = null;
         if (!dropSquare) {

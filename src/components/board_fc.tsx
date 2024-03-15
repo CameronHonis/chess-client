@@ -16,10 +16,11 @@ import {CancelPromoteAction} from "../models/actions/board/cancel_promote";
 import {UpdateBoardAction} from "../models/actions/board/update_board";
 import {RightClickSquareAction} from "../models/actions/board/right_click_square";
 import {LeftDraggingStartAction} from "../models/actions/board/left_dragging_start_action";
-import {LeftDraggingStopAction} from "../models/actions/board/left_dragging_stop_action";
+import {LeftDropAction} from "../models/actions/board/left_dragging_stop_action";
 import {ClearSelectionsAction} from "../models/actions/board/clear_premoves";
 import {UpdatePerspectiveAction} from "../models/actions/board/update_perspective_action";
 import {UpdateLockedAction} from "../models/actions/board/update_locked_action";
+import {AnimTile} from "./anim_tile";
 
 export interface BoardProps {
     isLocked: boolean;
@@ -98,30 +99,55 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
 
     const onTileDragStart = React.useCallback((button: MouseButton, square: Square) => {
         if (button === MouseButton.LEFT) {
-            // window.services.boardAnimator.holdPiece(square);
             dispatch(new LeftDraggingStartAction(square));
         }
     }, []);
 
-    const onTileDrop = React.useCallback((button: MouseButton, dropSquare: Square) => {
+    const onTileDrop = React.useCallback((button: MouseButton, dropSquare: Square | null) => {
         if (button === MouseButton.LEFT) {
             if (!state.selectedSquare)
                 return;
-            // window.services.boardAnimator.dropPiece();
-            dispatch(new LeftDraggingStopAction(dropSquare));
+            dispatch(new LeftDropAction(dropSquare));
         }
     }, [state.selectedSquare]);
+
+    React.useEffect(() => {
+        const onMouseUp = (ev: MouseEvent) => {
+            let currNode = ev.target as HTMLElement | null;
+            while (currNode && currNode.classList) {
+                const isTile = [...currNode.classList].some(className => className === "Tile");
+                if (isTile) {
+                    const dropSquareHash = currNode.id.substring(4);
+                    const dropSquare = Square.fromHash(dropSquareHash);
+                    onTileDrop(ev.button, dropSquare);
+                    return;
+                }
+                const isBody = currNode.nodeName === "BODY";
+                if (isBody) {
+                    onTileDrop(ev.button, null);
+                    return;
+                }
+
+                currNode = currNode.parentNode as HTMLElement | null;
+            }
+            onTileDrop(ev.button, null);
+        };
+        document.addEventListener("mouseup", onMouseUp);
+
+        return () => {
+            document.removeEventListener("mouseup", onMouseUp);
+        }
+    }, [onTileDrop]);
 
     const tiles = React.useMemo((): ReactComp<typeof Tile>[] => {
         return state.tileProps(lastMove).map((tileProps, idx) => {
             return <Tile {...tileProps}
                          onClick={onTileClick}
                          onDragStart={onTileDragStart}
-                         onDrop={onTileDrop}
                          key={idx}
             />
         });
-    }, [state, lastMove, onTileClick, onTileDragStart, onTileDrop]);
+    }, [state, lastMove, onTileClick, onTileDragStart]);
 
     const promoteOverlay = React.useMemo(() => {
         if (state.selectedMoves.length < 2)
@@ -130,10 +156,17 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
                                onCancel={onCancelPromote}/>;
     }, [onPromote, onCancelPromote, state.selectedMoves, isWhitePerspective]);
 
+    const draggingPieceAnimTile = React.useMemo(() => {
+        if (!state.draggingPiece)
+            return null;
+        return <AnimTile piece={state.draggingPiece} id={"DraggingTile"}/>;
+    }, [state.draggingPiece]);
+
     return <div className={"BoardFrame"}>
         <div className={"Board"}>
             {tiles}
             {promoteOverlay}
+            {draggingPieceAnimTile}
         </div>
     </div>
 }
