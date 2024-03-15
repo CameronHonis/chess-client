@@ -7,7 +7,6 @@ import {ArbitratorMessage} from "../models/api/messages/arbitrator_message";
 import {MessageContentType} from "../models/api/messages/message_content_type";
 import {ApiTimeControl} from "../models/api/time_control";
 import {AuthKeyset} from "../models/domain/auth_keyset";
-import {Challenge} from "../models/domain/challenge";
 import {TimeControl} from "../models/domain/time_control";
 import {sleep} from "../helpers/sleep";
 import {dispatchDisconnectedEvent} from "../models/events/disconnected_event";

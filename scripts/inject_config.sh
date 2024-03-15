@@ -37,6 +37,7 @@ do
   done
   WRITE_STRING+='}'
   sed -i "s/$match/$WRITE_STRING/g" "$file"
+  printf '\nfinal config \n\t%s\n' "$WRITE_STRING"
 done < <(echo "$FILE_NAME_TO_SUBSTRING_PAIRS")
 
 printf "injection complete!\n\n"
