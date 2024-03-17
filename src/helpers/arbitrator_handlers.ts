@@ -4,7 +4,7 @@ import {AppStateAction} from "../models/actions/app/app_state_action";
 import {IngestMoveAction} from "../models/actions/app/ingest_move_action";
 import {parseEventName} from "../models/events/message_event_name";
 import {AuthKeyset} from "../models/domain/auth_keyset";
-import {dispatchErr} from "../models/events/notif_event";
+import {dispatchErr} from "../models/events/notif_created_event";
 import {Square} from "../models/domain/square";
 import {Move} from "../models/domain/move";
 import {Match} from "../models/domain/match";

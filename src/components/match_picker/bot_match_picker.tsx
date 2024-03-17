@@ -4,7 +4,7 @@ import "../../styles/match_picker/bot_match_picker.css";
 import {Button} from "../button";
 import {BotType} from "../../models/domain/bot_type";
 import {appStateContext} from "../../App";
-import {dispatchErr} from "../../models/events/notif_event";
+import {dispatchErr} from "../../models/events/notif_created_event";
 import {newBlitzTimeControl} from "../../models/domain/time_control";
 
 export interface BotMatchPickerProps {
