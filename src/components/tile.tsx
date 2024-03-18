@@ -1,15 +1,16 @@
 import React from "react";
 import "../styles/tile.css";
-import {Pawn} from "./pieces/pawn_svg";
-import {Knight} from "./pieces/knight_svg";
-import {Bishop} from "./pieces/bishop_svg";
-import {Rook} from "./pieces/rook_svg";
-import {Queen} from "./pieces/queen_svg";
-import {King} from "./pieces/king_svg";
+import {Pawn} from "./pieces/pawn";
+import {Knight} from "./pieces/knight";
+import {Bishop} from "./pieces/bishop";
+import {Rook} from "./pieces/rook";
+import {Queen} from "./pieces/queen";
+import {King} from "./pieces/king";
 import {ChessPiece} from "../models/domain/chess_piece";
 import {ChessPieceHelper} from "../helpers/chess_piece_helper";
 import {Square} from "../models/domain/square";
 import {MouseButton} from "../types";
+import {Piece} from "./pieces/piece";
 
 export interface TileVisualProps {
     square: Square;
@@ -63,28 +64,6 @@ export const Tile: React.FC<TileProps> = (props) => {
         }
     }, [didClickDrag, _onClick, square]);
 
-    const isWhite = ChessPieceHelper.isWhite(pieceType)
-    let tileIcon: React.JSX.Element | null = null;
-    if (pieceType === ChessPiece.WHITE_PAWN || pieceType === ChessPiece.BLACK_PAWN) {
-        tileIcon = <Pawn isWhite={isWhite}
-                         onDragStart={onDragStart}/>
-    } else if (pieceType === ChessPiece.WHITE_KNIGHT || pieceType === ChessPiece.BLACK_KNIGHT) {
-        tileIcon = <Knight isWhite={isWhite}
-                           onDragStart={onDragStart}/>
-    } else if (pieceType === ChessPiece.WHITE_BISHOP || pieceType === ChessPiece.BLACK_BISHOP) {
-        tileIcon = <Bishop isWhite={isWhite}
-                           onDragStart={onDragStart}/>
-    } else if (pieceType === ChessPiece.WHITE_ROOK || pieceType === ChessPiece.BLACK_ROOK) {
-        tileIcon = <Rook isWhite={isWhite}
-                         onDragStart={onDragStart}/>
-    } else if (pieceType === ChessPiece.WHITE_QUEEN || pieceType === ChessPiece.BLACK_QUEEN) {
-        tileIcon = <Queen isWhite={isWhite}
-                          onDragStart={onDragStart}/>
-    } else if (pieceType === ChessPiece.WHITE_KING || pieceType === ChessPiece.BLACK_KING) {
-        tileIcon = <King isWhite={isWhite}
-                         onDragStart={onDragStart}/>
-    }
-
     const classNames = React.useMemo(() => {
         const classNames = [];
         classNames.push("Tile");
@@ -115,7 +94,7 @@ export const Tile: React.FC<TileProps> = (props) => {
         onContextMenu={ev => onClick(ev)}
         onClick={(ev) => onClick(ev)}
     >
-        {tileIcon}
+        <Piece pieceType={pieceType} onDragStart={onDragStart}/>
         <div className={"Highlight"}/>
         {isDotVisible && <div className="TileDot"/>}
     </div>

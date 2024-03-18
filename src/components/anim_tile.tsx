@@ -1,11 +1,11 @@
 import React from "react";
 import {ChessPiece} from "../models/domain/chess_piece";
-import {Pawn} from "./pieces/pawn_svg";
-import {Knight} from "./pieces/knight_svg";
-import {Bishop} from "./pieces/bishop_svg";
-import {Rook} from "./pieces/rook_svg";
-import {Queen} from "./pieces/queen_svg";
-import {King} from "./pieces/king_svg";
+import {Pawn} from "./pieces/pawn";
+import {Knight} from "./pieces/knight";
+import {Bishop} from "./pieces/bishop";
+import {Rook} from "./pieces/rook";
+import {Queen} from "./pieces/queen";
+import {King} from "./pieces/king";
 import {ChessPieceHelper} from "../helpers/chess_piece_helper";
 
 export type AnimTileProps = {

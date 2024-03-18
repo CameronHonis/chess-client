@@ -1,10 +1,10 @@
 import React from "react";
 import {Move} from "../models/domain/move";
 import {ChessPiece} from "../models/domain/chess_piece";
-import {Queen} from "./pieces/queen_svg";
-import {Rook} from "./pieces/rook_svg";
-import {Bishop} from "./pieces/bishop_svg";
-import {Knight} from "./pieces/knight_svg";
+import {Queen} from "./pieces/queen";
+import {Rook} from "./pieces/rook";
+import {Bishop} from "./pieces/bishop";
+import {Knight} from "./pieces/knight";
 
 import "../styles/promote_overlay.css";
 
