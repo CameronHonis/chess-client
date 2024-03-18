@@ -57,47 +57,48 @@ export class BoardAnimator {
 export class PieceMoveAnimation {
     private readonly originSquare: Square;
     private readonly destSquare: Square;
-    private originTile: HTMLDivElement;
-    private destTile: HTMLDivElement;
-    private readonly startX: number;
-    private readonly startY: number;
-    private readonly endX: number;
-    private readonly endY: number;
     readonly startTimeMs: number;
+    // memoized
+    private originTile: HTMLDivElement | undefined;
+    private destTile: HTMLDivElement | undefined;
+    private startX: number | undefined;
+    private startY: number | undefined;
+    private endX: number | undefined;
+    private endY: number | undefined;
+    private tileWidth: number | undefined;
+    private tileHeight: number | undefined;
 
     constructor(startSquare: Square, destSquare: Square) {
         this.originSquare = startSquare;
         this.destSquare = destSquare;
-
-        const originTileId = `Tile${startSquare.hash()}`;
-        this.originTile = document.getElementById(originTileId) as HTMLDivElement;
-        const {x: startX, y: startY} = this.originTile.getBoundingClientRect();
-        this.startX = startX;
-        this.startY = startY;
-
-        const destTileId = `Tile${destSquare.hash()}`;
-        this.destTile = document.getElementById(destTileId) as HTMLDivElement;
-        const {x: endX, y: endY} = this.destTile.getBoundingClientRect();
-        this.endX = endX;
-        this.endY = endY;
-
         this.startTimeMs = performance.now();
     }
 
     onTick(progress: number) {
         const animTile = document.getElementById("MoveTile");
         if (!animTile)
-            return
+            return;
+        const animStartCoords = this.startCoords();
+        if (!animStartCoords)
+            return;
+        const animEndCoords = this.endCoords();
+        if (!animEndCoords)
+            return;
+        const tileSize = this.tileSize();
+        if (!tileSize)
+            return;
+        const [startX, startY] = animStartCoords;
+        const [endX, endY] = animEndCoords;
+        const [width, height] = tileSize;
 
         this.setTilePieceVisible(this.originSquare, false);
         this.setTilePieceVisible(this.destSquare, false);
 
-        const {width, height} = this.originTile.getBoundingClientRect();
-        const deltaX = this.endX - this.startX;
-        const deltaY = this.endY - this.startY;
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
 
-        animTile.style.left = `${this.startX + progress * deltaX}px`;
-        animTile.style.top = `${this.startY + progress * deltaY}px`;
+        animTile.style.left = `${startX + progress * deltaX}px`;
+        animTile.style.top = `${startY + progress * deltaY}px`;
         animTile.style.width = `${width}px`;
         animTile.style.height = `${height}px`;
         animTile.style.visibility = "visible";
@@ -111,6 +112,59 @@ export class PieceMoveAnimation {
             return
         }
         animTile.style.visibility = "hidden";
+    }
+
+    private startCoords(): [number, number] | null {
+        if (!this.startX || !this.startY) {
+            const boardSquareTiles = this.boardSquareTiles();
+            if (!boardSquareTiles)
+                return null;
+            const [startTile] = boardSquareTiles;
+
+            const {x, y} = startTile.getBoundingClientRect();
+            this.startX = x;
+            this.startY = y;
+        }
+        return [this.startX, this.startY];
+    }
+
+    private endCoords(): [number, number] | null {
+        if (!this.endX || !this.endY) {
+            const boardSquareTiles = this.boardSquareTiles();
+            if (!boardSquareTiles)
+                return null;
+            const endTile = boardSquareTiles[1];
+
+            const {x, y} = endTile.getBoundingClientRect();
+            this.endX = x;
+            this.endY = y;
+        }
+        return [this.endX, this.endY];
+    }
+
+    private tileSize(): [number, number] | null {
+        if (!this.tileWidth || !this.tileHeight) {
+            const boardSquareTiles = this.boardSquareTiles();
+            if (!boardSquareTiles)
+                return null;
+            const [startTile] = boardSquareTiles;
+            const {width, height} = startTile.getBoundingClientRect();
+            this.tileWidth = width;
+            this.tileHeight = height;
+        }
+        return [this.tileWidth, this.tileHeight];
+    }
+
+    private boardSquareTiles(): [HTMLDivElement, HTMLDivElement] | null {
+        if (!this.originTile || !this.destTile) {
+            const originTileId = `Tile${this.originSquare.hash()}`;
+            this.originTile = document.getElementById(originTileId) as HTMLDivElement;
+            const destTileId = `Tile${this.destSquare.hash()}`;
+            this.destTile = document.getElementById(destTileId) as HTMLDivElement;
+        }
+        if (!this.originTile || !this.destTile)
+            return null;
+        return [this.originTile, this.destTile];
     }
 
     private setTilePieceVisible(square: Square, isVisible: boolean) {
