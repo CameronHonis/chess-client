@@ -172,12 +172,10 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         return <AnimTile piece={lastMove.piece} id={"MoveTile"}/>;
     }, [lastMove]);
 
-    return <div className={"BoardFrame"}>
-        <div className={"Board"}>
-            {tiles}
-            {promoteOverlay}
-            {draggingPieceAnimTile}
-            {moveAnimTile}
-        </div>
+    return <div className={"Board"}>
+        {tiles}
+        {promoteOverlay}
+        {draggingPieceAnimTile}
+        {moveAnimTile}
     </div>
 }
