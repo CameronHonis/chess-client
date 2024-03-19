@@ -61,6 +61,7 @@ export class PieceMoveAnimation {
     // memoized
     private originTile: HTMLDivElement | undefined;
     private destTile: HTMLDivElement | undefined;
+    private _destTilePiece: HTMLImageElement | undefined;
     private startX: number | undefined;
     private startY: number | undefined;
     private endX: number | undefined;
@@ -91,8 +92,7 @@ export class PieceMoveAnimation {
         const [endX, endY] = animEndCoords;
         const [width, height] = tileSize;
 
-        this.setTilePieceVisible(this.originSquare, false);
-        this.setTilePieceVisible(this.destSquare, false);
+        this.setDestTilePieceVisible(false);
 
         const deltaX = endX - startX;
         const deltaY = endY - startY;
@@ -105,8 +105,7 @@ export class PieceMoveAnimation {
     }
 
     cleanUp() {
-        this.setTilePieceVisible(this.originSquare, true);
-        this.setTilePieceVisible(this.destSquare, true);
+        this.setDestTilePieceVisible(true);
         const animTile = document.getElementById("MoveTile");
         if (!animTile) {
             return
@@ -167,12 +166,21 @@ export class PieceMoveAnimation {
         return [this.originTile, this.destTile];
     }
 
-    private setTilePieceVisible(square: Square, isVisible: boolean) {
-        const tileId = `Tile${square.hash()}`;
-        const tilePiece = document.querySelector(`#${tileId} .TilePiece`) as SVGElement | null;
-        if (tilePiece) {
-            tilePiece.style.visibility = isVisible ? "visible" : "hidden";
-        }
+    private destTilePiece(): HTMLImageElement | undefined {
+        const tiles = this.boardSquareTiles();
+        if (!tiles)
+            return;
+        const destTile = tiles[1];
+        this._destTilePiece = destTile.querySelector("img") || undefined;
+        return this._destTilePiece;
+    }
+
+    private setDestTilePieceVisible(isVisible: boolean) {
+        const destTile = this.destTilePiece();
+        if (!destTile)
+            return;
+
+        destTile.style.visibility = isVisible ? "visible" : "hidden";
     }
 }
 
