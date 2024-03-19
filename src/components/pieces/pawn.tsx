@@ -2,14 +2,25 @@ import React from "react";
 
 interface Props {
     isWhite: boolean;
+    classNames?: string[];
     onDragStart?: (ev: React.DragEvent<HTMLImageElement>) => void;
     onDragEnd?: (ev: React.DragEvent<HTMLImageElement>) => void;
 }
 
 
 export const Pawn: React.FC<Props> = (props) => {
-    const {isWhite} = props;
-    const classNames = ["Pawn", isWhite ? "WhitePawn" : "BlackPawn", "TilePiece"]
+    const {isWhite, classNames} = props;
+    const finalClassNames = React.useMemo(() => {
+        const rtn = ["Pawn"];
+        if (classNames)
+            rtn.push(...classNames);
+        if (isWhite) {
+            rtn.push("WhitePawn");
+        } else {
+            rtn.push("BlackPawn");
+        }
+        return rtn;
+    }, [isWhite, classNames])
     // return <svg className={classNames.join(" ")} version="1.1" xmlns="http://www.w3.org/2000/svg"
     //             viewBox="0 0 512 512">
     //     <g>
@@ -39,7 +50,7 @@ export const Pawn: React.FC<Props> = (props) => {
     return <img
         onDragStart={props.onDragStart}
         onDragEnd={props.onDragEnd}
-        className={classNames.join(" ")}
+        className={finalClassNames.join(" ")}
         src={isWhite ? "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg" : "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg"}
         alt={isWhite ? "white pawn" : "black pawn"}
     />

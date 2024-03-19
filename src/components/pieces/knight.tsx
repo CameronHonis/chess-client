@@ -4,11 +4,22 @@ interface Props {
     isWhite: boolean
     onDragStart?: (ev: React.DragEvent<HTMLImageElement>) => void;
     onDragEnd?: (ev: React.DragEvent<HTMLImageElement>) => void;
+    classNames?: string[];
 }
 
 export const Knight: React.FC<Props> = (props) => {
-    const {isWhite} = props;
-    const classNames = [isWhite ? "WhiteKnight" : "BlackKnight", "TilePiece"];
+    const {isWhite, classNames} = props;
+    const finalClassNames = React.useMemo(() => {
+        const rtn = ["Knight"];
+        if (classNames)
+            rtn.push(...classNames);
+        if (isWhite) {
+            rtn.push("WhiteKnight");
+        } else {
+            rtn.push("BlackKnight");
+        }
+        return rtn;
+    }, [isWhite, classNames])
     // return <svg version="1.1" viewBox="0 0 512 512" className={classNames.join(" ")}>
     //     <g>
     //         <path d="M281.603,136.533h-17.067c-4.719,0-8.533,3.823-8.533,8.533c0,4.71,3.814,8.533,8.533,8.533h17.067
@@ -37,7 +48,7 @@ export const Knight: React.FC<Props> = (props) => {
     return <img
         onDragStart={props.onDragStart}
         onDragEnd={props.onDragEnd}
-        className={classNames.join(" ")}
+        className={finalClassNames.join(" ")}
         src={isWhite ? "https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg" : "https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg"}
         alt={isWhite ? "white knight" : "black knight"}
     />

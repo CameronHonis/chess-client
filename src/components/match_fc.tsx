@@ -7,6 +7,7 @@ import {Match} from "../models/domain/match";
 import {BoardFC} from "./board_fc";
 import {Move} from "../models/domain/move";
 import {appStateContext} from "../App";
+import {BoardHorizontalGutter} from "./board_horizontal_gutter";
 
 interface Props {
     match: Match;
@@ -43,10 +44,12 @@ export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) =>
     return <div className={"BoardFrame"}>
         <BoardLeftGutter isWhitePerspective={isWhitePerspective} matchResult={match.result} matchUuid={match.uuid}/>
         <div className={"BoardWrapped"}>
-            <p className={"NameTag OppNameTag"}>{match.botName === "" ? formatKey(oppClientKey) : `${match.botName} bot`}</p>
+            <BoardHorizontalGutter isWhitePerspective={isWhitePerspective} isWhite={!isWhitePerspective}
+                                   displayName={formatKey(oppClientKey)} materialOnBoard={match.board.material}/>
             <BoardFC board={match.board} lastMove={match.lastMove} isWhitePerspective={isWhitePerspective}
                      isLocked={isLocked} sendMove={sendMove}/>
-            <p className={"NameTag SelfNameTag"}>{formatKey(selfClientKey)}</p>
+            <BoardHorizontalGutter isWhitePerspective={isWhitePerspective} isWhite={isWhitePerspective}
+                                   displayName={formatKey(selfClientKey)} materialOnBoard={match.board.material}/>
         </div>
         {match.result !== MatchResult.IN_PROGRESS && <Summary/>}
     </div>

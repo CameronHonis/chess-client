@@ -12,28 +12,30 @@ interface Props {
     pieceType: ChessPiece;
     onDragStart?: (ev: React.DragEvent<HTMLImageElement>) => void;
     onDragEnd?: (ev: React.DragEvent<HTMLImageElement>) => void;
+    classNames?: string[];
 }
 
 export const Piece: React.FC<Props> = (props) => {
     const {
         pieceType,
         onDragStart,
-        onDragEnd
+        onDragEnd,
+        classNames,
     } = props;
 
     const isWhite = ChessPieceHelper.isWhite(pieceType);
     if (ChessPieceHelper.isPawn(pieceType)) {
-        return <Pawn isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} />;
+        return <Pawn isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} classNames={classNames}/>;
     } else if (ChessPieceHelper.isKnight(pieceType)) {
-        return <Knight isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} />;
+        return <Knight isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} classNames={classNames}/>;
     } else if (ChessPieceHelper.isBishop(pieceType)) {
-        return <Bishop isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} />;
+        return <Bishop isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} classNames={classNames}/>;
     } else if (ChessPieceHelper.isRook(pieceType)) {
-        return <Rook isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} />;
+        return <Rook isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} classNames={classNames}/>;
     } else if (ChessPieceHelper.isQueen(pieceType)) {
-        return <Queen isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} />;
+        return <Queen isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} classNames={classNames}/>;
     } else if (ChessPieceHelper.isKing(pieceType)) {
-        return <King isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd}/>;
+        return <King isWhite={isWhite} onDragStart={onDragStart} onDragEnd={onDragEnd} classNames={classNames}/>;
     } else {
         return <></>
     }

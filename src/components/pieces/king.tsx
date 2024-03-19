@@ -4,14 +4,22 @@ interface Props {
     isWhite: boolean
     onDragStart?: (ev: React.DragEvent<HTMLImageElement>) => void;
     onDragEnd?: (ev: React.DragEvent<HTMLImageElement>) => void;
+    classNames?: string[];
 }
 
 export const King: React.FC<Props> = (props) => {
-    const {isWhite} = props;
-    const classNames = [
-        isWhite ? "WhiteKing" : "BlackKing",
-        "TilePiece"
-    ];
+    const {isWhite, classNames} = props;
+    const finalClassNames = React.useMemo(() => {
+        const rtn = ["King"];
+        if (classNames)
+            rtn.push(...classNames);
+        if (isWhite) {
+            rtn.push("WhiteKing");
+        } else {
+            rtn.push("BlackKing");
+        }
+        return rtn;
+    }, [isWhite, classNames])
     // return <svg version="1.1" viewBox="0 0 39.26 39.26" className={classNames.join(" ")}>
     //     <g>
     //         <path d="M28.103,32.97v-4.81h-2.271V15.557h2.271v-4.453V9.267V0.106l-4.832,3.488l-3.75-2.772L15.706,3.58L11.157,0v9.267v1.837
@@ -23,7 +31,7 @@ export const King: React.FC<Props> = (props) => {
     return <img
         onDragStart={props.onDragStart}
         onDragEnd={props.onDragEnd}
-        className={classNames.join(" ")}
+        className={finalClassNames.join(" ")}
         src={isWhite ? "https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg" : "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg"}
         alt={isWhite ? "white king" : "black king"}
     />
