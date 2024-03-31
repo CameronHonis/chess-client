@@ -1,7 +1,9 @@
 import {Square} from "../models/domain/square";
 import {MouseButton} from "../types";
+import {Move} from "../models/domain/move";
 
 export class BoardAnimator {
+    private lastMoveAnimated: Move | null = null;
     private pieceMoveAnimation: PieceMoveAnimation | null = null;
     private pieceMoveDurationMs: number = 500;
     private holdPieceAnimation: HoldPieceAnimation | null = null;
@@ -32,11 +34,16 @@ export class BoardAnimator {
         }
     }
 
-    movePiece(startSquare: Square, destSquare: Square) {
+    movePiece(move: Move) {
         if (this.pieceMoveAnimation) {
             this.pieceMoveAnimation.cleanUp();
         }
-        this.pieceMoveAnimation = new PieceMoveAnimation(startSquare, destSquare);
+
+        if (this.lastMoveAnimated?.equalTo(move))
+            return;
+
+        this.lastMoveAnimated = move;
+        this.pieceMoveAnimation = new PieceMoveAnimation(move.startSquare, move.endSquare);
     }
 
     holdPiece(square: Square) {

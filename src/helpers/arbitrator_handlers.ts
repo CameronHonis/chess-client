@@ -36,7 +36,6 @@ export function registerOnMatchUpdatedMsgHandler(dispatch: React.Dispatch<AppSta
 export function registerOnMoveMsgHandler(dispatch: React.Dispatch<AppStateAction>) {
     document.addEventListener(parseEventName(MessageContentType.MOVE), (e) => {
         const move = e.detail.msg.content.move;
-        window.services.boardAnimator.movePiece(Square.fromApi(move.startSquare), Square.fromApi(move.endSquare));
         dispatch(new IngestMoveAction(Move.fromApi(move)));
     });
 }

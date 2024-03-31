@@ -21,6 +21,7 @@ import {ClearSelectionsAction} from "../models/actions/board/clear_premoves";
 import {UpdatePerspectiveAction} from "../models/actions/board/update_perspective_action";
 import {UpdateLockedAction} from "../models/actions/board/update_locked_action";
 import {AnimTile} from "./anim_tile";
+import {usePrevious} from "../hooks/use_previous";
 
 export interface BoardProps {
     isLocked: boolean;
@@ -169,7 +170,7 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
     const moveAnimTile = React.useMemo(() => {
         if (!lastMove || state.lastMoveDragged)
             return null;
-        window.services.boardAnimator.movePiece(lastMove.startSquare, lastMove.endSquare);
+        window.services.boardAnimator.movePiece(lastMove);
         return <AnimTile piece={lastMove.piece} id={"MoveTile"}/>;
     }, [lastMove, state.lastMoveDragged]);
 
