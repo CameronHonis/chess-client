@@ -109,8 +109,9 @@ export const appStateReducer = (curr: AppState, action: AppStateAction): Throwab
         });
     } else if (isReturnHomeAction(action)) {
         if (curr.match && curr.match.result === MatchResult.IN_PROGRESS) {
-            throw new Error("Cannot return home while match is in progress");
+            return curr;
         }
+
         return new AppState({
             ...curr,
             page: Page.HOME,
