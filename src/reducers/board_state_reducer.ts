@@ -18,7 +18,6 @@ import {isUpdateLockedAction} from "../models/actions/board/update_locked_action
 
 export function boardStateReducer(state: BoardState, action: BoardAction): BoardState {
     const newState = state.copy();
-    console.log(action);
     if (isUpdateBoardAction(action)) {
         const newBoard = action.payload.newBoard;
         newState.board = newBoard;
@@ -30,6 +29,9 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
             if (pieceSelected !== newPieceSelected) {
                 newState.selectedSquare = null;
             }
+        }
+        if (newState.isTurn()) {
+            newState.lastMoveDragged = false;
         }
         if (newState.isTurn() && state.premoves.size()) {
             const premove = newState.premoves.pop();
@@ -53,12 +55,12 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
             newState.selectedSquare = null;
             newState.selectedMoves = [];
         } else {
-            leftInteractSquare(state, newState, square);
+            leftInteractSquare(state, newState, square, false);
         }
     } else if (isLeftDraggingStartAction(action)) {
         const square = action.payload.square;
         if (!state.selectedSquare || !state.selectedSquare.equalTo(square)) {
-            leftInteractSquare(state, newState, square);
+            leftInteractSquare(state, newState, square, false);
         }
         if (newState.selectedSquare) {
             newState.draggingSquare = newState.selectedSquare;
@@ -74,7 +76,7 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
                 newState.selectedSquare = null;
                 newState.selectedMoves = [];
             } else {
-                leftInteractSquare(state, newState, dropSquare);
+                leftInteractSquare(state, newState, dropSquare, true);
             }
         }
     } else if (isRightClickSquareAction(action)) {
@@ -106,7 +108,7 @@ export function boardStateReducer(state: BoardState, action: BoardAction): Board
     return newState;
 }
 
-function leftInteractSquare(oldState: BoardState, newState: BoardState, square: Square) {
+function leftInteractSquare(oldState: BoardState, newState: BoardState, square: Square, isDrop: boolean) {
     const [board] = oldState.boardAndPremoveSquareHashesAfterPremoves();
     const landPiece = board.getPieceBySquare(square);
     if (oldState.selectedSquare) {
@@ -121,6 +123,7 @@ function leftInteractSquare(oldState: BoardState, newState: BoardState, square: 
                 if (matchingLegalMoves.length > 0) {
                     newState.selectedMoves = matchingLegalMoves;
                     newState.selectedSquare = null;
+                    newState.lastMoveDragged = isDrop;
                 } else {
                     newState.selectedSquare = null;
                 }

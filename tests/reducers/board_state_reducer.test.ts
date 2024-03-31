@@ -107,7 +107,7 @@ describe("boardStateReducer", () => {
                     const move = newState.selectedMoves[0];
                     expect(move).not.toBeNull();
                     expect(move.piece).toEqual(ChessPiece.WHITE_PAWN);
-                    expect(move.startSquare.equalTo(new Square(7 ,7))).toBeTruthy();
+                    expect(move.startSquare.equalTo(new Square(7, 7))).toBeTruthy();
                     expect(move.endSquare.equalTo(new Square(8, 6))).toBeTruthy();
                     expect(move.pawnUpgradedTo).toEqual(ChessPiece.WHITE_ROOK);
                 });
@@ -124,6 +124,31 @@ describe("boardStateReducer", () => {
                 it("flushes the premoves queue", () => {
                     const newState = boardStateReducer(state, action);
                     expect(newState.premoves.size()).toEqual(0);
+                });
+            });
+        });
+        describe("the last move was a drag", () => {
+            beforeEach(() => {
+                state.lastMoveDragged = true;
+            });
+            describe("it's the opponents turn", () => {
+                beforeEach(() => {
+                    state.isWhitePerspective = true;
+                    action = new UpdateBoardAction(Board.fromFEN("rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1"));
+                });
+                it("keeps the lastMoveDrag as true", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.lastMoveDragged).toBeTruthy();
+                });
+            });
+            describe("it's the player's turn", () => {
+                beforeEach(() => {
+                    state.isWhitePerspective = true;
+                    action = new UpdateBoardAction(Board.fromFEN("rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1"))
+                });
+                it("sets the lastMoveDrag as false", () => {
+                    const newState = boardStateReducer(state, action);
+                    expect(newState.lastMoveDragged).toBeFalsy();
                 });
             });
         });
@@ -427,7 +452,7 @@ describe("boardStateReducer", () => {
             });
             describe("the dragging square is not a friendly square", () => {
                 beforeEach(() => {
-                   action = new LeftDraggingStartAction(new Square(5, 5));
+                    action = new LeftDraggingStartAction(new Square(5, 5));
                 });
                 it("does not select the dragging square", () => {
                     const newState = boardStateReducer(state, action);
@@ -441,7 +466,7 @@ describe("boardStateReducer", () => {
         });
     });
 
-    describe("on LEFT_DRAGGING_STOP", () => {
+    describe("on LEFT_DROP", () => {
         let action: LeftDropAction;
         beforeEach(() => {
             state.selectedSquare = new Square(2, 4);
@@ -483,6 +508,7 @@ describe("boardStateReducer", () => {
         describe("the drop square is on a land-able square", () => {
             beforeEach(() => {
                 action = new LeftDropAction(new Square(4, 4));
+                state.lastMoveDragged = false;
             });
             it("deselects the selected square", () => {
                 const newState = boardStateReducer(state, action);
@@ -499,6 +525,10 @@ describe("boardStateReducer", () => {
             it("sets the dragging piece to null", () => {
                 const newState = boardStateReducer(state, action);
                 expect(newState.draggingSquare).toBeNull();
+            });
+            it("sets the lastMoveDrag to true", () => {
+                const newState = boardStateReducer(state, action);
+                expect(newState.lastMoveDragged).toBeTruthy();
             });
         });
         describe("the drop square is not on a land-able square", () => {

@@ -18,6 +18,7 @@ interface BoardStateArgs {
     selectedMoves: Move[];
     premoves: Queue<Move>;
     draggingSquare: Square | null;
+    lastMoveDragged: boolean;
 }
 
 export class BoardState {
@@ -29,6 +30,7 @@ export class BoardState {
     selectedMoves: Move[];
     premoves: Queue<Move>;
     draggingSquare: Square | null;
+    lastMoveDragged: boolean;
 
 
     constructor(args: BoardStateArgs) {
@@ -40,6 +42,7 @@ export class BoardState {
         this.selectedMoves = args.selectedMoves;
         this.premoves = args.premoves;
         this.draggingSquare = args.draggingSquare;
+        this.lastMoveDragged = args.lastMoveDragged;
     }
 
     getSquareColor(square: Square): SquareColor | undefined {
@@ -157,6 +160,7 @@ export class BoardState {
             selectedMoves: [...this.selectedMoves],
             premoves: this.premoves.copy(),
             draggingSquare: this.draggingSquare,
+            lastMoveDragged: this.lastMoveDragged,
         });
     }
 
@@ -197,6 +201,7 @@ export class BoardState {
             selectedMoves: [],
             premoves: new EasyQueue<Move>(),
             draggingSquare: null,
+            lastMoveDragged: false,
         });
     }
 }

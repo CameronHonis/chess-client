@@ -40,6 +40,7 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
         selectedMoves: [],
         premoves: new EasyQueue(),
         draggingSquare: null,
+        lastMoveDragged: false,
     }));
 
     React.useEffect(() => {
@@ -166,11 +167,11 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
     }, [state]);
 
     const moveAnimTile = React.useMemo(() => {
-        if (!lastMove)
+        if (!lastMove || state.lastMoveDragged)
             return null;
         window.services.boardAnimator.movePiece(lastMove.startSquare, lastMove.endSquare);
         return <AnimTile piece={lastMove.piece} id={"MoveTile"}/>;
-    }, [lastMove]);
+    }, [lastMove, state.lastMoveDragged]);
 
     return <div className={"Board"}>
         {tiles}
