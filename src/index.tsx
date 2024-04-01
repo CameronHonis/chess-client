@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import "./styles/index.css";
 import App from './App';
 import {ArbitratorClient} from "./services/arbitrator_client";
-import {Timer} from "./services/timer";
+import {Timer} from "./services/clock_animator";
 import {BoardAnimator} from "./services/board_animator";
 import {NotifAnimator} from "./services/notif_animator";
 import {registerOnChallengeFailedMsgHandler} from "./helpers/arbitrator_handlers";

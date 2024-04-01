@@ -56,6 +56,7 @@ export class TimeControl {
 }
 
 
+// TODO: move these to be static methods on TimeControl
 export function newBulletTimeControl(): TimeControl {
     return new TimeControl({
         initialTimeSec: 60,

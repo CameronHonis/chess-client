@@ -1,6 +1,6 @@
 import {ArbitratorClient} from "./services/arbitrator_client";
 import {MessageContentType} from "./models/messages/message_content_type";
-import {Timer} from "./services/timer";
+import {Timer} from "./services/clock_animator";
 import {AppState} from "./models/domain/app_state";
 import {AppStateAction} from "./models/actions/app/app_state_action";
 import React from "react";
