@@ -1,7 +1,7 @@
 import React from "react";
 import {TimeControlPreset} from "../../models/domain/time_control";
 // @ts-ignore
-import timerIcon from "../../res/timer.png";
+import timerIcon from "../../res/images/timer.png";
 import {TimeControlOption} from "../../components/match_picker/time_control_option";
 import "../../styles/match_picker/time_control_options.css";
 

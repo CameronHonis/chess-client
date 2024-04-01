@@ -111,6 +111,10 @@ export class Move {
         return rtnBoardState;
     }
 
+    isCastles(): boolean {
+        return ChessPieceHelper.isKing(this.piece) && this.startSquare.file === 5 && (this.endSquare.file === 3 || this.endSquare.file === 7);
+    }
+
     copyWith({
                  piece,
                  startSquare,

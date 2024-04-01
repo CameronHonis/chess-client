@@ -22,6 +22,7 @@ import {UpdatePerspectiveAction} from "../models/actions/board/update_perspectiv
 import {UpdateLockedAction} from "../models/actions/board/update_locked_action";
 import {AnimTile} from "./anim_tile";
 import {usePrevious} from "../hooks/use_previous";
+import {AudioHelper} from "../helpers/audio_helper";
 
 export interface BoardProps {
     isLocked: boolean;
@@ -81,6 +82,12 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
             window.services.boardAnimator.dropPiece();
         }
     }, [state.selectedSquare, state.draggingSquare]);
+
+    React.useEffect(() => {
+        if (!lastMove)
+            return;
+        AudioHelper.playSoundFromMove(lastMove);
+    }, [lastMove]);
 
     const onPromote = React.useCallback((piece: ChessPiece) => {
         dispatch(new PickPromoteAction(piece));

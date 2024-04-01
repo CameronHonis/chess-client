@@ -2,11 +2,11 @@ import React from "react";
 import {Button} from "../button";
 import {TimeControlPreset} from "../../models/domain/time_control";
 // @ts-ignore
-import bulletIcon from "../../res/bullet.png";
+import bulletIcon from "../../res/images/bullet.png";
 // @ts-ignore
-import blitzIcon from "../../res/blitz.png";
+import blitzIcon from "../../res/images/blitz.png";
 // @ts-ignore
-import rapidIcon from "../../res/rapid.png";
+import rapidIcon from "../../res/images/rapid.png";
 
 export interface TimeControlOptionProps {
     timeControl: TimeControlPreset;

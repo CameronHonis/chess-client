@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/header.css";
 
 // @ts-ignore
-import logo from "../res/cage.png"
+import logo from "../res/images/cage.png"
 import {appStateContext} from "../App";
 import {ReturnHomeAction} from "../models/actions/app/return_home_action";
 
