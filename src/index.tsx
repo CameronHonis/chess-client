@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import "./styles/index.css";
 import App from './App';
 import {ArbitratorClient} from "./services/arbitrator_client";
-import {Timer} from "./services/clock_animator";
 import {BoardAnimator} from "./services/board_animator";
 import {NotifAnimator} from "./services/notif_animator";
 import {registerOnChallengeFailedMsgHandler} from "./helpers/arbitrator_handlers";
@@ -14,10 +13,11 @@ import {Challenge} from "./models/domain/challenge";
 import {ChessPiece} from "./models/domain/chess_piece";
 import {Square} from "./models/domain/square";
 import {ArbitratorMessage} from "./models/api/messages/arbitrator_message";
+import {ClockAnimator} from "./services/clock_animator";
 
 window.services = {
     arbitratorClient: new ArbitratorClient(),
-    timer: new Timer(),
+    clockAnimator: new ClockAnimator(),
     boardAnimator: new BoardAnimator(),
     notifAnimator: new NotifAnimator(),
 };

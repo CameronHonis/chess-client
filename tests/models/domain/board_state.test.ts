@@ -21,6 +21,7 @@ describe("BoardState", () => {
                 selectedMoves: [],
                 premoves: new EasyQueue(),
                 draggingSquare: null,
+                lastMoveDragged: false,
             });
         });
         describe("board actions are locked", () => {

@@ -16,3 +16,7 @@
     background-color: black;
     color: white;
 }
+
+.Clock.LowTime {
+    background-color: red;
+}

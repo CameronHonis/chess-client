@@ -6,14 +6,7 @@ export interface TimerProps {
     isHomeClock?: boolean;
 }
 
-export const Clock: React.FC<TimerProps & { [key: string]: any }> = (props) => {
-    const [displaySeconds, setDisplaySeconds] = React.useState<string>("00.0");
-    const [isRed, setIsRed] = React.useState(false);
-
-    React.useEffect(() => {
-        window.services.timer.registerClockStateSetter(props.isWhite, setDisplaySeconds);
-    }, [props.isWhite]);
-
+export const Clock: React.FC<TimerProps> = (props) => {
     const classNames = React.useMemo(() => {
         const rtn = ["Clock"];
         if (props.isWhite) {
@@ -30,6 +23,5 @@ export const Clock: React.FC<TimerProps & { [key: string]: any }> = (props) => {
     }, [props.isWhite, props.isHomeClock]);
 
     return <div className={classNames.join(" ")}>
-        {displaySeconds}
     </div>
 }

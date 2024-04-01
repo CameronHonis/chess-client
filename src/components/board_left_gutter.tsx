@@ -1,9 +1,9 @@
 import {Clock} from "./clock";
 import React from "react";
 import "../styles/board_left_gutter.css";
-import {appStateContext} from "../App";
 import {Button} from "./button";
 import {MatchResult} from "../models/domain/match_result";
+import {ClockAnimator} from "../services/clock_animator";
 
 export interface BoardLeftGutterProps {
     isWhitePerspective: boolean;

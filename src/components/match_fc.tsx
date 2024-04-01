@@ -6,8 +6,8 @@ import React from "react";
 import {Match} from "../models/domain/match";
 import {BoardFC} from "./board_fc";
 import {Move} from "../models/domain/move";
-import {appStateContext} from "../App";
 import {BoardHorizontalGutter} from "./board_horizontal_gutter";
+import {ClockAnimator} from "../services/clock_animator";
 
 interface Props {
     match: Match;
@@ -18,8 +18,9 @@ interface Props {
 export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) => {
     const [isWhitePerspective, setIsWhitePerspective] = React.useState(initIsWhitePerspective(match, viewingClientKey));
 
+    // TODO: evaluate if this is the best place/method of updating ClockAnimator
     React.useEffect(() => {
-        window.services.timer.setFromMatch(match);
+        window.services.clockAnimator.updateMatch(match);
     }, [match]);
 
     React.useEffect(() => {
