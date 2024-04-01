@@ -7,7 +7,6 @@ import {Match} from "../models/domain/match";
 import {BoardFC} from "./board_fc";
 import {Move} from "../models/domain/move";
 import {BoardHorizontalGutter} from "./board_horizontal_gutter";
-import {ClockAnimator} from "../services/clock_animator";
 
 interface Props {
     match: Match;
@@ -31,12 +30,16 @@ export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) =>
         }
     }, [viewingClientKey, match.whiteClientKey, match.blackClientKey]);
 
-    const [selfClientKey, oppClientKey] = React.useMemo(() => {
+    const [selfName, oppName] = React.useMemo(() => {
         if (isWhitePerspective) {
-            return [match.whiteClientKey, match.blackClientKey];
+            if (match.botName) {
+                return [match.whiteClientKey, match.botName];
+            } else {
+                return [match.whiteClientKey, match.blackClientKey];
+            }
         }
         return [match.blackClientKey, match.whiteClientKey];
-    }, [match.whiteClientKey, match.blackClientKey, isWhitePerspective]);
+    }, [match.botName, match.whiteClientKey, match.blackClientKey, isWhitePerspective]);
 
     const sendMove = React.useCallback((move: Move) => {
         window.services.arbitratorClient.sendMove(match.uuid, move);
@@ -46,11 +49,11 @@ export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) =>
         <BoardLeftGutter isWhitePerspective={isWhitePerspective} matchResult={match.result} matchUuid={match.uuid}/>
         <div className={"BoardWrapped"}>
             <BoardHorizontalGutter isWhitePerspective={isWhitePerspective} isWhite={!isWhitePerspective}
-                                   displayName={formatKey(oppClientKey)} materialOnBoard={match.board.material}/>
+                                   displayName={formatKey(oppName)} materialOnBoard={match.board.material}/>
             <BoardFC board={match.board} lastMove={match.lastMove} isWhitePerspective={isWhitePerspective}
                      isLocked={isLocked} sendMove={sendMove}/>
             <BoardHorizontalGutter isWhitePerspective={isWhitePerspective} isWhite={isWhitePerspective}
-                                   displayName={formatKey(selfClientKey)} materialOnBoard={match.board.material}/>
+                                   displayName={formatKey(selfName)} materialOnBoard={match.board.material}/>
         </div>
         {match.result !== MatchResult.IN_PROGRESS && <Summary/>}
     </div>

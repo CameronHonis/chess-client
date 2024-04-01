@@ -21,7 +21,6 @@ import {ClearSelectionsAction} from "../models/actions/board/clear_premoves";
 import {UpdatePerspectiveAction} from "../models/actions/board/update_perspective_action";
 import {UpdateLockedAction} from "../models/actions/board/update_locked_action";
 import {AnimTile} from "./anim_tile";
-import {usePrevious} from "../hooks/use_previous";
 import {AudioHelper} from "../helpers/audio_helper";
 
 export interface BoardProps {
