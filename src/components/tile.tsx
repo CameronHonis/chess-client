@@ -1,13 +1,6 @@
 import React from "react";
 import "../styles/tile.css";
-import {Pawn} from "./pieces/pawn";
-import {Knight} from "./pieces/knight";
-import {Bishop} from "./pieces/bishop";
-import {Rook} from "./pieces/rook";
-import {Queen} from "./pieces/queen";
-import {King} from "./pieces/king";
 import {ChessPiece} from "../models/domain/chess_piece";
-import {ChessPieceHelper} from "../helpers/chess_piece_helper";
 import {Square} from "../models/domain/square";
 import {MouseButton} from "../types";
 import {Piece} from "./pieces/piece";
