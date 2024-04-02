@@ -1,4 +1,5 @@
 .BotMatchPicker {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -8,6 +9,15 @@
     padding: 4vw;
     background: linear-gradient(#78593c, #a25f20);
     border-radius: 20px;
+}
+
+.BotMatchPicker-Back {
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    left: 1rem;
+    top: 2rem;
+    opacity: 0.7;
 }
 
 .BotsDroplist {
@@ -22,4 +32,16 @@
 
 .BotMatchPicker button {
     color: #420;
+}
+
+@media (max-width: 767px) {
+    .BotMatchPicker {
+        padding: 10vw;
+        height: 70vh;
+        width: 100%;
+    }
+
+    .BotMatchPicker h2 {
+        font-size: 2.5rem;
+    }
 }

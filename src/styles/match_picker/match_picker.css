@@ -23,3 +23,40 @@
 .MatchPickerWrappers h2 {
     font-size: 3rem;
 }
+
+@media (max-width: 767px) {
+    .MatchPickerWrappers {
+        flex-direction: column;
+        height: auto;
+    }
+    .MatchPickerPage {
+        padding: 3rem 1rem 1rem 1rem;
+    }
+    .MatchPickerPage-Subtitle {
+        padding-bottom: 1.5vh;
+    }
+
+    .MatchPickerPage-Prompt {
+        font-size: 2.5rem;
+        text-align: left;
+        margin-bottom: 5rem;
+    }
+
+    .MatchPickerPageOption {
+        font-size: 3rem;
+        font-weight: bold;
+        padding: 1rem 0;
+        border: none;
+        border-radius: 1rem;
+        width: 12rem;
+        margin-bottom: 4rem;
+    }
+
+    .MatchPickerPageOption.Human {
+        background: #1b5da4;
+    }
+
+    .MatchPickerPageOption.Bot {
+        background: #a25f20;
+    }
+}

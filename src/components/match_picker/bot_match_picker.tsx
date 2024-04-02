@@ -5,11 +5,17 @@ import {Button} from "../button";
 import {BotType} from "../../models/domain/bot_type";
 import {TimeControl, TimeControlPreset} from "../../models/domain/time_control";
 import {TimeControlOptions} from "../../styles/match_picker/time_control_options";
+//@ts-ignore
+import backIcon from "../../res/images/back-button.png";
 
 export interface BotMatchPickerProps {
+    onBackButtonClick?: () => void;
 }
 
 export const BotMatchPicker: React.FC<BotMatchPickerProps> = (props) => {
+    const {
+        onBackButtonClick
+    } = props;
     const [selectedBotName, setSelectedBotName] = React.useState<BotType>(BotType.RANDOM);
     const [selectedTimeControlPreset, setSelectedTimeControlPreset] = React.useState(TimeControlPreset.RAPID);
 
@@ -27,6 +33,8 @@ export const BotMatchPicker: React.FC<BotMatchPickerProps> = (props) => {
         );
     }
     return <div className={"BotMatchPicker"}>
+        {onBackButtonClick &&
+            <img src={backIcon} alt="back button" className="HumanMatchPicker-Back" onClick={onBackButtonClick}/>}
         <h2>A Robot</h2>
         <div className={"BotsDroplist"}>
             {botDroplistItems}

@@ -16,6 +16,7 @@ import {ChallengesOverlay} from "./components/challenges/challenges_overlay";
 import {Home} from "./components/home";
 import {DisconnectedOverlay} from "./components/disconnected_overlay";
 import {MatchFC} from './components/match_fc';
+import {useIsMobile} from "./hooks/use_is_mobile";
 
 
 // const initAppState = new AppState({
@@ -50,6 +51,7 @@ export const appStateContext = React.createContext<[AppState, React.Dispatch<App
 
 function App() {
     const [state, dispatch] = React.useReducer(appStateReducer, initAppState);
+
 
     React.useEffect(() => {
         window.appState = state;

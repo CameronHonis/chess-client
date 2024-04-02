@@ -2,19 +2,22 @@ import React from "react"
 import {Button} from "../button";
 import {Dots} from "../dots";
 import "../../styles/match_picker/human_match_picker.css";
-import {appStateContext} from "../../App";
 import {TimeControl, TimeControlPreset} from "../../models/domain/time_control";
 import {TimeControlOptions} from "../../styles/match_picker/time_control_options";
+//@ts-ignore
+import backIcon from "../../res/images/back-button.png";
 
 export interface HumanMatchPickerProps {
     isSearchingMatch: boolean;
     setIsSearchingMatch: React.Dispatch<React.SetStateAction<boolean>>;
+    onBackButtonClick?: () => void;
 }
 
 export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
     const {
         isSearchingMatch,
-        setIsSearchingMatch
+        setIsSearchingMatch,
+        onBackButtonClick,
     } = props;
     const [selectedTimeControlPreset, setSelectedTimeControlPreset] = React.useState(TimeControlPreset.RAPID);
 
@@ -29,7 +32,9 @@ export const HumanMatchPicker: React.FC<HumanMatchPickerProps> = (props) => {
     }, [setIsSearchingMatch]);
 
     return <div className={"HumanMatchPicker"}>
-        <h2>A Human</h2>
+        {onBackButtonClick &&
+            <img src={backIcon} alt="back button" className="HumanMatchPicker-Back" onClick={onBackButtonClick}/>}
+        <h2> A Human</h2>
         {
             isSearchingMatch ?
                 <>
