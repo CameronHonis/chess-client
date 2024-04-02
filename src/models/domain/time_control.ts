@@ -42,44 +42,42 @@ export class TimeControl {
     }
 
     static fromPreset(timeControlPreset: TimeControlPreset) {
-        switch(timeControlPreset){
+        switch (timeControlPreset) {
             case TimeControlPreset.BLITZ:
-                return newBlitzTimeControl();
+                return this.blitzTimeControl();
             case TimeControlPreset.RAPID:
-                return newRapidTimeControl();
+                return this.rapidTimeControl();
             case TimeControlPreset.BULLET:
-                return newBulletTimeControl();
+                return this.bulletTimeControl();
             default:
                 throw new Error(`timeControl preset '${timeControlPreset}' not valid`);
         }
     }
-}
 
+    static bulletTimeControl(): TimeControl {
+        return new TimeControl({
+            initialTimeSec: 60,
+            incrementSec: 0,
+            timeAfterMovesCount: 0,
+            secAfterMoves: 0,
+        });
+    }
 
-// TODO: move these to be static methods on TimeControl
-export function newBulletTimeControl(): TimeControl {
-    return new TimeControl({
-        initialTimeSec: 60,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    });
-}
+    static blitzTimeControl(): TimeControl {
+        return new TimeControl({
+            initialTimeSec: 300,
+            incrementSec: 0,
+            timeAfterMovesCount: 0,
+            secAfterMoves: 0,
+        });
+    }
 
-export function newBlitzTimeControl(): TimeControl {
-    return new TimeControl({
-        initialTimeSec: 300,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    });
-}
-
-export function newRapidTimeControl(): TimeControl {
-    return new TimeControl({
-        initialTimeSec: 900,
-        incrementSec: 0,
-        timeAfterMovesCount: 0,
-        secAfterMoves: 0,
-    });
+    static rapidTimeControl(): TimeControl {
+        return new TimeControl({
+            initialTimeSec: 900,
+            incrementSec: 0,
+            timeAfterMovesCount: 0,
+            secAfterMoves: 0,
+        });
+    }
 }

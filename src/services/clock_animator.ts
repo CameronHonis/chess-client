@@ -1,12 +1,12 @@
 import {Match} from "../models/domain/match";
-import {newBlitzTimeControl, newRapidTimeControl, TimeControl} from "../models/domain/time_control";
 import {MatchResult} from "../models/domain/match_result";
+import {TimeControl} from "../models/domain/time_control";
 
-const RAPID_INIT_SECS = newRapidTimeControl().initialTimeSec;
-const BLITZ_INIT_SECS = newBlitzTimeControl().initialTimeSec;
+const RAPID_INIT_SECS = TimeControl.rapidTimeControl().initialTimeSec;
+const BLITZ_INIT_SECS = TimeControl.blitzTimeControl().initialTimeSec;
 
 export class ClockAnimator {
-    private timeControl: TimeControl = newBlitzTimeControl();
+    private timeControl: TimeControl = TimeControl.blitzTimeControl();
     private isWhiteTurn: boolean = false;
     private whiteSecs: number = 0;
     private blackSecs: number = 0;

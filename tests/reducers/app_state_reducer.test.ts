@@ -8,14 +8,14 @@ import {UpdateMatchAction} from "../../src/models/actions/app/update_match_actio
 import {UpdateChallengeAction} from "../../src/models/actions/app/update_challenge_action";
 import {AuthKeyset} from "../../src/models/domain/auth_keyset";
 import {MatchResult} from "../../src/models/domain/match_result";
-import {newBlitzTimeControl, newBulletTimeControl} from "../../src/models/domain/time_control";
+import {TimeControl} from "../../src/models/domain/time_control";
 
 function getSomeChallenge(): Challenge {
     return new Challenge({
         uuid: "some-challenge-uuid",
         challengerKey: "some-client-key",
         challengedKey: "some-other-client-key",
-        timeControl: newBulletTimeControl(),
+        timeControl: TimeControl.bulletTimeControl(),
         isChallengerWhite: true,
         isChallengerBlack: false,
         botName: "",
@@ -49,7 +49,7 @@ describe("app_state_reducer", () => {
                     blackClientKey: "some-other-client-key",
                     whiteTimeRemainingSec: 10,
                     blackTimeRemainingSec: 10,
-                    timeControl: newBulletTimeControl(),
+                    timeControl: TimeControl.bulletTimeControl(),
                     botName: "",
                     result: MatchResult.IN_PROGRESS,
                 }));
@@ -95,7 +95,7 @@ describe("app_state_reducer", () => {
                 describe("when the challenge already exists", () => {
                     beforeEach(() => {
                         const oldChallenge = new Challenge(getSomeChallenge());
-                        oldChallenge.timeControl = newBlitzTimeControl();
+                        oldChallenge.timeControl = TimeControl.blitzTimeControl();
                         appState.inboundChallenges = [
                             oldChallenge,
                         ];
@@ -130,7 +130,7 @@ describe("app_state_reducer", () => {
 
                         const challenge = new Challenge({
                             ...oldChallenge,
-                            timeControl: newBlitzTimeControl(),
+                            timeControl: TimeControl.blitzTimeControl(),
                         });
                         updateChallengeAction = new UpdateChallengeAction(challenge);
                     });
