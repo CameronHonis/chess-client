@@ -20,3 +20,15 @@
 .Clock.LowTime {
     background-color: red;
 }
+
+@media (max-width: 767px) {
+    .Clock {
+        width: auto;
+        border-radius: .5rem;
+        padding: .75rem 1rem;
+        padding-bottom: 0.5rem;
+        font-size: 1.75rem;
+        font-weight: bold;
+        text-align: center;
+    }
+}

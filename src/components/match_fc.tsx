@@ -1,4 +1,3 @@
-import {BoardLeftGutter} from "./board_left_gutter";
 import {formatKey} from "../helpers/format_key";
 import {MatchResult} from "../models/domain/match_result";
 import {Summary} from "./summary";
@@ -6,7 +5,10 @@ import React from "react";
 import {Match} from "../models/domain/match";
 import {BoardFC} from "./board_fc";
 import {Move} from "../models/domain/move";
-import {BoardHorizontalGutter} from "./board_horizontal_gutter";
+import {CapturedPieces} from "./captured_pieces";
+import {useIsMobile} from "../hooks/use_is_mobile";
+import {Clock} from "./clock";
+import {ResignButton} from "./resign_button";
 
 interface Props {
     match: Match;
@@ -16,6 +18,7 @@ interface Props {
 
 export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) => {
     const [isWhitePerspective, setIsWhitePerspective] = React.useState(initIsWhitePerspective(match, viewingClientKey));
+    const isMobile = useIsMobile();
 
     // TODO: evaluate if this is the best place/method of updating ClockAnimator
     React.useEffect(() => {
@@ -30,33 +33,76 @@ export const MatchFC: React.FC<Props> = ({match, viewingClientKey, isLocked}) =>
         }
     }, [viewingClientKey, match.whiteClientKey, match.blackClientKey]);
 
-    const [selfName, oppName] = React.useMemo(() => {
+    const [selfDisplayName, oppDisplayName] = React.useMemo(() => {
         if (isWhitePerspective) {
-            if (match.botName) {
-                return [match.whiteClientKey, match.botName];
-            } else {
-                return [match.whiteClientKey, match.blackClientKey];
-            }
+            const selfDisplayName = formatKey(match.whiteClientKey);
+            if (match.botName)
+                return [selfDisplayName, `🤖${match.botName}`];
+            else
+                return [selfDisplayName, formatKey(match.blackClientKey)];
+        } else {
+            const selfDisplayName = formatKey(match.blackClientKey);
+            if (match.botName)
+                return [selfDisplayName, `🤖${match.botName}`];
+            else
+                return [selfDisplayName, formatKey(match.whiteClientKey)];
         }
-        return [match.blackClientKey, match.whiteClientKey];
     }, [match.botName, match.whiteClientKey, match.blackClientKey, isWhitePerspective]);
 
     const sendMove = React.useCallback((move: Move) => {
         window.services.arbitratorClient.sendMove(match.uuid, move);
     }, [match.uuid]);
 
-    return <div className={"BoardFrame"}>
-        <BoardLeftGutter isWhitePerspective={isWhitePerspective} matchResult={match.result} matchUuid={match.uuid}/>
-        <div className={"BoardWrapped"}>
-            <BoardHorizontalGutter isWhitePerspective={isWhitePerspective} isWhite={!isWhitePerspective}
-                                   displayName={formatKey(oppName)} materialOnBoard={match.board.material}/>
+    if (isMobile) {
+        return <div className={"BoardFrame"}>
+            <div className={"BoardTopGutter"}>
+                <div className={"BoardTopGutter-Top"}>
+                    <Clock isWhite={!isWhitePerspective}/>
+                    <ResignButton matchUuid={match.uuid} matchResult={match.result}/>
+                </div>
+                <div className={"BoardTopGutter-Bottom"}>
+                    <p className={"PlayerName"}>{oppDisplayName}</p>
+                    <CapturedPieces isWhitePieces={isWhitePerspective} materialOnBoard={match.board.material}/>
+                </div>
+            </div>
             <BoardFC board={match.board} lastMove={match.lastMove} isWhitePerspective={isWhitePerspective}
                      isLocked={isLocked} sendMove={sendMove}/>
-            <BoardHorizontalGutter isWhitePerspective={isWhitePerspective} isWhite={isWhitePerspective}
-                                   displayName={formatKey(selfName)} materialOnBoard={match.board.material}/>
+            <div className={"BoardBottomGutter"}>
+                <div className={"BoardBottomGutter-Top"}>
+                    <p className={"PlayerName"}>{selfDisplayName}</p>
+                    <CapturedPieces isWhitePieces={!isWhitePerspective} materialOnBoard={match.board.material}/>
+                </div>
+                <div className={"BoardBottomGutter-Bottom"}>
+                    <Clock isWhite={isWhitePerspective} isHomeClock/>
+                </div>
+            </div>
+            {match.result !== MatchResult.IN_PROGRESS && <Summary/>}
         </div>
-        {match.result !== MatchResult.IN_PROGRESS && <Summary/>}
-    </div>
+    } else { // not mobile
+        return <div className={"BoardFrame"}>
+            <div className={"BoardLeftGutter"}>
+                <Clock isWhite={!isWhitePerspective}/>
+                <div className={"LeftGutter-Bottom"}>
+                    <ResignButton matchUuid={match.uuid} matchResult={match.result}/>
+                    <Clock isWhite={isWhitePerspective} isHomeClock/>
+                </div>
+            </div>
+            <div className={"BoardWrapped"}>
+                <div className={"BoardTopGutter"}>
+                    <p className={"PlayerName"}>{oppDisplayName}</p>
+                    <CapturedPieces isWhitePieces={isWhitePerspective} materialOnBoard={match.board.material}/>
+                </div>
+                <BoardFC board={match.board} lastMove={match.lastMove} isWhitePerspective={isWhitePerspective}
+                         isLocked={isLocked} sendMove={sendMove}/>
+                <div className={"BoardBottomGutter"}>
+                    <p className={"PlayerName"}>{selfDisplayName}</p>
+                    <CapturedPieces isWhitePieces={!isWhitePerspective} materialOnBoard={match.board.material}/>
+                </div>
+            </div>
+            {match.result !== MatchResult.IN_PROGRESS && <Summary/>}
+        </div>
+    }
+
 }
 
 function initIsWhitePerspective(match: Match, viewingClientKey: string): boolean {

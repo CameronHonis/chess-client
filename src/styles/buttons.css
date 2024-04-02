@@ -53,3 +53,14 @@
 .ResignButton-Unlocked {
     background: #c00;
 }
+
+@media (max-width: 767px) {
+    .ResignButton {
+        width: 6.5rem;
+        border-radius: .5rem;
+        padding: .5rem 0;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+    }
+}

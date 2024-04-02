@@ -5,57 +5,55 @@ import {Piece} from "./pieces/piece";
 import "../styles/board_horizontal_gutter.css";
 
 interface Props {
-    isWhitePerspective: boolean;
-    isWhite: boolean;
-    displayName: string;
+    isWhitePieces: boolean;
     materialOnBoard: Material;
 }
 
-export const BoardHorizontalGutter: React.FC<Props> = (props) => {
+export const CapturedPieces: React.FC<Props> = (props) => {
     const {
-        isWhitePerspective,
-        isWhite,
-        displayName,
         materialOnBoard,
+        isWhitePieces: isWhite,
     } = props;
-
-    const isBottom = React.useMemo(() => {
-        return isWhite === isWhitePerspective;
-    }, [isWhite, isWhitePerspective]);
 
     const pieceDiff = React.useMemo(() => {
         const rtn: ChessPiece[] = [];
-        const friendlyIdx = isWhite ? 0 : 1;
-        const enemyIdx = isWhite ? 1 : 0;
+        const friendlyIdx = isWhite ? 1 : 0;
+        const enemyIdx = isWhite ? 0 : 1;
         const pawnDiff = materialOnBoard.pawns[friendlyIdx] - materialOnBoard.pawns[enemyIdx];
         for (let i = 0; i < pawnDiff; i++)
-            rtn.push(isWhite ? ChessPiece.BLACK_PAWN : ChessPiece.WHITE_PAWN);
+            rtn.push(isWhite ? ChessPiece.WHITE_PAWN : ChessPiece.BLACK_PAWN);
 
         const knightDiff = materialOnBoard.knights[friendlyIdx] - materialOnBoard.knights[enemyIdx];
         for (let i = 0; i < knightDiff; i++)
-            rtn.push(isWhite ? ChessPiece.BLACK_KNIGHT : ChessPiece.WHITE_KNIGHT);
+            rtn.push(isWhite ? ChessPiece.WHITE_KNIGHT : ChessPiece.BLACK_KNIGHT);
 
         const enemyBishopsCount = materialOnBoard.darkSquareBishops[enemyIdx] + materialOnBoard.lightSquareBishops[enemyIdx];
         const friendlyBishopsCount = materialOnBoard.darkSquareBishops[friendlyIdx] + materialOnBoard.lightSquareBishops[friendlyIdx];
         const bishopsDiff = friendlyBishopsCount - enemyBishopsCount;
         for (let i = 0; i < bishopsDiff; i++)
-            rtn.push(isWhite ? ChessPiece.BLACK_BISHOP : ChessPiece.WHITE_BISHOP);
+            rtn.push(isWhite ? ChessPiece.WHITE_BISHOP : ChessPiece.BLACK_BISHOP);
 
         const rooksDiff = materialOnBoard.rooks[friendlyIdx] - materialOnBoard.rooks[enemyIdx];
         for (let i = 0; i < rooksDiff; i++)
-            rtn.push(isWhite ? ChessPiece.BLACK_ROOK : ChessPiece.WHITE_ROOK);
+            rtn.push(isWhite ? ChessPiece.WHITE_ROOK : ChessPiece.BLACK_ROOK);
 
         const queensDiff = materialOnBoard.queens[friendlyIdx] - materialOnBoard.queens[enemyIdx];
         for (let i = 0; i < queensDiff; i++)
-            rtn.push(isWhite ? ChessPiece.BLACK_QUEEN : ChessPiece.WHITE_QUEEN);
+            rtn.push(isWhite ? ChessPiece.WHITE_QUEEN : ChessPiece.BLACK_QUEEN);
         return rtn;
     }, [materialOnBoard, isWhite]);
 
+    const className = React.useMemo(() => {
+        const classNames = ["CapturedPieces"];
+        if (isWhite) {
+            classNames.push("White");
+        } else {
+            classNames.push("Black");
+        }
+        return classNames.join(" ");
+    }, [isWhite]);
 
-    return <div className={isBottom ? "BoardBottomGutter" : "BoardTopGutter"}>
-        <p className={"PlayerName"}>{displayName}</p>
-        <div className={"LostPieces"}>
-            {pieceDiff.map(piece => <Piece pieceType={piece} classNames={["LostPiece"]}/>)}
-        </div>
+    return <div className={className}>
+        {pieceDiff.map((piece, idx) => <Piece pieceType={piece} classNames={["CapturedPiece"]} key={idx}/>)}
     </div>
 }
