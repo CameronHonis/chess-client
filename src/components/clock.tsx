@@ -23,5 +23,6 @@ export const Clock: React.FC<TimerProps> = (props) => {
     }, [props.isWhite, props.isHomeClock]);
 
     return <div className={classNames.join(" ")}>
+        0:00
     </div>
 }

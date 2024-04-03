@@ -117,34 +117,55 @@ export const BoardFC: React.FC<BoardProps> = ({isLocked, isWhitePerspective, boa
     }, []);
 
     React.useEffect(() => {
-        const onMouseUp = (ev: MouseEvent) => {
-            let currNode = ev.target as HTMLElement | null;
+        const squareFromDropNode = (node: HTMLElement): Square | null => {
+            let currNode = node as HTMLElement | null;
             while (currNode && currNode.classList) {
-                const isTile = [...currNode.classList].some(className => className === "Tile");
+                const isTile = currNode.classList.contains("Tile");
                 if (isTile) {
                     const dropSquareHash = currNode.id.substring(4);
-                    const dropSquare = Square.fromHash(dropSquareHash);
-                    onTileDrop(ev.button, dropSquare);
-                    return;
+                    return Square.fromHash(dropSquareHash);
                 }
                 const isBody = currNode.nodeName === "BODY";
-                if (isBody) {
-                    onTileDrop(ev.button, null);
-                    return;
-                }
+                if (isBody)
+                    return null;
 
                 currNode = currNode.parentNode as HTMLElement | null;
             }
-            onTileDrop(ev.button, null);
+            return null;
+        }
+        const onMouseUp = (ev: MouseEvent) => {
+            let currNode = ev.target as HTMLElement;
+            const dropSquare = squareFromDropNode(currNode);
+            if (dropSquare) {
+                onTileDrop(ev.button, dropSquare);
+            } else {
+                onTileDrop(ev.button, null);
+            }
         };
+        const onTouchEnd = (ev: TouchEvent) => {
+            const touch = ev.changedTouches[0];
+            const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (!elem)
+                return onTileDrop(MouseButton.LEFT, null);
+            const dropSquare = squareFromDropNode(elem as HTMLElement);
+            if (dropSquare) {
+                onTileDrop(MouseButton.LEFT, dropSquare);
+            } else {
+                onTileDrop(MouseButton.LEFT, null);
+            }
+        }
+
         if (state.draggingSquare) {
             document.addEventListener("mouseup", onMouseUp);
+            document.addEventListener("touchend", onTouchEnd, {passive: true});
         } else {
             document.removeEventListener("mouseup", onMouseUp);
+            document.removeEventListener("touchend", onTouchEnd);
         }
 
         return () => {
             document.removeEventListener("mouseup", onMouseUp);
+            document.removeEventListener("touchend", onTouchEnd);
         }
     }, [onTileDrop, state.draggingSquare]);
 

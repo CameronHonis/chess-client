@@ -48,7 +48,7 @@
         padding: 1rem 0;
         border: none;
         border-radius: 1rem;
-        width: 12rem;
+        width: 13rem;
         margin-bottom: 4rem;
     }
 
@@ -58,5 +58,9 @@
 
     .MatchPickerPageOption.Bot {
         background: #a25f20;
+    }
+
+    .MatchPickerPageOption {
+        color: White;
     }
 }

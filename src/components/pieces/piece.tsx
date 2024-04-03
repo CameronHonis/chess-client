@@ -17,6 +17,7 @@ export const Piece: React.FC<Props> = (props) => {
         classNames: priorClassNames,
     } = props;
 
+    const [isIosDrag, setIsIosDrag] = React.useState(false);
 
     const isWhite = ChessPieceHelper.isWhite(pieceType);
     const [imgSrc, imgAlt, imgClassName] = React.useMemo(() => {
@@ -84,6 +85,19 @@ export const Piece: React.FC<Props> = (props) => {
         return ["", "", classNames.join(" ")];
     }, [priorClassNames, isWhite, pieceType]);
 
+
+    const onTouchMove = React.useCallback((e: React.TouchEvent) => {
+        if (!isIosDrag && onDragStart) {
+            const dragEvent = {
+                ...e,
+                button: 0,
+                preventDefault: () => {},
+            }
+            onDragStart(dragEvent as unknown as React.DragEvent<HTMLImageElement>);
+        }
+        setIsIosDrag(true);
+    }, [onDragStart, isIosDrag]);
+
     if (pieceType === ChessPiece.EMPTY) {
         return null;
     }
@@ -91,6 +105,8 @@ export const Piece: React.FC<Props> = (props) => {
     return <img
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
+        onTouchStart={() => setIsIosDrag(false)}
+        onTouchMove={onTouchMove}
         className={imgClassName}
         src={imgSrc}
         alt={imgAlt}

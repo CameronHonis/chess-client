@@ -84,6 +84,7 @@ export const Tile: React.FC<TileProps> = (props) => {
         className={classNames.join(" ")}
         id={`Tile${square.hash()}`}
         onMouseDown={() => setDidClickDrag(false)}
+        onTouchStart={() => setDidClickDrag(false)}
         onContextMenu={ev => onClick(ev)}
         onClick={(ev) => onClick(ev)}
     >
