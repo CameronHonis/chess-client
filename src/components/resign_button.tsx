@@ -18,6 +18,7 @@ export function ResignButton(props: Props) {
                 setIsProtected(true);
             }, 2000);
         } else {
+            setIsProtected(true);
             window.services.arbitratorClient.resignMatch(matchUuid);
         }
     }, [isProtected, setIsProtected, matchUuid]);
