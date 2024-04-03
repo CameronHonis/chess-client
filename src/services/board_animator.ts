@@ -204,6 +204,17 @@ export class HoldPieceAnimation {
         const draggingTileId = `Tile${draggingSquare.hash()}`;
         this.draggingTile = document.getElementById(draggingTileId) as HTMLDivElement;
         window.addEventListener("mousemove", ev => this.onMouseMove(ev));
+        window.addEventListener("touchmove", ev => this.onTouchMove(ev));
+    }
+
+    private onTouchMove(ev: TouchEvent) {
+        if (ev.touches.length !== 1) {
+            return;
+        }
+        const touch = ev.touches[0];
+        this.mouseX = touch.clientX;
+        this.mouseY = touch.clientY;
+        this.isDragging = true;
     }
 
     private onMouseMove(ev: MouseEvent) {
@@ -226,6 +237,7 @@ export class HoldPieceAnimation {
     }
 
     cleanUp() {
-
+        window.removeEventListener("mousemove", ev => this.onMouseMove(ev));
+        window.removeEventListener("touchmove", ev => this.onTouchMove(ev));
     }
 }
