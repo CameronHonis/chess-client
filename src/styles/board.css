@@ -79,7 +79,6 @@
     }
 
     .BoardFrame {
-        position: relative;
         flex-direction: column;
         justify-content: start;
         padding-top: 3rem;
