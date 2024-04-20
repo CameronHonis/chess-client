@@ -24,7 +24,7 @@ export const BotMatchPicker: React.FC<BotMatchPickerProps> = (props) => {
             selectedBotName, true, true, TimeControl.fromPreset(selectedTimeControlPreset));
     }, [selectedBotName, selectedTimeControlPreset]);
 
-    const botNames = [BotType.RANDOM, BotType.STOCKFISH, BotType.NOT_IMPLEMENTED];
+    const botNames = [BotType.RANDOM, BotType.STOCKFISH, BotType.MILA, BotType.NOT_IMPLEMENTED];
     const botDroplistItems: ReactElement[] = [];
     for (let botName of botNames) {
         botDroplistItems.push(

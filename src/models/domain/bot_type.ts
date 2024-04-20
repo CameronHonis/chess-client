@@ -1,6 +1,7 @@
 export enum BotType {
     RANDOM = "random",
     STOCKFISH = "stockfish",
+    MILA = "mila",
     NOT_IMPLEMENTED = "not_implemented",
 }
 
