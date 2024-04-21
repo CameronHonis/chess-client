@@ -28,8 +28,6 @@ const animateDots = (dotsWrapperRef: React.RefObject<HTMLDivElement>,
     const thirdDotHeight = getHeight(thirdDotNormT);
 
     const {
-        left,
-        top,
         width,
         height
     } = dotsWrapperRef.current!.getBoundingClientRect();
@@ -39,16 +37,16 @@ const animateDots = (dotsWrapperRef: React.RefObject<HTMLDivElement>,
     } = firstDotRef.current!.getBoundingClientRect();
 
     const heightRange = height - dotHeight;
-    const firstDotTop = top + heightRange * (1 - firstDotHeight);
-    const secondDotTop = top + heightRange * (1 - secondDotHeight);
-    const thirdDotTop = top + heightRange * (1 - thirdDotHeight);
-    const secondDotLeft = left + width / 2 - dotWidth / 2;
-    const thirdDotLeft = left + width - dotWidth;
+    const firstDotTop = heightRange * (1 - firstDotHeight);
+    const secondDotTop = heightRange * (1 - secondDotHeight);
+    const thirdDotTop = heightRange * (1 - thirdDotHeight);
+    const secondDotLeft = width / 2 - dotWidth / 2;
+    const thirdDotLeft = width - dotWidth;
 
     firstDotRef.current!.style.top = toPxString(firstDotTop);
     secondDotRef.current!.style.top = toPxString(secondDotTop);
     thirdDotRef.current!.style.top = toPxString(thirdDotTop);
-    firstDotRef.current!.style.left = toPxString(left);
+    firstDotRef.current!.style.left = toPxString(0);
     secondDotRef.current!.style.left = toPxString(secondDotLeft);
     thirdDotRef.current!.style.left = toPxString(thirdDotLeft);
 
